@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>B4L7 單字測驗｜自學檢討系統</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f1ec;color:#111827;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;line-height:1.75}
+.header{position:sticky;top:0;z-index:50;background:#ead4d8;border-bottom:3px solid #111827;box-shadow:0 4px 0 rgba(17,24,39,.12)}
+.header-inner{max-width:1120px;margin:auto;padding:16px}
+h1{margin:0;font-size:28px;font-weight:950;letter-spacing:.5px}
+.sub{margin-top:6px;font-size:14px;color:#374151}
+.container{max-width:1120px;margin:auto;padding:18px 14px 100px}
+.panel{background:#fffdf8;border:2px solid #111827;border-radius:24px;padding:18px;margin-bottom:16px;box-shadow:5px 5px 0 rgba(17,24,39,.14)}
+.legend{display:flex;flex-wrap:wrap;gap:8px;font-size:14px}.tag{border:1.8px solid #111827;border-radius:999px;padding:5px 10px;background:#fff}.orange-dot{display:inline-block;width:12px;height:12px;background:#f59e0b;border-radius:4px;border:1px solid #111827;vertical-align:-1px;margin-right:4px}
+.q{background:#fff;border:2px solid #111827;border-radius:22px;padding:16px;margin-bottom:16px;box-shadow:4px 4px 0 rgba(17,24,39,.10)}
+.q-title{font-weight:950;font-size:19px;margin-bottom:8px}.sentence{font-size:18px;margin-bottom:10px}.word{cursor:pointer;border-bottom:1.5px dotted #64748b;padding:0 1px;border-radius:4px}.word:hover{background:#eef2ff}.func-word{color:#94a3b8;cursor:default;border-bottom:none}.blank{font-weight:900;color:#2563eb}.grammar-word{color:#ea580c;font-weight:900}.grammar-word.word{border-bottom:1.5px dotted #ea580c}.grammar-word:hover{background:#fff7ed}
+.grammar-phrase{background:#fff7ed;border-radius:6px;padding:0 1px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.grammar-phrase .word,.grammar-phrase .blank{color:#ea580c;font-weight:900;border-bottom-color:#ea580c}.options{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.opt{background:#dfe7ec;border:1.8px solid #111827;border-radius:14px;padding:6px 10px;cursor:pointer;font-weight:700}.opt:hover{filter:brightness(.97)}.answer{background:#dcfce7}.tools{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.btn{border:2px solid #111827;background:#fffdf8;border-radius:999px;padding:6px 12px;font-weight:800;cursor:pointer;box-shadow:2px 2px 0 rgba(17,24,39,.13)}.btn:hover{transform:translateY(-1px)}
+.grammar-list{margin-top:10px;border-top:1.5px dashed #cbd5e1;padding-top:10px}.grammar-chip{display:inline-block;margin:4px 6px 4px 0;padding:6px 10px;border:1.8px solid #111827;border-radius:999px;background:#fff7ed;cursor:pointer;font-weight:800;font-size:14px}.grammar-chip:hover{background:#ffedd5}
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.28);display:none;align-items:flex-start;justify-content:center;z-index:100;padding:80px 14px 20px}.modal{width:min(680px,100%);background:#fffdf8;border:2.5px solid #111827;border-radius:24px;box-shadow:8px 8px 0 rgba(17,24,39,.22);padding:18px;max-height:78vh;overflow:auto}.modal h2{margin:0 0 8px;font-size:24px}.modal h3{margin:14px 0 5px;font-size:17px}.modal p{margin:5px 0}.close{float:right;border:2px solid #111827;background:#fff;border-radius:999px;padding:5px 10px;cursor:pointer;font-weight:900}.muted{color:#64748b}.mini{font-size:14px}.floating{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:60}.float-btn{border:2px solid #111827;background:#fffdf8;border-radius:999px;padding:9px 13px;font-weight:900;cursor:pointer;box-shadow:3px 3px 0 rgba(17,24,39,.16)}
+@media(max-width:640px){h1{font-size:23px}.sentence{font-size:16px}.q{padding:13px}.options{display:block}.opt{display:block;margin:6px 0}.modal-backdrop{padding-top:65px}}
+</style>
+</head>
+<body>
+<div class="header"><div class="header-inner"><h1>B4L7 單字測驗｜自學檢討系統</h1><div class="sub">點英文單字看詞性、中文、搭配詞與例句；點「中譯」看句子中文；點選項看中文；點橘色整段為文法重點（點字只看單字）；下方標籤看片語解說。</div></div></div>
+<div class="container">
+  <div class="panel legend"><span class="tag"><span class="orange-dot"></span>橘色整段＝文法片語（點字＝單字）</span><span class="tag">藍色空格＝答案字</span><span class="tag">綠底選項＝正解</span><span class="tag">灰字＝功能詞不點；內容字可點查詞典</span></div>
+  <div id="quiz"></div>
+</div>
+<div class="floating"><button class="float-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 頂端</button></div>
+<div class="modal-backdrop" id="backdrop" onclick="closeModal(event)"><div class="modal" id="modal"><button class="close" onclick="hideModal()">關閉</button><div id="modalContent"></div></div></div>
+<script>
+const questions = [
+{n:1,a:"C",s:"Making a [[bold]] decision that thoroughly shocked her conservative mentors, the young entrepreneur invested all her life savings into a highly volatile technology startup.",zh:"做出一個徹底震驚她那些保守導師的大膽決定後，這位年輕創業家把畢生積蓄全投入一家波動極大的科技新創公司。",opts:[["A","strict","嚴格的"],["B","domestic","國內的；家庭的"],["C","bold","大膽的"],["D","democratic","民主的"]],g:["Making a bold decision","that thoroughly shocked her conservative mentors","invested all her life savings into"]},
+{n:2,a:"B",s:"The municipal [[council]], which consists of twenty newly elected representatives, held an emergency session last night to debate the controversial urban renewal plan.",zh:"這個由二十位新當選代表組成的市議會，昨晚召開緊急會議討論具爭議性的都市更新計畫。",opts:[["A","democracy","民主制度"],["B","council","議會；委員會"],["C","discrimination","歧視"],["D","chaos","混亂"]],g:["which consists of twenty newly elected representatives","to debate the controversial urban renewal plan"]},
+{n:3,a:"D",s:"After a severe earthquake disrupted the city's main power grid, the international airport fell into total [[chaos]], leaving thousands of passengers stranded in the crowded terminals.",zh:"一場強烈地震破壞城市主要電網後，國際機場陷入全面混亂，讓數千名乘客受困在擁擠的航廈中。",opts:[["A","chore","雜務"],["B","salary","薪水"],["C","council","議會"],["D","chaos","混亂"]],g:["After a severe earthquake disrupted the city's main power grid","leaving thousands of passengers stranded","passengers stranded"]},
+{n:4,a:"A",s:"The head coach enforced [[strict]] rules regarding training attendance and nutrition, warning the athletes that any minor violation would lead to immediate suspension.",zh:"總教練針對訓練出席與飲食執行嚴格規定，並警告選手任何小違規都會立即遭到停權。",opts:[["A","strict","嚴格的"],["B","democratic","民主的"],["C","domestic","國內的；家庭的"],["D","bold","大膽的"]],g:["regarding training attendance and nutrition","warning the athletes","that any minor violation would lead to immediate suspension"]},
+{n:5,a:"B",s:"Although the newly elected Prime Minister promised to lead a truly [[democratic]] government, critics argue that his administration rarely listens to the voices of minority groups.",zh:"雖然新當選的總理承諾帶領真正民主的政府，但批評者認為他的政府很少傾聽少數族群的聲音。",opts:[["A","domestic","國內的"],["B","democratic","民主的"],["C","strict","嚴格的"],["D","bold","大膽的"]],g:["Although the newly elected Prime Minister promised","promised to lead","that his administration rarely listens to the voices of minority groups"]},
+{n:6,a:"C",s:"Despite working long hours in the high-tech laboratory, the research assistants complained that their monthly [[salary]] was barely enough to cover the surging cost of living in the capital.",zh:"儘管在高科技實驗室長時間工作，研究助理們仍抱怨他們每月的薪水幾乎不足以負擔首都不斷上漲的生活費。",opts:[["A","chaos","混亂"],["B","discrimination","歧視"],["C","salary","薪水"],["D","chore","雜務"]],g:["Despite working long hours","that their monthly salary was barely enough","enough to cover the surging cost of living"]},
+{n:7,a:"D",s:"Growing up on a remote farm, Jason was responsible for daily [[chores]], such as milking the cows and cleaning the barn, before he caught the school bus every morning.",zh:"在偏遠農場長大的 Jason 每天上學前都要負責日常雜務，例如擠牛奶和清理穀倉。",opts:[["A","councils","議會"],["B","salaries","薪水"],["C","democracies","民主制度"],["D","chores","雜務"]],g:["Growing up on a remote farm","such as milking the cows and cleaning the barn","before he caught the school bus"]},
+{n:8,a:"A",s:"The school administration decided to [[eliminate]] all vending machines selling sugary drinks from the campus in hopes of promoting a healthier lifestyle among students.",zh:"校方決定將所有販售含糖飲料的販賣機從校園中移除，希望促進學生更健康的生活方式。",opts:[["A","eliminate","消除；移除"],["B","ban","禁止"],["C","commute","通勤"],["D","discriminate","歧視"]],g:["selling sugary drinks","in hopes of promoting","promoting a healthier lifestyle"]},
+{n:9,a:"D",s:"Because the factory owners repeatedly refused to obey environmental regulations, the local government decided to completely [[ban]] the usage of certain toxic chemicals.",zh:"由於工廠業者一再拒絕遵守環保法規，地方政府決定全面禁止某些有毒化學物質的使用。",opts:[["A","commute","通勤"],["B","eliminate","消除"],["C","discriminate","歧視"],["D","ban","禁止"]],g:["Because the factory owners repeatedly refused","refused to obey environmental regulations","ban the usage of certain toxic chemicals"]},
+{n:10,a:"B",s:"The human rights organization highly praised the citizens for their [[bold]] choice to stand up against the tyrannical regime during the peaceful street protest.",zh:"人權組織高度讚揚人民在和平街頭抗爭中勇敢站出來反抗暴政的選擇。",opts:[["A","domestic","國內的"],["B","bold","大膽的"],["C","strict","嚴格的"],["D","democratic","民主的"]],g:["praised the citizens for","to stand up against the tyrannical regime","stand up against"]},
+{n:11,a:"C",s:"To ensure fairness in the workplace, the HR department implemented new guidelines designed to [[eliminate]] any unfair treatment based on gender or ethnicity.",zh:"為了確保職場公平，人資部門實施了新的規範，以消除任何基於性別或種族的不公平待遇。",opts:[["A","ban","禁止"],["B","discriminate","歧視"],["C","eliminate","消除"],["D","commute","通勤"]],g:["To ensure fairness in the workplace","designed to eliminate any unfair treatment","based on gender or ethnicity"]},
+{n:12,a:"B",s:"Many workers who live in the quiet suburbs have to [[commute]] for over an hour every single day to reach their offices located in the bustling downtown district.",zh:"許多住在安靜郊區的上班族每天都得通勤超過一小時，才能抵達位於繁華市中心的辦公室。",opts:[["A","ban","禁止"],["B","commute","通勤"],["C","paralyze","癱瘓"],["D","eliminate","消除"]],g:["who live in the quiet suburbs","to reach their offices","located in the bustling downtown district"]},
+{n:13,a:"D",s:"The constitution ensures that the legal system is built upon equality, explicitly stating that no institution shall [[discriminate]] against individuals because of their social background.",zh:"憲法保障法律制度建立在平等之上，並明確指出任何機構都不得因個人社會背景而歧視他人。",opts:[["A","eliminate","消除"],["B","ban","禁止"],["C","commute","通勤"],["D","discriminate","歧視"]],g:["that the legal system is built upon equality","explicitly stating that no institution shall discriminate","discriminate against individuals"]},
+{n:14,a:"B",s:"When the severe winter storm blanketed the entire region with heavy snow, it threatened to completely [[paralyze]] the city's public transportation system.",zh:"當猛烈暴風雪以大雪覆蓋整個地區時，它威脅要徹底癱瘓城市的大眾運輸系統。",opts:[["A","ban","禁止"],["B","paralyze","癱瘓"],["C","commute","通勤"],["D","eliminate","消除"]],g:["When the severe winter storm blanketed the entire region","threatened to completely paralyze","blanketed the entire region with heavy snow"]},
+{n:15,a:"C",s:"The international human rights group filed a lawsuit against the corporation, aiming to end systematic [[discrimination]] against female employees regarding promotion opportunities.",zh:"國際人權組織對該公司提起訴訟，旨在終止針對女性員工升遷機會的系統性歧視。",opts:[["A","salary","薪水"],["B","chaos","混亂"],["C","discrimination","歧視"],["D","council","議會"]],g:["filed a lawsuit against the corporation","aiming to end systematic discrimination","discrimination against female employees","regarding promotion opportunities"]},
+{n:16,a:"A",s:"Although the airline offers extensive international flights, a large portion of its annual revenue still comes from its [[domestic]] routes connecting major domestic cities.",zh:"雖然這家航空公司提供大量國際航班，但它年度收入中很大一部分仍來自連接主要國內城市的國內航線。",opts:[["A","domestic","國內的"],["B","bold","大膽的"],["C","strict","嚴格的"],["D","democratic","民主的"]],g:["Although the airline offers extensive international flights","a large portion of its annual revenue","connecting major domestic cities"]},
+{n:17,a:"D",s:"When the fire alarm suddenly went off during the live concert, panic struck the crowd, and the grand theater instantly turned into a scene of complete [[chaos]].",zh:"當演唱會中火警警報突然響起時，人群陷入恐慌，整座大劇院瞬間變成一片混亂。",opts:[["A","council","議會"],["B","salary","薪水"],["C","chore","雜務"],["D","chaos","混亂"]],g:["When the fire alarm suddenly went off","panic struck the crowd","turned into a scene of complete chaos"]},
+{n:18,a:"B",s:"Sarah manages to maintain a tidy apartment by dividing the household [[chores]], such as doing the laundry and washing the dishes, equally among her three roommates.",zh:"Sarah 透過將家務平均分配給三位室友，例如洗衣服和洗碗，來維持公寓整潔。",opts:[["A","salaries","薪水"],["B","chores","家務；雜務"],["C","councils","議會"],["D","democracies","民主制度"]],g:["manages to maintain a tidy apartment","by dividing the household chores","such as doing the laundry and washing the dishes"]},
+{n:19,a:"A",s:"In a healthy and mature [[democracy]], the media always serves as a watchdog that monitors the actions of government officials and exposes political corruption.",zh:"在一個健康成熟的民主制度中，媒體總是扮演監督政府官員並揭露政治腐敗的守門人角色。",opts:[["A","democracy","民主制度"],["B","discrimination","歧視"],["C","chaos","混亂"],["D","salary","薪水"]],g:["serves as a watchdog","that monitors the actions of government officials and exposes political corruption","monitors ... and exposes ..."]},
+{n:20,a:"C",s:"The regional environmental [[council]] passed a new piece of legislation that allocates more funds to the construction of public parks and bicycle lanes.",zh:"地區環保議會通過一項新法案，撥出更多資金用於公共公園與自行車道建設。",opts:[["A","discrimination","歧視"],["B","democracy","民主制度"],["C","council","議會；委員會"],["D","salary","薪水"]],g:["that allocates more funds","allocates more funds to the construction","the construction of public parks and bicycle lanes"]},
+{n:21,a:"B",s:"To curb the rising rates of juvenile delinquency, the city decided to [[ban]] minors from entering internet cafes after midnight, a move that triggered intense debates.",zh:"為了抑制青少年犯罪率上升，該市決定禁止未成年人午夜後進入網咖，此舉引發激烈爭論。",opts:[["A","commute","通勤"],["B","ban","禁止"],["C","eliminate","消除"],["D","paralyze","癱瘓"]],g:["To curb the rising rates of juvenile delinquency","ban minors from entering internet cafes","a move that triggered intense debates"]},
+{n:22,a:"A",s:"Although the principal's approach to discipline seemed excessively [[strict]] to the students, parents appreciated the orderly and safe environment it created.",zh:"雖然校長的管教方式對學生而言似乎過於嚴格，但家長很欣賞它所創造出的有秩序且安全的環境。",opts:[["A","strict","嚴格的"],["B","bold","大膽的"],["C","domestic","國內的"],["D","democratic","民主的"]],g:["Although the principal's approach to discipline seemed","seemed excessively strict to the students","the orderly and safe environment it created"]},
+{n:23,a:"C",s:"Following a series of financial scandals that dominated the headlines, the board of directors urged the CEO to [[eliminate]] the executives who were involved in the fraud.",zh:"在一連串占據新聞版面的金融醜聞後，董事會敦促執行長清除那些涉入詐欺的高階主管。",opts:[["A","ban","禁止"],["B","commute","通勤"],["C","eliminate","消除；除掉"],["D","discriminate","歧視"]],g:["Following a series of financial scandals","that dominated the headlines","urged the CEO to eliminate","who were involved in the fraud"]},
+{n:24,a:"A",s:"Heavy traffic congestion during rush hour can easily [[paralyze]] the flow of vehicles, causing long delays for thousands of daily commuters.",zh:"尖峰時段的嚴重交通壅塞很容易癱瘓車流，導致數千名每日通勤者嚴重延誤。",opts:[["A","paralyze","癱瘓"],["B","ban","禁止"],["C","commute","通勤"],["D","eliminate","消除"]],g:["can easily paralyze the flow of vehicles","causing long delays","daily commuters"]},
+{n:25,a:"B",s:"The non-profit organization works tirelessly to fight against racial [[discrimination]], ensuring that children from all backgrounds have equal access to quality education.",zh:"這個非營利組織不知疲倦地對抗種族歧視，確保來自各種背景的孩子都能平等獲得優質教育。",opts:[["A","chaos","混亂"],["B","discrimination","歧視"],["C","council","議會"],["D","chore","雜務"]],g:["works tirelessly to fight against racial discrimination","fight against","ensuring that children from all backgrounds have equal access","have equal access to quality education"]}
+];
+
+const vocab = {
+"making":{pos:"V-ing／現在分詞",zh:"做出；製造",forms:"make v. 製造；做；maker n. 製造者",coll:"make a decision 做決定；make an effort 努力",ex:"Making a quick decision can be difficult."},
+"bold":{pos:"adj.",zh:"大膽的；勇敢的",forms:"boldly adv. 大膽地；boldness n. 大膽",coll:"a bold decision 大膽的決定；a bold move 大膽行動",ex:"She made a bold choice and started her own business."},
+"decision":{pos:"n.",zh:"決定",forms:"decide v. 決定；decisive adj. 果斷的",coll:"make a decision 做決定；a difficult decision 困難的決定",ex:"The final decision surprised everyone."},
+"thoroughly":{pos:"adv.",zh:"徹底地；完全地",forms:"thorough adj. 徹底的",coll:"thoroughly shocked 徹底震驚；thoroughly understand 完全了解",ex:"The news thoroughly shocked the class."},
+"shocked":{pos:"v. 過去式／過去分詞；adj.",zh:"震驚；感到震驚的",forms:"shock v./n. 震驚；shocking adj. 令人震驚的",coll:"be shocked by 被……震驚；shock someone 使某人震驚",ex:"His answer shocked the teacher."},
+"conservative":{pos:"adj.",zh:"保守的",forms:"conserve v. 保存；conservation n. 保護",coll:"conservative views 保守觀點；conservative mentors 保守導師",ex:"Her parents have conservative ideas about careers."},
+"mentors":{pos:"n. pl.",zh:"導師；良師",forms:"mentor v. 指導；mentorship n. 指導關係",coll:"a career mentor 職涯導師；mentor students 指導學生",ex:"The young writer learned a lot from her mentors."},
+"entrepreneur":{pos:"n.",zh:"創業家",forms:"entrepreneurial adj. 創業的",coll:"a young entrepreneur 年輕創業家；start-up entrepreneur 新創創業者",ex:"The entrepreneur opened a small café."},
+"invested":{pos:"v. 過去式",zh:"投資；投入",forms:"invest v. 投資；investment n. 投資",coll:"invest money in/into 投資金錢於；invest time in 投入時間於",ex:"He invested his savings in a small company."},
+"savings":{pos:"n. pl.",zh:"積蓄；存款",forms:"save v. 儲蓄；saving n. 節省",coll:"life savings 畢生積蓄；personal savings 個人存款",ex:"She used her savings to buy a laptop."},
+"volatile":{pos:"adj.",zh:"易變的；波動大的",forms:"volatility n. 波動性",coll:"a volatile market 波動大的市場；highly volatile 極不穩定的",ex:"Technology stocks can be volatile."},
+"technology":{pos:"n.",zh:"科技",forms:"technological adj. 科技的",coll:"technology startup 科技新創；modern technology 現代科技",ex:"Technology has changed how people learn."},
+"startup":{pos:"n.",zh:"新創公司",forms:"start up phr.v. 開始；創辦",coll:"a tech startup 科技新創；startup company 新創公司",ex:"Her startup created a new app."},
+"municipal":{pos:"adj.",zh:"市政的；地方自治的",forms:"municipality n. 自治市；市政府",coll:"municipal council 市議會；municipal government 市政府",ex:"The municipal government built a new park."},
+"council":{pos:"n.",zh:"議會；委員會",forms:"councilor n. 議員",coll:"city council 市議會；student council 學生會",ex:"The council discussed the new law."},
+"consists":{pos:"v.",zh:"由……組成",forms:"consist v. 組成；consistent adj. 一致的",coll:"consist of 由……組成",ex:"The team consists of five students."},
+"elected":{pos:"adj./v. 過去分詞",zh:"當選的；被選出的",forms:"elect v. 選舉；election n. 選舉",coll:"newly elected representatives 新當選代表",ex:"The newly elected mayor gave a speech."},
+"representatives":{pos:"n. pl.",zh:"代表",forms:"represent v. 代表；representative adj. 有代表性的",coll:"elected representatives 民選代表；sales representative 業務代表",ex:"The representatives met with the mayor."},
+"emergency":{pos:"n./adj.",zh:"緊急情況；緊急的",forms:"emergent adj. 新興的；emerge v. 出現",coll:"emergency session 緊急會議；emergency room 急診室",ex:"The school held an emergency meeting."},
+"session":{pos:"n.",zh:"會議；一段時間",forms:"sessional adj. 會期的",coll:"hold a session 召開會議；training session 訓練課",ex:"The session lasted two hours."},
+"debate":{pos:"v./n.",zh:"辯論；討論",forms:"debatable adj. 可爭論的",coll:"debate a plan 討論計畫；public debate 公開辯論",ex:"They debated the new school rule."},
+"controversial":{pos:"adj.",zh:"具爭議的",forms:"controversy n. 爭議",coll:"a controversial issue 爭議性議題；controversial plan 爭議計畫",ex:"The policy remains controversial."},
+"renewal":{pos:"n.",zh:"更新；重建",forms:"renew v. 更新；renewable adj. 可再生的",coll:"urban renewal 都市更新；license renewal 執照更新",ex:"Urban renewal changed the old neighborhood."},
+"severe":{pos:"adj.",zh:"嚴重的；猛烈的",forms:"severely adv. 嚴重地",coll:"severe earthquake 強震；severe damage 嚴重損害",ex:"The typhoon caused severe damage."},
+"earthquake":{pos:"n.",zh:"地震",forms:"quake n./v. 震動",coll:"a severe earthquake 強烈地震；earthquake drill 地震演練",ex:"The earthquake damaged many buildings."},
+"disrupted":{pos:"v. 過去式",zh:"打斷；破壞；中斷",forms:"disrupt v. 擾亂；disruption n. 中斷",coll:"disrupt traffic 擾亂交通；disrupt the power grid 破壞電網",ex:"Heavy rain disrupted the game."},
+"power":{pos:"n.",zh:"電力；力量；權力",forms:"powerful adj. 強大的",coll:"power grid 電網；power failure 停電",ex:"The storm caused a power failure."},
+"grid":{pos:"n.",zh:"網格；電網",forms:"無常用衍生字",coll:"power grid 電網；main grid 主電網",ex:"The city depends on the power grid."},
+"airport":{pos:"n.",zh:"機場",forms:"airline n. 航空公司",coll:"international airport 國際機場",ex:"The airport was crowded."},
+"chaos":{pos:"n.",zh:"混亂",forms:"chaotic adj. 混亂的",coll:"total chaos 完全混亂；a scene of chaos 混亂場面",ex:"The classroom was in chaos after the game."},
+"leaving":{pos:"V-ing／現在分詞",zh:"留下；使……處於某狀態",forms:"leave v. 離開；留下",coll:"leave someone stranded 使某人受困",ex:"The storm hit the city, leaving many people without power."},
+"passengers":{pos:"n. pl.",zh:"乘客",forms:"passenger n. 乘客",coll:"stranded passengers 受困乘客；airline passengers 航空乘客",ex:"The passengers waited at the gate."},
+"stranded":{pos:"adj./過去分詞",zh:"受困的；滯留的",forms:"strand v. 使受困",coll:"be stranded in 被困在；leave someone stranded 使某人受困",ex:"The travelers were stranded at the airport."},
+"crowded":{pos:"adj.",zh:"擁擠的",forms:"crowd n./v. 人群；擠滿",coll:"crowded terminals 擁擠航廈；crowded streets 擁擠街道",ex:"The bus was crowded this morning."},
+"terminals":{pos:"n. pl.",zh:"航廈；終點站",forms:"terminal adj. 末端的",coll:"airport terminal 機場航廈；bus terminal 巴士總站",ex:"Terminal 2 is very busy."},
+"coach":{pos:"n.",zh:"教練",forms:"coach v. 指導",coll:"head coach 總教練；basketball coach 籃球教練",ex:"The coach trained the team every day."},
+"enforced":{pos:"v. 過去式",zh:"執行；強制實施",forms:"enforce v. 執行；enforcement n. 執法",coll:"enforce rules 執行規定；law enforcement 執法",ex:"The teacher enforced the classroom rules."},
+"strict":{pos:"adj.",zh:"嚴格的",forms:"strictly adv. 嚴格地；strictness n. 嚴格",coll:"strict rules 嚴格規定；strict teacher 嚴格老師",ex:"The school has strict rules about phones."},
+"regarding":{pos:"prep.",zh:"關於",forms:"regard v. 視為；regarding prep. 關於",coll:"regarding this issue 關於這個問題",ex:"The email regarding the trip was sent yesterday."},
+"attendance":{pos:"n.",zh:"出席；出勤",forms:"attend v. 出席；attendant n. 服務員",coll:"training attendance 訓練出席；attendance record 出席紀錄",ex:"Attendance is important in this class."},
+"nutrition":{pos:"n.",zh:"營養",forms:"nutritious adj. 有營養的",coll:"nutrition education 營養教育；balanced nutrition 均衡營養",ex:"Good nutrition helps athletes perform well."},
+"warning":{pos:"V-ing／n.",zh:"警告",forms:"warn v. 警告；warning n. 警告",coll:"warn someone that... 警告某人……；warning sign 警告標誌",ex:"The coach warned the players not to be late."},
+"athletes":{pos:"n. pl.",zh:"運動員",forms:"athletic adj. 運動的",coll:"professional athletes 職業運動員；student athletes 學生運動員",ex:"The athletes practiced hard."},
+"violation":{pos:"n.",zh:"違規；違反",forms:"violate v. 違反",coll:"minor violation 小違規；traffic violation 交通違規",ex:"A serious violation may lead to punishment."},
+"suspension":{pos:"n.",zh:"停權；暫停；停學",forms:"suspend v. 暫停；使停職",coll:"immediate suspension 立即停權；school suspension 停學",ex:"The player faced suspension after breaking the rule."},
+"although":{pos:"conj.",zh:"雖然",forms:"無常用衍生字",coll:"Although S + V, S + V 雖然……但是……",ex:"Although it rained, the game continued."},
+"minister":{pos:"n.",zh:"部長；總理",forms:"ministry n. 部會",coll:"Prime Minister 總理；foreign minister 外交部長",ex:"The Prime Minister spoke on TV."},
+"promised":{pos:"v. 過去式",zh:"承諾",forms:"promise n./v. 承諾",coll:"promise to V 承諾做某事",ex:"He promised to finish the report."},
+"democratic":{pos:"adj.",zh:"民主的",forms:"democracy n. 民主制度；democrat n. 民主人士",coll:"democratic government 民主政府；democratic society 民主社會",ex:"People can vote in a democratic country."},
+"critics":{pos:"n. pl.",zh:"批評者；評論家",forms:"criticize v. 批評；critical adj. 批判的",coll:"political critics 政治批評者；film critics 影評人",ex:"Critics questioned the new policy."},
+"argue":{pos:"v.",zh:"主張；爭論",forms:"argument n. 論點；爭吵",coll:"argue that... 主張……；argue with 與……爭吵",ex:"Some people argue that homework is necessary."},
+"administration":{pos:"n.",zh:"政府；行政部門；管理",forms:"administer v. 管理",coll:"school administration 校方；government administration 政府部門",ex:"The administration introduced a new rule."},
+"minority":{pos:"n./adj.",zh:"少數；少數族群的",forms:"minor adj. 較小的；majority n. 多數",coll:"minority groups 少數族群；minority rights 少數權益",ex:"The law protects minority groups."},
+"despite":{pos:"prep.",zh:"儘管",forms:"無常用衍生字",coll:"Despite + N/V-ing 儘管……",ex:"Despite feeling tired, she kept studying."},
+"laboratory":{pos:"n.",zh:"實驗室",forms:"lab n. 實驗室縮寫",coll:"science laboratory 科學實驗室；research laboratory 研究實驗室",ex:"Students worked in the laboratory."},
+"assistants":{pos:"n. pl.",zh:"助理",forms:"assist v. 協助；assistance n. 協助",coll:"research assistants 研究助理；teaching assistants 教學助理",ex:"The assistants helped with the project."},
+"complained":{pos:"v. 過去式",zh:"抱怨",forms:"complain v. 抱怨；complaint n. 抱怨",coll:"complain that... 抱怨……；complain about 抱怨……",ex:"They complained that the room was too hot."},
+"salary":{pos:"n.",zh:"薪水",forms:"salaried adj. 領薪水的",coll:"monthly salary 月薪；high salary 高薪",ex:"Her monthly salary is enough to pay the rent."},
+"barely":{pos:"adv.",zh:"幾乎不；勉強",forms:"bare adj. 空的；赤裸的",coll:"barely enough 幾乎不夠；barely hear 幾乎聽不到",ex:"I barely had enough time to finish."},
+"surging":{pos:"adj./V-ing",zh:"急遽上升的",forms:"surge v./n. 激增",coll:"surging prices 飆升的價格；surging cost 上漲的成本",ex:"Surging prices made life harder."},
+"capital":{pos:"n.",zh:"首都；資本",forms:"capitalism n. 資本主義",coll:"the capital city 首都；capital letter 大寫字母",ex:"Taipei is the capital of Taiwan."},
+"chores":{pos:"n. pl.",zh:"家務；雜務",forms:"chore n. 雜務",coll:"daily chores 日常雜務；household chores 家務",ex:"I do my chores after school."},
+"remote":{pos:"adj.",zh:"偏遠的；遙遠的",forms:"remotely adv. 遠端地",coll:"remote farm 偏遠農場；remote area 偏遠地區",ex:"They live in a remote village."},
+"responsible":{pos:"adj.",zh:"負責的",forms:"responsibility n. 責任",coll:"be responsible for 對……負責",ex:"Students are responsible for their own learning."},
+"milking":{pos:"V-ing",zh:"擠奶",forms:"milk n./v. 牛奶；擠奶",coll:"milk the cows 擠牛奶",ex:"Milking the cows was his morning job."},
+"cleaning":{pos:"V-ing",zh:"清理；打掃",forms:"clean v./adj. 清理；乾淨的",coll:"clean the barn 清理穀倉；clean the room 打掃房間",ex:"Cleaning the kitchen took an hour."},
+"barn":{pos:"n.",zh:"穀倉；牲口棚",forms:"無常用衍生字",coll:"clean the barn 清理穀倉",ex:"The cows stayed in the barn."},
+"administration2":{pos:"n.",zh:"校方；行政部門",forms:"administer v. 管理",coll:"school administration 校方",ex:"The school administration changed the schedule."},
+"eliminate":{pos:"v.",zh:"消除；移除；淘汰",forms:"elimination n. 消除；淘汰",coll:"eliminate unfair treatment 消除不公平待遇；eliminate waste 消除浪費",ex:"The school tried to eliminate plastic waste."},
+"vending":{pos:"adj./V-ing",zh:"販賣的",forms:"vend v. 販售；vendor n. 攤販",coll:"vending machine 販賣機",ex:"The vending machine sells snacks."},
+"machines":{pos:"n. pl.",zh:"機器",forms:"machinery n. 機械",coll:"vending machines 販賣機；washing machines 洗衣機",ex:"The machines stopped working."},
+"selling":{pos:"V-ing",zh:"販售；賣",forms:"sell v. 賣；sale n. 銷售",coll:"sell drinks 賣飲料；selling sugary drinks 販售含糖飲料",ex:"The store is selling fresh bread."},
+"sugary":{pos:"adj.",zh:"含糖的；甜的",forms:"sugar n. 糖",coll:"sugary drinks 含糖飲料；sugary snacks 甜食",ex:"Sugary drinks are popular with kids."},
+"promoting":{pos:"V-ing",zh:"促進；推廣",forms:"promote v. 促進；promotion n. 推廣；升遷",coll:"promote a healthy lifestyle 促進健康生活",ex:"The campaign promotes reading."},
+"lifestyle":{pos:"n.",zh:"生活方式",forms:"無常用衍生字",coll:"healthy lifestyle 健康生活方式",ex:"Exercise is part of a healthy lifestyle."},
+"factory":{pos:"n.",zh:"工廠",forms:"無常用衍生字",coll:"factory owners 工廠業者；factory workers 工廠員工",ex:"The factory makes shoes."},
+"owners":{pos:"n. pl.",zh:"擁有者；業主",forms:"own v. 擁有；ownership n. 所有權",coll:"factory owners 工廠業者；business owners 企業主",ex:"The owners agreed to close the shop early."},
+"refused":{pos:"v. 過去式",zh:"拒絕",forms:"refuse v. 拒絕；refusal n. 拒絕",coll:"refuse to V 拒絕做某事",ex:"He refused to answer the question."},
+"obey":{pos:"v.",zh:"遵守；服從",forms:"obedient adj. 服從的；obedience n. 服從",coll:"obey rules 遵守規則；obey the law 守法",ex:"Drivers must obey traffic laws."},
+"regulations":{pos:"n. pl.",zh:"法規；規定",forms:"regulate v. 管制；regulation n. 規定",coll:"environmental regulations 環保法規",ex:"The company must follow safety regulations."},
+"ban":{pos:"v./n.",zh:"禁止；禁令",forms:"banned adj. 被禁止的",coll:"ban A from V-ing 禁止A做某事；ban the usage 禁止使用",ex:"The city banned smoking in parks."},
+"toxic":{pos:"adj.",zh:"有毒的",forms:"toxicity n. 毒性",coll:"toxic chemicals 有毒化學物質；toxic waste 有毒廢棄物",ex:"The river was polluted by toxic chemicals."},
+"chemicals":{pos:"n. pl.",zh:"化學物質",forms:"chemical adj. 化學的",coll:"toxic chemicals 有毒化學物質",ex:"Some chemicals are dangerous."},
+"praised":{pos:"v. 過去式",zh:"讚揚",forms:"praise n./v. 讚美",coll:"praise A for B 因B讚揚A",ex:"The teacher praised her for her hard work."},
+"citizens":{pos:"n. pl.",zh:"公民；市民",forms:"citizen n. 公民；citizenship n. 公民身分",coll:"ordinary citizens 普通公民；citizens' rights 公民權利",ex:"Citizens voted in the election."},
+"choice":{pos:"n.",zh:"選擇",forms:"choose v. 選擇；chosen adj. 被選中的",coll:"make a choice 做選擇；bold choice 大膽選擇",ex:"It was a difficult choice."},
+"tyrannical":{pos:"adj.",zh:"暴虐的；專制的",forms:"tyranny n. 暴政",coll:"tyrannical regime 暴政",ex:"People protested against the tyrannical ruler."},
+"regime":{pos:"n.",zh:"政權；體制",forms:"無常用衍生字",coll:"political regime 政權；tyrannical regime 暴政",ex:"The regime controlled the media."},
+"protest":{pos:"n./v.",zh:"抗議",forms:"protester n. 抗議者",coll:"peaceful protest 和平抗議；street protest 街頭抗爭",ex:"The protest remained peaceful."},
+"ensure":{pos:"v.",zh:"確保",forms:"ensurance 少用；insurance n. 保險，字不同",coll:"ensure fairness 確保公平；ensure that... 確保……",ex:"Rules help ensure safety."},
+"fairness":{pos:"n.",zh:"公平",forms:"fair adj. 公平的；unfair adj. 不公平的",coll:"ensure fairness 確保公平",ex:"Fairness matters in every classroom."},
+"workplace":{pos:"n.",zh:"職場",forms:"work n./v. 工作；place n. 地方",coll:"in the workplace 在職場",ex:"Communication is important in the workplace."},
+"implemented":{pos:"v. 過去式",zh:"實施；執行",forms:"implementation n. 實施",coll:"implement guidelines 實施規範；implement a plan 執行計畫",ex:"The school implemented a new policy."},
+"guidelines":{pos:"n. pl.",zh:"指引；規範",forms:"guide v./n. 指導；指南",coll:"new guidelines 新規範；safety guidelines 安全指引",ex:"Please follow the guidelines."},
+"designed":{pos:"過去分詞／adj.",zh:"被設計來；設計的",forms:"design v./n. 設計；designer n. 設計師",coll:"designed to V 被設計來……",ex:"The course is designed to help beginners."},
+"treatment":{pos:"n.",zh:"待遇；對待；治療",forms:"treat v. 對待；治療",coll:"unfair treatment 不公平待遇；medical treatment 醫療",ex:"Everyone deserves fair treatment."},
+"gender":{pos:"n.",zh:"性別",forms:"無常用衍生字",coll:"gender equality 性別平等；based on gender 基於性別",ex:"The rule protects people of every gender."},
+"ethnicity":{pos:"n.",zh:"族裔；種族背景",forms:"ethnic adj. 族裔的",coll:"based on ethnicity 基於族裔",ex:"The class includes students of different ethnicities."},
+"workers":{pos:"n. pl.",zh:"工作者；勞工",forms:"work v./n. 工作",coll:"office workers 上班族；factory workers 工廠員工",ex:"Many workers take the train."},
+"suburbs":{pos:"n. pl.",zh:"郊區",forms:"suburban adj. 郊區的",coll:"quiet suburbs 安靜郊區",ex:"They live in the suburbs."},
+"commute":{pos:"v./n.",zh:"通勤",forms:"commuter n. 通勤者",coll:"commute to work 通勤上班；daily commute 每日通勤",ex:"She commutes by train every day."},
+"reach":{pos:"v.",zh:"到達",forms:"reachable adj. 可到達的",coll:"reach the office 到達辦公室；reach a goal 達成目標",ex:"We reached the station at eight."},
+"located":{pos:"過去分詞／adj.",zh:"位於",forms:"locate v. 找出；位於；location n. 地點",coll:"be located in 位於……",ex:"The museum is located near the river."},
+"bustling":{pos:"adj.",zh:"熱鬧繁忙的",forms:"bustle v./n. 忙亂",coll:"bustling downtown 繁華市中心",ex:"The market was bustling in the morning."},
+"downtown":{pos:"n./adv./adj.",zh:"市中心",forms:"無常用衍生字",coll:"downtown district 市中心區",ex:"Her office is downtown."},
+"constitution":{pos:"n.",zh:"憲法",forms:"constitutional adj. 憲法的",coll:"the constitution ensures 憲法保障",ex:"The constitution protects basic rights."},
+"legal":{pos:"adj.",zh:"法律的；合法的",forms:"legally adv. 合法地；illegal adj. 非法的",coll:"legal system 法律制度；legal rights 法律權利",ex:"Everyone has legal rights."},
+"equality":{pos:"n.",zh:"平等",forms:"equal adj. 平等的；equally adv. 平等地",coll:"built upon equality 建立在平等之上；gender equality 性別平等",ex:"The school values equality."},
+"explicitly":{pos:"adv.",zh:"明確地",forms:"explicit adj. 明確的",coll:"explicitly state 明確指出",ex:"The rule explicitly states the deadline."},
+"institution":{pos:"n.",zh:"機構；制度",forms:"institutional adj. 機構的",coll:"public institution 公共機構",ex:"The institution provides help for children."},
+"discriminate":{pos:"v.",zh:"歧視；區別",forms:"discrimination n. 歧視；discriminatory adj. 歧視性的",coll:"discriminate against 歧視……",ex:"A fair society should not discriminate against anyone."},
+"individuals":{pos:"n. pl.",zh:"個人",forms:"individual adj. 個人的",coll:"individual rights 個人權利",ex:"The law protects individuals."},
+"background":{pos:"n.",zh:"背景",forms:"無常用衍生字",coll:"social background 社會背景；family background 家庭背景",ex:"Students from every background are welcome."},
+"winter":{pos:"n./adj.",zh:"冬天；冬季的",forms:"wintry adj. 冬天般的",coll:"winter storm 冬季暴風雪",ex:"Winter is cold in that city."},
+"storm":{pos:"n.",zh:"暴風雨；暴風雪",forms:"stormy adj. 暴風雨的",coll:"severe storm 強烈暴風雨；winter storm 冬季暴風雪",ex:"The storm damaged the bridge."},
+"blanketed":{pos:"v. 過去式",zh:"覆蓋",forms:"blanket n. 毯子；blanket v. 覆蓋",coll:"blanket A with B 用B覆蓋A",ex:"Snow blanketed the town."},
+"region":{pos:"n.",zh:"地區",forms:"regional adj. 地區的",coll:"entire region 整個地區",ex:"This region is famous for tea."},
+"threatened":{pos:"v. 過去式",zh:"威脅；可能造成",forms:"threat n. 威脅；threatening adj. 威脅性的",coll:"threaten to V 威脅要；可能會",ex:"The rain threatened to cancel the picnic."},
+"paralyze":{pos:"v.",zh:"使癱瘓",forms:"paralysis n. 癱瘓；paralyzed adj. 癱瘓的",coll:"paralyze traffic 癱瘓交通；paralyze the system 癱瘓系統",ex:"The accident paralyzed traffic for hours."},
+"transportation":{pos:"n.",zh:"交通；運輸",forms:"transport v./n. 運送；交通工具",coll:"public transportation 大眾運輸",ex:"Public transportation is convenient here."},
+"lawsuit":{pos:"n.",zh:"訴訟",forms:"sue v. 提告",coll:"file a lawsuit against 對……提起訴訟",ex:"The company faced a lawsuit."},
+"corporation":{pos:"n.",zh:"公司；企業",forms:"corporate adj. 企業的",coll:"large corporation 大企業",ex:"The corporation hired many workers."},
+"aiming":{pos:"V-ing",zh:"旨在；目標是",forms:"aim v./n. 目標；瞄準",coll:"aim to V 旨在做某事",ex:"The project is aiming to reduce waste."},
+"systematic":{pos:"adj.",zh:"系統性的",forms:"system n. 系統；systematically adv. 有系統地",coll:"systematic discrimination 系統性歧視",ex:"The team made a systematic plan."},
+"discrimination":{pos:"n.",zh:"歧視",forms:"discriminate v. 歧視；discriminatory adj. 歧視性的",coll:"racial discrimination 種族歧視；discrimination against 對……的歧視",ex:"The law fights discrimination."},
+"female":{pos:"adj./n.",zh:"女性的；女性",forms:"male adj./n. 男性的；男性",coll:"female employees 女性員工",ex:"The company supports female leaders."},
+"employees":{pos:"n. pl.",zh:"員工",forms:"employ v. 雇用；employer n. 雇主",coll:"female employees 女性員工；full-time employees 全職員工",ex:"Employees joined the training."},
+"promotion":{pos:"n.",zh:"升遷；推廣",forms:"promote v. 升遷；推廣",coll:"promotion opportunities 升遷機會",ex:"She worked hard for a promotion."},
+"airline":{pos:"n.",zh:"航空公司",forms:"air n. 空氣；航空相關",coll:"international airline 國際航空公司",ex:"The airline offers cheap flights."},
+"extensive":{pos:"adj.",zh:"大量的；廣泛的",forms:"extend v. 延伸；extension n. 延伸",coll:"extensive international flights 大量國際航班",ex:"The library has an extensive collection."},
+"flights":{pos:"n. pl.",zh:"航班；飛行",forms:"fly v. 飛",coll:"international flights 國際航班；domestic flights 國內航班",ex:"Several flights were delayed."},
+"portion":{pos:"n.",zh:"部分",forms:"無常用衍生字",coll:"a large portion of 很大一部分",ex:"A large portion of the class passed the test."},
+"revenue":{pos:"n.",zh:"收入；營收",forms:"無常用衍生字",coll:"annual revenue 年營收",ex:"The shop's revenue increased this year."},
+"domestic":{pos:"adj.",zh:"國內的；家庭的",forms:"domestically adv. 國內地",coll:"domestic routes 國內航線；domestic issues 國內議題",ex:"Domestic flights are often cheaper."},
+"routes":{pos:"n. pl.",zh:"路線；航線",forms:"route v. 安排路線",coll:"domestic routes 國內航線；bus routes 公車路線",ex:"The airline added new routes."},
+"connecting":{pos:"V-ing",zh:"連接",forms:"connect v. 連接；connection n. 連接",coll:"routes connecting cities 連接城市的路線",ex:"The bridge connects two towns."},
+"alarm":{pos:"n.",zh:"警報",forms:"alarming adj. 令人擔心的",coll:"fire alarm 火警警報；alarm goes off 警報響起",ex:"The alarm went off at six."},
+"concert":{pos:"n.",zh:"演唱會；音樂會",forms:"無常用衍生字",coll:"live concert 現場演唱會",ex:"We went to a concert last night."},
+"panic":{pos:"n./v.",zh:"恐慌",forms:"panicked adj. 驚慌的",coll:"panic struck the crowd 人群陷入恐慌",ex:"Panic spread through the crowd."},
+"struck":{pos:"v. 過去式",zh:"襲擊；突然發生；打中",forms:"strike v. 打；襲擊",coll:"panic struck 恐慌襲來；a storm struck 暴風雨襲擊",ex:"Fear struck him suddenly."},
+"crowd":{pos:"n.",zh:"人群",forms:"crowded adj. 擁擠的",coll:"a large crowd 大群人；strike the crowd 使群眾……",ex:"The crowd cheered loudly."},
+"theater":{pos:"n.",zh:"劇院；戲院",forms:"theatrical adj. 戲劇的",coll:"grand theater 大劇院",ex:"The theater was full."},
+"instantly":{pos:"adv.",zh:"立刻；瞬間",forms:"instant adj. 立即的",coll:"instantly turned into 瞬間變成",ex:"The room instantly became quiet."},
+"manages":{pos:"v.",zh:"設法做到；管理",forms:"manage v. 管理；設法；manager n. 經理",coll:"manage to V 設法做到",ex:"She manages to finish her homework every day."},
+"maintain":{pos:"v.",zh:"維持",forms:"maintenance n. 維護",coll:"maintain a tidy apartment 維持公寓整潔",ex:"It is hard to maintain good habits."},
+"tidy":{pos:"adj.",zh:"整潔的",forms:"tidy v. 整理；tidiness n. 整潔",coll:"tidy room 整潔房間；tidy apartment 整潔公寓",ex:"His desk is always tidy."},
+"dividing":{pos:"V-ing",zh:"分配；分開",forms:"divide v. 分開；division n. 分配；除法",coll:"divide A among B 把A分給B",ex:"The teacher divided the work among the students."},
+"household":{pos:"adj./n.",zh:"家庭的；一家人",forms:"無常用衍生字",coll:"household chores 家務",ex:"Household chores should be shared."},
+"laundry":{pos:"n.",zh:"洗衣；待洗衣物",forms:"無常用衍生字",coll:"do the laundry 洗衣服",ex:"I do the laundry on Sunday."},
+"dishes":{pos:"n. pl.",zh:"碗盤；菜餚",forms:"dish n. 碗盤；一道菜",coll:"wash the dishes 洗碗",ex:"He washed the dishes after dinner."},
+"equally":{pos:"adv.",zh:"平均地；平等地",forms:"equal adj. 平等的；equality n. 平等",coll:"divide equally 平均分配",ex:"The snacks were shared equally."},
+"roommates":{pos:"n. pl.",zh:"室友",forms:"roommate n. 室友",coll:"three roommates 三位室友",ex:"Her roommates are friendly."},
+"democracy":{pos:"n.",zh:"民主制度；民主國家",forms:"democratic adj. 民主的",coll:"healthy democracy 健康民主制度",ex:"A democracy protects people's rights."},
+"media":{pos:"n.",zh:"媒體",forms:"medium n. 媒介；media 為複數概念但常作集合名詞",coll:"the media 媒體；social media 社群媒體",ex:"The media reported the story."},
+"watchdog":{pos:"n.",zh:"監督者；看門狗",forms:"watch v. 觀看；dog n. 狗",coll:"serve as a watchdog 擔任監督者",ex:"The newspaper serves as a watchdog."},
+"monitors":{pos:"v.",zh:"監督；監控",forms:"monitor n./v. 螢幕；監控",coll:"monitor actions 監督行動；monitor progress 監控進度",ex:"The teacher monitors students' progress."},
+"officials":{pos:"n. pl.",zh:"官員",forms:"official adj. 官方的",coll:"government officials 政府官員",ex:"Government officials answered questions."},
+"exposes":{pos:"v.",zh:"揭露；暴露",forms:"exposure n. 暴露；揭露",coll:"expose corruption 揭露貪腐",ex:"The report exposes serious problems."},
+"corruption":{pos:"n.",zh:"貪腐；腐敗",forms:"corrupt adj./v. 腐敗的；使腐敗",coll:"political corruption 政治腐敗",ex:"The journalist exposed corruption."},
+"regional":{pos:"adj.",zh:"地區的",forms:"region n. 地區",coll:"regional council 地區議會",ex:"The regional office handles local issues."},
+"environmental":{pos:"adj.",zh:"環境的；環保的",forms:"environment n. 環境",coll:"environmental council 環保委員會；environmental problem 環境問題",ex:"Environmental issues are important."},
+"legislation":{pos:"n.",zh:"法律；立法",forms:"legislate v. 立法；legislative adj. 立法的",coll:"pass legislation 通過法案",ex:"The government passed new legislation."},
+"allocates":{pos:"v.",zh:"分配；撥出",forms:"allocate v. 分配；allocation n. 分配",coll:"allocate funds to 將資金撥給",ex:"The school allocates money to clubs."},
+"funds":{pos:"n. pl.",zh:"資金",forms:"fund v. 資助；funding n. 資金",coll:"allocate funds 撥款；public funds 公款",ex:"The project needs more funds."},
+"construction":{pos:"n.",zh:"建設；建造",forms:"construct v. 建造",coll:"the construction of 建設……",ex:"The construction of the bridge took two years."},
+"parks":{pos:"n. pl.",zh:"公園",forms:"park n. 公園；v. 停車",coll:"public parks 公共公園",ex:"The city has many public parks."},
+"lanes":{pos:"n. pl.",zh:"車道；小徑",forms:"lane n. 車道",coll:"bicycle lanes 自行車道",ex:"Bicycle lanes make roads safer."},
+"curb":{pos:"v.",zh:"抑制；控制",forms:"curb n. 路緣；限制",coll:"curb rising rates 抑制上升率",ex:"The city tried to curb air pollution."},
+"rising":{pos:"adj./V-ing",zh:"上升的",forms:"rise v./n. 上升",coll:"rising rates 上升的比率；rising prices 上漲的價格",ex:"Rising prices worry many families."},
+"rates":{pos:"n. pl.",zh:"比率；速度",forms:"rate v. 評價；n. 比率",coll:"crime rates 犯罪率；rising rates 上升率",ex:"The birth rate is falling."},
+"juvenile":{pos:"adj./n.",zh:"青少年的；少年",forms:"juvenility n. 少年期",coll:"juvenile delinquency 青少年犯罪",ex:"The program helps juvenile offenders."},
+"delinquency":{pos:"n.",zh:"違法行為；犯罪",forms:"delinquent n./adj. 少年犯；違法的",coll:"juvenile delinquency 青少年犯罪",ex:"The policy aims to reduce delinquency."},
+"minors":{pos:"n. pl.",zh:"未成年人",forms:"minor adj. 較小的；minority n. 少數",coll:"ban minors from 禁止未成年人……",ex:"Minors need permission to enter."},
+"cafes":{pos:"n. pl.",zh:"咖啡館；網咖中的 cafe",forms:"cafe n. 咖啡館",coll:"internet cafes 網咖",ex:"Many students study in cafes."},
+"triggered":{pos:"v. 過去式",zh:"引發",forms:"trigger n./v. 觸發；引發",coll:"trigger debates 引發爭論",ex:"The news triggered heated discussion."},
+"debates":{pos:"n. pl.",zh:"辯論；爭論",forms:"debate v./n. 辯論",coll:"intense debates 激烈爭論",ex:"The rule caused many debates."},
+"principal":{pos:"n.",zh:"校長",forms:"principal adj. 主要的",coll:"school principal 校長",ex:"The principal gave a speech."},
+"approach":{pos:"n./v.",zh:"方法；接近",forms:"approachable adj. 好親近的",coll:"approach to discipline 管教方式",ex:"Her approach to teaching is creative."},
+"discipline":{pos:"n./v.",zh:"紀律；管教",forms:"disciplined adj. 自律的",coll:"approach to discipline 管教方式",ex:"Discipline helps the class run smoothly."},
+"seemed":{pos:"linking verb",zh:"似乎",forms:"seem v. 似乎",coll:"seem adj. 看起來……",ex:"The test seemed difficult."},
+"excessively":{pos:"adv.",zh:"過度地",forms:"excessive adj. 過度的",coll:"excessively strict 過於嚴格",ex:"The rule seemed excessively harsh."},
+"appreciated":{pos:"v. 過去式",zh:"欣賞；感激",forms:"appreciation n. 感謝；欣賞",coll:"appreciate the environment 欣賞環境；appreciate help 感謝幫忙",ex:"I appreciated your advice."},
+"orderly":{pos:"adj.",zh:"有秩序的",forms:"order n. 秩序；命令",coll:"orderly environment 有秩序的環境",ex:"The classroom was orderly and quiet."},
+"environment":{pos:"n.",zh:"環境",forms:"environmental adj. 環境的",coll:"safe environment 安全環境",ex:"Students need a safe environment."},
+"following":{pos:"prep./adj.",zh:"在……之後；接下來的",forms:"follow v. 跟隨",coll:"following a series of 在一連串……之後",ex:"Following the meeting, everyone left."},
+"series":{pos:"n.",zh:"一連串；系列",forms:"單複數同形",coll:"a series of 一連串",ex:"A series of mistakes caused the problem."},
+"financial":{pos:"adj.",zh:"財務的；金融的",forms:"finance n. 財務；金融",coll:"financial scandals 金融醜聞",ex:"The company had financial problems."},
+"scandals":{pos:"n. pl.",zh:"醜聞",forms:"scandalous adj. 可恥的",coll:"financial scandals 金融醜聞",ex:"The scandals damaged the company's image."},
+"dominated":{pos:"v. 過去式",zh:"主導；占據",forms:"dominate v. 主導；dominant adj. 主要的",coll:"dominate the headlines 占據新聞版面",ex:"The story dominated the news."},
+"headlines":{pos:"n. pl.",zh:"新聞標題；頭條",forms:"headline n. 頭條",coll:"make headlines 成為頭條；dominate the headlines 占據頭條",ex:"The event made headlines."},
+"board":{pos:"n.",zh:"董事會；板子",forms:"無常用衍生字",coll:"board of directors 董事會",ex:"The board approved the plan."},
+"directors":{pos:"n. pl.",zh:"董事；主管；導演",forms:"direct v. 指導；director n. 董事；導演",coll:"board of directors 董事會",ex:"The directors met on Monday."},
+"urged":{pos:"v. 過去式",zh:"敦促；力勸",forms:"urge v./n. 敦促；衝動",coll:"urge someone to V 敦促某人做某事",ex:"The teacher urged students to review."},
+"executives":{pos:"n. pl.",zh:"高階主管",forms:"executive adj. 行政的；執行的",coll:"company executives 公司高層",ex:"The executives discussed the budget."},
+"fraud":{pos:"n.",zh:"詐欺；舞弊",forms:"fraudulent adj. 詐欺的",coll:"be involved in fraud 涉入詐欺",ex:"The police investigated the fraud."},
+"traffic":{pos:"n.",zh:"交通；車流",forms:"無常用衍生字",coll:"heavy traffic 交通壅塞；traffic congestion 交通壅塞",ex:"Traffic is heavy during rush hour."},
+"congestion":{pos:"n.",zh:"壅塞；擁塞",forms:"congested adj. 壅塞的",coll:"traffic congestion 交通壅塞",ex:"Traffic congestion delayed the bus."},
+"rush":{pos:"n./v.",zh:"匆忙；尖峰",forms:"rushed adj. 匆忙的",coll:"rush hour 尖峰時段",ex:"The train is crowded during rush hour."},
+"vehicles":{pos:"n. pl.",zh:"車輛",forms:"vehicle n. 車輛",coll:"flow of vehicles 車流",ex:"Many vehicles were stuck on the road."},
+"causing":{pos:"V-ing",zh:"造成；導致",forms:"cause v./n. 導致；原因",coll:"cause delays 造成延誤",ex:"The accident blocked the road, causing delays."},
+"delays":{pos:"n. pl.",zh:"延誤",forms:"delay v./n. 延誤",coll:"long delays 長時間延誤",ex:"The rain caused long delays."},
+"commuters":{pos:"n. pl.",zh:"通勤者",forms:"commute v. 通勤",coll:"daily commuters 每日通勤者",ex:"Commuters waited for the train."},
+"non-profit":{pos:"adj./n.",zh:"非營利的；非營利組織",forms:"profit n. 利潤",coll:"non-profit organization 非營利組織",ex:"She works for a non-profit organization."},
+"organization":{pos:"n.",zh:"組織；機構",forms:"organize v. 組織；organized adj. 有組織的",coll:"human rights organization 人權組織；non-profit organization 非營利組織",ex:"The organization helps children."},
+"works":{pos:"v.",zh:"工作；運作；努力",forms:"work n./v. 工作",coll:"work tirelessly 不知疲倦地努力",ex:"The group works to protect animals."},
+"tirelessly":{pos:"adv.",zh:"不知疲倦地",forms:"tireless adj. 不知疲倦的",coll:"work tirelessly 不知疲倦地努力",ex:"Volunteers worked tirelessly after the earthquake."},
+"fight":{pos:"v./n.",zh:"對抗；打鬥",forms:"fighter n. 戰士；fighting n. 打鬥",coll:"fight against 對抗",ex:"People should fight against injustice."},
+"racial":{pos:"adj.",zh:"種族的",forms:"race n. 種族；racism n. 種族主義",coll:"racial discrimination 種族歧視",ex:"The law bans racial discrimination."},
+"ensuring":{pos:"V-ing",zh:"確保",forms:"ensure v. 確保",coll:"ensuring that... 確保……",ex:"The teacher checked the list, ensuring that everyone was present."},
+"access":{pos:"n./v.",zh:"取得機會；使用權；進入",forms:"accessible adj. 可取得的",coll:"have access to 有……的機會／權利",ex:"Students have access to online resources."},
+"quality":{pos:"adj./n.",zh:"優質的；品質",forms:"qualify v. 使合格；qualified adj. 合格的",coll:"quality education 優質教育",ex:"Every child deserves quality education."},
+"education":{pos:"n.",zh:"教育",forms:"educate v. 教育；educational adj. 教育的",coll:"quality education 優質教育",ex:"Education can change lives."}
+};
+
+const autoVocab = {
+"actions":{pos:"—",zh:"行動",forms:"—",coll:"—",ex:"例：請在題幹中觀察「actions」。"},
+"always":{pos:"—",zh:"總是",forms:"—",coll:"—",ex:"例：請在題幹中觀察「always」。"},
+"annual":{pos:"—",zh:"年度的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「annual」。"},
+"apartment":{pos:"—",zh:"公寓",forms:"—",coll:"—",ex:"例：請在題幹中觀察「apartment」。"},
+"based":{pos:"—",zh:"基於",forms:"—",coll:"—",ex:"例：請在題幹中觀察「based」。"},
+"bicycle":{pos:"—",zh:"自行車",forms:"—",coll:"—",ex:"例：請在題幹中觀察「bicycle」。"},
+"built":{pos:"—",zh:"建立",forms:"—",coll:"—",ex:"例：請在題幹中觀察「built」。"},
+"bus":{pos:"—",zh:"公車",forms:"—",coll:"—",ex:"例：請在題幹中觀察「bus」。"},
+"campus":{pos:"—",zh:"校園",forms:"—",coll:"—",ex:"例：請在題幹中觀察「campus」。"},
+"caught":{pos:"—",zh:"趕上",forms:"—",coll:"—",ex:"例：請在題幹中觀察「caught」。"},
+"ceo":{pos:"—",zh:"執行長",forms:"—",coll:"—",ex:"例：請在題幹中觀察「ceo」。"},
+"certain":{pos:"—",zh:"某些",forms:"—",coll:"—",ex:"例：請在題幹中觀察「certain」。"},
+"children":{pos:"—",zh:"兒童",forms:"—",coll:"—",ex:"例：請在題幹中觀察「children」。"},
+"cities":{pos:"—",zh:"城市",forms:"—",coll:"—",ex:"例：請在題幹中觀察「cities」。"},
+"city":{pos:"—",zh:"城市",forms:"—",coll:"—",ex:"例：請在題幹中觀察「city」。"},
+"city's":{pos:"—",zh:"城市的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「citys」。"},
+"comes":{pos:"—",zh:"來自",forms:"—",coll:"—",ex:"例：請在題幹中觀察「comes」。"},
+"complete":{pos:"—",zh:"完全的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「complete」。"},
+"completely":{pos:"—",zh:"完全地",forms:"—",coll:"—",ex:"例：請在題幹中觀察「completely」。"},
+"cost":{pos:"—",zh:"費用",forms:"—",coll:"—",ex:"例：請在題幹中觀察「cost」。"},
+"cover":{pos:"—",zh:"支付",forms:"—",coll:"—",ex:"例：請在題幹中觀察「cover」。"},
+"cows":{pos:"—",zh:"牛",forms:"—",coll:"—",ex:"例：請在題幹中觀察「cows」。"},
+"created":{pos:"—",zh:"創造",forms:"—",coll:"—",ex:"例：請在題幹中觀察「created」。"},
+"daily":{pos:"—",zh:"每日的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「daily」。"},
+"day":{pos:"—",zh:"天",forms:"—",coll:"—",ex:"例：請在題幹中觀察「day」。"},
+"decided":{pos:"—",zh:"決定",forms:"—",coll:"—",ex:"例：請在題幹中觀察「decided」。"},
+"department":{pos:"—",zh:"部門",forms:"—",coll:"—",ex:"例：請在題幹中觀察「department」。"},
+"district":{pos:"—",zh:"區域",forms:"—",coll:"—",ex:"例：請在題幹中觀察「district」。"},
+"doing":{pos:"—",zh:"做",forms:"—",coll:"—",ex:"例：請在題幹中觀察「doing」。"},
+"drinks":{pos:"—",zh:"飲料",forms:"—",coll:"—",ex:"例：請在題幹中觀察「drinks」。"},
+"easily":{pos:"—",zh:"容易地",forms:"—",coll:"—",ex:"例：請在題幹中觀察「easily」。"},
+"end":{pos:"—",zh:"終止",forms:"—",coll:"—",ex:"例：請在題幹中觀察「end」。"},
+"enough":{pos:"—",zh:"足夠",forms:"—",coll:"—",ex:"例：請在題幹中觀察「enough」。"},
+"entering":{pos:"—",zh:"進入",forms:"—",coll:"—",ex:"例：請在題幹中觀察「entering」。"},
+"entire":{pos:"—",zh:"整個",forms:"—",coll:"—",ex:"例：請在題幹中觀察「entire」。"},
+"equal":{pos:"—",zh:"平等的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「equal」。"},
+"farm":{pos:"—",zh:"農場",forms:"—",coll:"—",ex:"例：請在題幹中觀察「farm」。"},
+"fell":{pos:"—",zh:"陷入",forms:"—",coll:"—",ex:"例：請在題幹中觀察「fell」。"},
+"filed":{pos:"—",zh:"提出",forms:"—",coll:"—",ex:"例：請在題幹中觀察「filed」。"},
+"fire":{pos:"—",zh:"火警",forms:"—",coll:"—",ex:"例：請在題幹中觀察「fire」。"},
+"flow":{pos:"—",zh:"車流",forms:"—",coll:"—",ex:"例：請在題幹中觀察「flow」。"},
+"government":{pos:"—",zh:"政府",forms:"—",coll:"—",ex:"例：請在題幹中觀察「government」。"},
+"grand":{pos:"—",zh:"宏偉的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「grand」。"},
+"group":{pos:"—",zh:"組織",forms:"—",coll:"—",ex:"例：請在題幹中觀察「group」。"},
+"groups":{pos:"—",zh:"族群",forms:"—",coll:"—",ex:"例：請在題幹中觀察「groups」。"},
+"growing":{pos:"—",zh:"成長",forms:"—",coll:"—",ex:"例：請在題幹中觀察「growing」。"},
+"head":{pos:"—",zh:"總的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「head」。"},
+"healthier":{pos:"—",zh:"更健康的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「healthier」。"},
+"healthy":{pos:"—",zh:"健康的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「healthy」。"},
+"heavy":{pos:"—",zh:"嚴重的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「heavy」。"},
+"held":{pos:"—",zh:"舉行",forms:"—",coll:"—",ex:"例：請在題幹中觀察「held」。"},
+"high-tech":{pos:"—",zh:"高科技",forms:"—",coll:"—",ex:"例：請在題幹中觀察「high-tech」。"},
+"highly":{pos:"—",zh:"高度地",forms:"—",coll:"—",ex:"例：請在題幹中觀察「highly」。"},
+"hopes":{pos:"—",zh:"希望",forms:"—",coll:"—",ex:"例：請在題幹中觀察「hopes」。"},
+"hour":{pos:"—",zh:"小時",forms:"—",coll:"—",ex:"例：請在題幹中觀察「hour」。"},
+"hours":{pos:"—",zh:"小時",forms:"—",coll:"—",ex:"例：請在題幹中觀察「hours」。"},
+"hr":{pos:"—",zh:"人資",forms:"—",coll:"—",ex:"例：請在題幹中觀察「hr」。"},
+"human":{pos:"—",zh:"人權的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「human」。"},
+"immediate":{pos:"—",zh:"立即的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「immediate」。"},
+"intense":{pos:"—",zh:"激烈的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「intense」。"},
+"international":{pos:"—",zh:"國際的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「international」。"},
+"internet":{pos:"—",zh:"網路",forms:"—",coll:"—",ex:"例：請在題幹中觀察「internet」。"},
+"involved":{pos:"—",zh:"涉入",forms:"—",coll:"—",ex:"例：請在題幹中觀察「involved」。"},
+"jason":{pos:"—",zh:"傑森",forms:"—",coll:"—",ex:"例：請在題幹中觀察「jason」。"},
+"large":{pos:"—",zh:"大的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「large」。"},
+"last":{pos:"—",zh:"昨晚",forms:"—",coll:"—",ex:"例：請在題幹中觀察「last」。"},
+"lead":{pos:"—",zh:"帶領",forms:"—",coll:"—",ex:"例：請在題幹中觀察「lead」。"},
+"life":{pos:"—",zh:"人生",forms:"—",coll:"—",ex:"例：請在題幹中觀察「life」。"},
+"listens":{pos:"—",zh:"傾聽",forms:"—",coll:"—",ex:"例：請在題幹中觀察「listens」。"},
+"live":{pos:"—",zh:"居住",forms:"—",coll:"—",ex:"例：請在題幹中觀察「live」。"},
+"living":{pos:"—",zh:"生活",forms:"—",coll:"—",ex:"例：請在題幹中觀察「living」。"},
+"local":{pos:"—",zh:"地方的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「local」。"},
+"long":{pos:"—",zh:"長的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「long」。"},
+"main":{pos:"—",zh:"主要的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「main」。"},
+"major":{pos:"—",zh:"主要的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「major」。"},
+"many":{pos:"—",zh:"許多",forms:"—",coll:"—",ex:"例：請在題幹中觀察「many」。"},
+"mature":{pos:"—",zh:"成熟的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「mature」。"},
+"midnight":{pos:"—",zh:"午夜",forms:"—",coll:"—",ex:"例：請在題幹中觀察「midnight」。"},
+"minor":{pos:"—",zh:"輕微的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「minor」。"},
+"monthly":{pos:"—",zh:"每月",forms:"—",coll:"—",ex:"例：請在題幹中觀察「monthly」。"},
+"morning":{pos:"—",zh:"早晨",forms:"—",coll:"—",ex:"例：請在題幹中觀察「morning」。"},
+"move":{pos:"—",zh:"措施",forms:"—",coll:"—",ex:"例：請在題幹中觀察「move」。"},
+"new":{pos:"—",zh:"新的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「new」。"},
+"newly":{pos:"—",zh:"新近",forms:"—",coll:"—",ex:"例：請在題幹中觀察「newly」。"},
+"night":{pos:"—",zh:"夜晚",forms:"—",coll:"—",ex:"例：請在題幹中觀察「night」。"},
+"offers":{pos:"—",zh:"提供",forms:"—",coll:"—",ex:"例：請在題幹中觀察「offers」。"},
+"offices":{pos:"—",zh:"辦公室",forms:"—",coll:"—",ex:"例：請在題幹中觀察「offices」。"},
+"opportunities":{pos:"—",zh:"機會",forms:"—",coll:"—",ex:"例：請在題幹中觀察「opportunities」。"},
+"parents":{pos:"—",zh:"家長",forms:"—",coll:"—",ex:"例：請在題幹中觀察「parents」。"},
+"passed":{pos:"—",zh:"通過",forms:"—",coll:"—",ex:"例：請在題幹中觀察「passed」。"},
+"peaceful":{pos:"—",zh:"和平的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「peaceful」。"},
+"piece":{pos:"—",zh:"一項",forms:"—",coll:"—",ex:"例：請在題幹中觀察「piece」。"},
+"plan":{pos:"—",zh:"計畫",forms:"—",coll:"—",ex:"例：請在題幹中觀察「plan」。"},
+"political":{pos:"—",zh:"政治的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「political」。"},
+"prime":{pos:"—",zh:"總理的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「prime」。"},
+"principal's":{pos:"—",zh:"校長的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「principals」。"},
+"public":{pos:"—",zh:"公共的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「public」。"},
+"quiet":{pos:"—",zh:"安靜的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「quiet」。"},
+"rarely":{pos:"—",zh:"很少",forms:"—",coll:"—",ex:"例：請在題幹中觀察「rarely」。"},
+"repeatedly":{pos:"—",zh:"一再",forms:"—",coll:"—",ex:"例：請在題幹中觀察「repeatedly」。"},
+"research":{pos:"—",zh:"研究",forms:"—",coll:"—",ex:"例：請在題幹中觀察「research」。"},
+"rights":{pos:"—",zh:"權利",forms:"—",coll:"—",ex:"例：請在題幹中觀察「rights」。"},
+"rules":{pos:"—",zh:"規定",forms:"—",coll:"—",ex:"例：請在題幹中觀察「rules」。"},
+"safe":{pos:"—",zh:"安全的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「safe」。"},
+"sarah":{pos:"—",zh:"莎拉",forms:"—",coll:"—",ex:"例：請在題幹中觀察「sarah」。"},
+"scene":{pos:"—",zh:"場面",forms:"—",coll:"—",ex:"例：請在題幹中觀察「scene」。"},
+"school":{pos:"—",zh:"學校",forms:"—",coll:"—",ex:"例：請在題幹中觀察「school」。"},
+"serves":{pos:"—",zh:"擔任",forms:"—",coll:"—",ex:"例：請在題幹中觀察「serves」。"},
+"shall":{pos:"—",zh:"應",forms:"—",coll:"—",ex:"例：請在題幹中觀察「shall」。"},
+"single":{pos:"—",zh:"每一",forms:"—",coll:"—",ex:"例：請在題幹中觀察「single」。"},
+"snow":{pos:"—",zh:"雪",forms:"—",coll:"—",ex:"例：請在題幹中觀察「snow」。"},
+"social":{pos:"—",zh:"社會的",forms:"—",coll:"—",ex:"例：請在題幹中觀察「social」。"},
+"stand":{pos:"—",zh:"站立",forms:"—",coll:"—",ex:"例：請在題幹中觀察「stand」。"},
+"stating":{pos:"—",zh:"指出",forms:"—",coll:"—",ex:"例：請在題幹中觀察「stating」。"},
+"street":{pos:"—",zh:"街頭",forms:"—",coll:"—",ex:"例：請在題幹中觀察「street」。"},
+"students":{pos:"—",zh:"學生",forms:"—",coll:"—",ex:"例：請在題幹中觀察「students」。"},
+"suddenly":{pos:"—",zh:"突然",forms:"—",coll:"—",ex:"例：請在題幹中觀察「suddenly」。"},
+"system":{pos:"—",zh:"系統",forms:"—",coll:"—",ex:"例：請在題幹中觀察「system」。"},
+"thousands":{pos:"—",zh:"數千",forms:"—",coll:"—",ex:"例：請在題幹中觀察「thousands」。"},
+"three":{pos:"—",zh:"三",forms:"—",coll:"—",ex:"例：請在題幹中觀察「three」。"},
+"total":{pos:"—",zh:"完全",forms:"—",coll:"—",ex:"例：請在題幹中觀察「total」。"},
+"training":{pos:"—",zh:"訓練",forms:"—",coll:"—",ex:"例：請在題幹中觀察「training」。"},
+"truly":{pos:"—",zh:"真正",forms:"—",coll:"—",ex:"例：請在題幹中觀察「truly」。"},
+"turned":{pos:"—",zh:"變成",forms:"—",coll:"—",ex:"例：請在題幹中觀察「turned」。"},
+"twenty":{pos:"—",zh:"二十",forms:"—",coll:"—",ex:"例：請在題幹中觀察「twenty」。"},
+"unfair":{pos:"—",zh:"不公平",forms:"—",coll:"—",ex:"例：請在題幹中觀察「unfair」。"},
+"upon":{pos:"—",zh:"在…之上",forms:"—",coll:"—",ex:"例：請在題幹中觀察「upon」。"},
+"urban":{pos:"—",zh:"都市",forms:"—",coll:"—",ex:"例：請在題幹中觀察「urban」。"},
+"usage":{pos:"—",zh:"使用",forms:"—",coll:"—",ex:"例：請在題幹中觀察「usage」。"},
+"voices":{pos:"—",zh:"聲音",forms:"—",coll:"—",ex:"例：請在題幹中觀察「voices」。"},
+"washing":{pos:"—",zh:"清洗",forms:"—",coll:"—",ex:"例：請在題幹中觀察「washing」。"},
+"went":{pos:"—",zh:"去",forms:"—",coll:"—",ex:"例：請在題幹中觀察「went」。"},
+"working":{pos:"—",zh:"工作",forms:"—",coll:"—",ex:"例：請在題幹中觀察「working」。"},
+"young":{pos:"—",zh:"年輕",forms:"—",coll:"—",ex:"例：請在題幹中觀察「young」。"},
+};
+
+const phraseInfo = {
+"Making a bold decision":{type:"分詞構句",detail:"Making a bold decision 放在句首，說明 young entrepreneur 在主要動作 invested 之前做了什麼。不是形容 decision，而是補充主詞 young entrepreneur 的動作，可理解為 After she made a bold decision。"},
+"that thoroughly shocked her conservative mentors":{type:"關係子句",detail:"that 是關係代名詞，修飾前面的 decision。意思是『那個震驚她保守導師的決定』，不是修飾 entrepreneur。"},
+"invested all her life savings into":{type:"重要搭配",detail:"invest A into B 表示『把 A 投入 B』。這句中 A 是 all her life savings，B 是 a technology startup。"},
+"which consists of twenty newly elected representatives":{type:"非限定關係子句",detail:"which 指前面的 municipal council。逗號後的 which 子句只是補充說明這個 council 的組成，不是用來區分是哪一個 council。"},
+"to debate the controversial urban renewal plan":{type:"不定詞表目的",detail:"to debate 說明 held an emergency session 的目的：召開緊急會議是『為了討論』都市更新計畫。"},
+"After a severe earthquake disrupted the city's main power grid":{type:"時間副詞子句",detail:"After 引導時間，說明機場陷入混亂發生在地震破壞電網之後。"},
+"leaving thousands of passengers stranded":{type:"分詞補充結果",detail:"leaving... 補充說明 airport fell into total chaos 造成的結果：數千名乘客因此受困。"},
+"passengers stranded":{type:"受詞補語",detail:"stranded 是過去分詞形容 passengers 的狀態，表示乘客『被困住』。"},
+"regarding training attendance and nutrition":{type:"介系詞片語",detail:"regarding 表示『關於』，說明 strict rules 管的是哪些範圍：訓練出席與營養。"},
+"warning the athletes":{type:"現在分詞補充動作",detail:"warning 補充 head coach enforce strict rules 時同時做的事：他執行規定，並警告選手。"},
+"that any minor violation would lead to immediate suspension":{type:"名詞子句",detail:"that 子句說明 warning 的內容：任何小違規都會導致停權。"},
+"Although the newly elected Prime Minister promised":{type:"讓步子句",detail:"Although 表示『雖然』，先承認總理有承諾，但後面 critics argue... 轉向批評。"},
+"promised to lead":{type:"不定詞當受詞",detail:"promise 後面常接 to V，表示承諾要做某事。這裡承諾的內容是 lead a democratic government。"},
+"that his administration rarely listens to the voices of minority groups":{type:"名詞子句",detail:"that 子句是 argue 的受詞，說明 critics 主張的內容。"},
+"Despite working long hours":{type:"介系詞 despite + V-ing",detail:"Despite 不是連接詞，後面不能直接接完整句子；這裡接 working，表示『儘管長時間工作』。"},
+"that their monthly salary was barely enough":{type:"名詞子句",detail:"that 子句是 complained 的內容：他們的月薪幾乎不夠。"},
+"enough to cover the surging cost of living":{type:"enough + to V",detail:"to cover 說明 enough 的程度：薪水是否足夠到可以支付生活費。"},
+"Growing up on a remote farm":{type:"分詞構句",detail:"Growing up... 補充 Jason 的成長背景，主詞仍然是 Jason。"},
+"such as milking the cows and cleaning the barn":{type:"舉例片語",detail:"such as 後面舉 daily chores 的例子：milking the cows 和 cleaning the barn。"},
+"before he caught the school bus":{type:"時間副詞子句",detail:"before 說明做家務發生在搭校車之前。"},
+"selling sugary drinks":{type:"現在分詞修飾名詞",detail:"selling sugary drinks 修飾 vending machines，意思是『販售含糖飲料的販賣機』。"},
+"in hopes of promoting":{type:"目的用法",detail:"in hopes of 表示『希望能……』，說明學校移除販賣機的目的。"},
+"promoting a healthier lifestyle":{type:"動名詞片語",detail:"of 是介系詞，所以後面接 promoting，不接 promote。promoting 的受詞是 a healthier lifestyle。"},
+"Because the factory owners repeatedly refused":{type:"原因副詞子句",detail:"Because 說明地方政府禁止化學物質使用的原因：工廠業者一再拒絕遵守法規。"},
+"refused to obey environmental regulations":{type:"不定詞當受詞",detail:"refuse 後面常接 to V，這裡表示拒絕做的事情是 obey environmental regulations。"},
+"ban the usage of certain toxic chemicals":{type:"動詞用法",detail:"ban 的受詞是 the usage，不是 chemicals 本身；意思是禁止這些有毒化學物質的使用。"},
+"praised the citizens for":{type:"重要搭配",detail:"praise A for B 表示『因為 B 讚揚 A』。這句 A 是 the citizens，B 是 their bold choice。"},
+"to stand up against the tyrannical regime":{type:"不定詞修飾名詞",detail:"to stand up against... 修飾 choice，說明這是什麼樣的選擇：挺身反抗暴政的選擇。"},
+"stand up against":{type:"片語動詞",detail:"stand = 站；up = 起來；against = 反對。合起來 stand up against 表示『挺身反抗』。例句：They stood up against unfair rules."},
+"To ensure fairness in the workplace":{type:"不定詞表目的",detail:"To ensure... 說明 HR department implemented new guidelines 的目的：為了確保職場公平。"},
+"designed to eliminate any unfair treatment":{type:"過去分詞修飾名詞",detail:"designed to... 修飾 guidelines，表示這些規範是被設計來消除不公平待遇的。"},
+"based on gender or ethnicity":{type:"過去分詞片語",detail:"based on... 修飾 unfair treatment，說明這種不公平待遇是基於性別或族裔。"},
+"who live in the quiet suburbs":{type:"關係子句",detail:"who 修飾 Many workers，說明是哪些 workers：住在安靜郊區的上班族。"},
+"to reach their offices":{type:"不定詞表目的",detail:"to reach 說明 commute for over an hour 的目的：通勤是為了到達辦公室。"},
+"located in the bustling downtown district":{type:"過去分詞修飾名詞",detail:"located in... 修飾 offices，表示辦公室位於繁華市中心。"},
+"that the legal system is built upon equality":{type:"名詞子句",detail:"that 子句是 ensures 的受詞，說明憲法確保的內容。"},
+"explicitly stating that no institution shall discriminate":{type:"分詞補充說明",detail:"stating 補充 constitution ensures... 的內容：憲法明確指出任何機構不得歧視。"},
+"discriminate against individuals":{type:"重要搭配",detail:"discriminate 通常搭配 against，表示『歧視某人』。這裡的對象是 individuals。"},
+"When the severe winter storm blanketed the entire region":{type:"時間副詞子句",detail:"When 說明暴風雪覆蓋地區時，造成後面威脅癱瘓交通系統的情況。"},
+"threatened to completely paralyze":{type:"動詞 + 不定詞",detail:"threaten to V 表示『有可能造成／威脅要』。這裡威脅造成的結果是癱瘓大眾運輸。"},
+"blanketed the entire region with heavy snow":{type:"動詞搭配",detail:"blanket A with B 表示『用 B 覆蓋 A』。A 是 the entire region，B 是 heavy snow。"},
+"filed a lawsuit against the corporation":{type:"重要搭配",detail:"file a lawsuit against... 表示『對……提起訴訟』，這裡是對 corporation 提告。"},
+"aiming to end systematic discrimination":{type:"分詞補充目的",detail:"aiming to... 補充 filed a lawsuit 的目的：提告是為了終止系統性歧視。"},
+"discrimination against female employees":{type:"名詞搭配",detail:"discrimination against... 表示『對……的歧視』，這裡的對象是 female employees。"},
+"regarding promotion opportunities":{type:"介系詞片語",detail:"regarding 說明歧視發生在哪個方面：升遷機會。"},
+"Although the airline offers extensive international flights":{type:"讓步子句",detail:"Although 先說航空公司有很多國際航班，後面用 still 轉回重點：收入仍有很大部分來自國內航線。"},
+"a large portion of its annual revenue":{type:"數量片語",detail:"a large portion of... 表示『很大一部分的……』，這裡指年度營收的一大部分。"},
+"connecting major domestic cities":{type:"現在分詞修飾名詞",detail:"connecting... 修飾 routes，表示這些航線連接主要國內城市。"},
+"When the fire alarm suddenly went off":{type:"時間副詞子句",detail:"When 說明恐慌發生的時間：火警警報突然響起時。"},
+"panic struck the crowd":{type:"擬人用法",detail:"panic 原本是抽象名詞，這裡當主詞搭配 struck，意思是恐慌突然襲向人群。"},
+"turned into a scene of complete chaos":{type:"片語動詞",detail:"turn into 表示『變成』。劇院變成 a scene of complete chaos。"},
+"manages to maintain a tidy apartment":{type:"動詞 + 不定詞",detail:"manage to V 表示『設法做到』，這裡 Sarah 設法做到的事是維持公寓整潔。"},
+"by dividing the household chores":{type:"by + V-ing",detail:"by dividing... 說明 Sarah 維持公寓整潔的方法：透過分配家務。"},
+"such as doing the laundry and washing the dishes":{type:"舉例片語",detail:"such as 後面舉 household chores 的例子：洗衣服和洗碗。"},
+"serves as a watchdog":{type:"重要搭配",detail:"serve as 表示『擔任／扮演』，the media 扮演 watchdog 的角色。"},
+"that monitors the actions of government officials and exposes political corruption":{type:"關係子句",detail:"that 修飾 watchdog。關係子句中有兩個平行動詞 monitors 和 exposes，說明 watchdog 做的兩件事。"},
+"monitors ... and exposes ...":{type:"平行結構",detail:"monitors 和 exposes 都是 that 子句中的動詞，主詞都是 that，也就是 watchdog。"},
+"that allocates more funds":{type:"關係子句",detail:"that 修飾 legislation，說明這項法案會撥出更多資金。"},
+"allocates more funds to the construction":{type:"重要搭配",detail:"allocate A to B 表示『把 A 分配給 B』。這裡 A 是 more funds，B 是 the construction。"},
+"the construction of public parks and bicycle lanes":{type:"of 片語",detail:"of 後面說明 construction 的內容：公共公園與自行車道的建設。"},
+"To curb the rising rates of juvenile delinquency":{type:"不定詞表目的",detail:"To curb... 說明 the city decided to ban minors... 的目的：為了抑制青少年犯罪率上升。"},
+"ban minors from entering internet cafes":{type:"重要句型",detail:"ban A from V-ing 表示『禁止 A 做某事』。A 是 minors，被禁止的事是 entering internet cafes。"},
+"a move that triggered intense debates":{type:"同位語 + 關係子句",detail:"a move 指前面『禁止未成年人午夜後進入網咖』這個措施；that 修飾 move，說明這個措施引發激烈爭論。"},
+"Although the principal's approach to discipline seemed":{type:"讓步子句",detail:"Although 先說學生覺得校長管教方式過嚴，後面轉折說家長欣賞這個環境。"},
+"seemed excessively strict to the students":{type:"連綴動詞",detail:"seem 後面接形容詞 strict，表示『看起來／似乎很嚴格』；to the students 說明是對學生而言。"},
+"the orderly and safe environment it created":{type:"關係代名詞省略",detail:"it created 修飾 environment，完整可理解為 the environment that it created。it 指 approach to discipline。"},
+"Following a series of financial scandals":{type:"介系詞片語",detail:"Following 這裡不是現在分詞，而是介系詞，表示『在一連串金融醜聞之後』。"},
+"that dominated the headlines":{type:"關係子句",detail:"that 修飾 scandals，意思是『占據新聞版面的醜聞』。"},
+"urged the CEO to eliminate":{type:"urge + 受詞 + to V",detail:"urge someone to V 表示『敦促某人做某事』。這裡董事會敦促 CEO 清除涉案主管。"},
+"who were involved in the fraud":{type:"關係子句",detail:"who 修飾 executives，說明是哪些主管：涉入詐欺的主管。"},
+"can easily paralyze the flow of vehicles":{type:"情態助動詞",detail:"can 表示可能性；paralyze 的受詞是 the flow of vehicles，意思是交通壅塞可能使車流癱瘓。"},
+"causing long delays":{type:"分詞補充結果",detail:"causing... 補充前面交通癱瘓造成的結果：造成長時間延誤。"},
+"daily commuters":{type:"名詞片語",detail:"daily 修飾 commuters，表示每天通勤的人，不是『每日的交通』。"},
+"works tirelessly to fight against racial discrimination":{type:"不定詞表目的",detail:"to fight against... 說明 non-profit organization works tirelessly 的目的：這個組織努力工作是為了對抗種族歧視。"},
+"fight against":{type:"片語動詞",detail:"fight = 戰鬥／對抗；against = 反對。合起來 fight against 表示『對抗』。例句：Many people fight against unfair treatment."},
+"ensuring that children from all backgrounds have equal access":{type:"分詞補充結果",detail:"ensuring... 補充 fight against racial discrimination 帶來的結果：確保不同背景的孩子都有平等機會。"},
+"have equal access to quality education":{type:"重要搭配",detail:"have access to... 表示『有取得／使用／接觸……的機會』。這裡是有平等接受優質教育的機會。"}
+};
+
+function cleanKey(w){return w.toLowerCase().replace(/[^a-z'-]/g,'')}
+const skipWords=new Set(['a','an','the','in','on','at','to','for','from','of','with','by','among','into','against','during','after','before','because','although','when','while','as','than','over','under','up','out','off','and','or','but','so','if','nor','yet','that','this','these','those','it','its','they','them','their','we','our','you','your','he','him','his','she','her','who','whom','which','what','where','there','here','i','me','my','is','are','was','were','be','been','being','am','have','has','had','having','do','does','did','doing','will','would','can','could','shall','should','may','might','must','not','no','all','any','some','both','each','every','more','most','other','such','only','own','same','also','just','very','too','how','why','then','now','even','still','already','once','ever']);
+function isSkipWord(key){return skipWords.has(cleanKey(key));}
+function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function escapeJs(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
+function escapeQuote(s){return escapeJs(s)}
+function vocabKeys(key){
+  const k=cleanKey(key);
+  const list=[k];
+  if(k.endsWith('ies')) list.push(k.slice(0,-3)+'y');
+  if(k.endsWith('es')) list.push(k.slice(0,-2),k.slice(0,-1));
+  if(k.endsWith('s')) list.push(k.slice(0,-1));
+  if(k.endsWith('ed')) list.push(k.slice(0,-2),k.slice(0,-1));
+  if(k.endsWith('ing')) list.push(k.slice(0,-3),k.slice(0,-3)+'e');
+  if(k.endsWith('e')) list.push(k.slice(0,-1));
+  return [...new Set(list.filter(Boolean))];
+}
+function lookupVocab(key, displayWord, zhHint){
+  for(const k of vocabKeys(key||displayWord)){ if(vocab[k]) return vocab[k]; if(autoVocab[k]) return autoVocab[k]; }
+  const w=displayWord||key||'';
+  return {pos:'—',zh:zhHint||'（可參考題幹或選項中文）',forms:'（詞彙庫可再補充字形變化）',coll:'—',ex:w?'例：請對照題幹中「'+w+'」的用法。':'—'};
+}
+function vocabModalHtml(title,v){
+  return '<h2>'+escapeHtml(title)+'</h2><h3>詞性</h3><p>'+escapeHtml(v.pos)+'</p><h3>中文</h3><p>'+escapeHtml(v.zh)+'</p><h3>其他詞性／字形變化</h3><p>'+escapeHtml(v.forms)+'</p><h3>搭配詞</h3><p>'+escapeHtml(v.coll)+'</p><h3>例句</h3><p>'+escapeHtml(v.ex)+'</p>';
+}
+function phraseWords(phrase){return phrase.split(/\s+/).map(function(w){return cleanKey(w.replace(/[^A-Za-z'-]/g,''));}).filter(Boolean);}
+function findGrammarRanges(tokens,grammarList){
+  const wordIdx=[];tokens.forEach(function(t,i){if(t.type==='word'||t.type==='blank')wordIdx.push({i:i,key:cleanKey(t.word)});});
+  const ranges=[];
+  grammarList.forEach(function(g){
+    const pw=phraseWords(g);if(!pw.length)return;
+    outer:for(let s=0;s<=wordIdx.length-pw.length;s++){
+      for(let j=0;j<pw.length;j++){if(wordIdx[s+j].key!==pw[j])continue outer;}
+      ranges.push({start:wordIdx[s].i,end:wordIdx[s+pw.length-1].i,phrase:g});break;
+    }
+  });
+  return ranges.sort(function(a,b){return a.start-b.start;});
+}
+function renderSentence(sentence,grammarList){
+  const tokens=[];
+  sentence.split(/(\[\[[^\]]+\]\]|[A-Za-z][A-Za-z'-]*)/g).filter(Boolean).forEach(function(p){
+    if(p.startsWith('[['))tokens.push({type:'blank',word:p.replace(/\[\[|\]\]/g,'')});
+    else if(/^[A-Za-z][A-Za-z'-]*$/.test(p))tokens.push({type:'word',word:p});
+    else tokens.push({type:'text',text:p});
+  });
+  const ranges=findGrammarRanges(tokens,grammarList);
+  function rangeAt(i){return ranges.find(function(r){return i>=r.start&&i<=r.end;})||null;}
+  let out='',open=null;
+  for(let i=0;i<tokens.length;i++){
+    const t=tokens[i],r=(t.type==='word'||t.type==='blank')?rangeAt(i):null;
+    if(r&&r.phrase!==open){if(open)out+='</span>';out+='<span class="grammar-phrase">';open=r.phrase;}
+    if(!r&&open){out+='</span>';open=null;}
+    if(t.type==='text')out+=t.text;
+    else if(t.type==='blank'){
+      const key=cleanKey(t.word),cls='blank word'+(r?' grammar-word':'');
+      out+='<span class="'+cls+'" onclick="showWord(\''+escapeJs(key)+'\')">'+escapeHtml(t.word)+'</span>';
+    }else{
+      const key=cleanKey(t.word);
+      if(isSkipWord(key)){out+='<span class="func-word">'+escapeHtml(t.word)+'</span>';}
+      else{const cls='word'+(r?' grammar-word':'');out+='<span class="'+cls+'" onclick="showWord(\''+escapeJs(key)+'\')">'+escapeHtml(t.word)+'</span>';}
+    }
+  }
+  if(open)out+='</span>';return out;
+}
+function render(){
+  const root=document.getElementById('quiz');
+  root.innerHTML=questions.map(function(q){
+    var opts=q.opts.map(function(o){
+      return '<button class="opt '+(o[0]===q.a?'answer':'')+'" onclick="showOption(\''+escapeQuote(o[0])+'\',\''+escapeQuote(o[1])+'\',\''+escapeQuote(o[2])+'\')">('+o[0]+') '+escapeHtml(o[1])+'</button>';
+    }).join('');
+    var chips=q.g.map(function(g){
+      return '<button class="grammar-chip" onclick="showGrammar(\''+escapeQuote(g)+'\')">'+escapeHtml(g)+'</button>';
+    }).join('');
+    return '<section class="q"><div class="q-title">('+q.a+') '+q.n+'.</motion></motion>'.replace('.</motion></motion>','.</div><div class="sentence">'+renderSentence(q.s,q.g)+'</div><div class="tools"><button class="btn" onclick="showTranslation('+q.n+')">中譯</button></div><div class="options">'+opts+'</div><motion></motion>'.replace('<motion></motion>','<div class="grammar-list">'+chips+'</div></section>'));
+  }).join('');
+}
+function showModal(html){document.getElementById('modalContent').innerHTML=html;document.getElementById('backdrop').style.display='flex'}
+function hideModal(){document.getElementById('backdrop').style.display='none'}
+function closeModal(e){if(e.target.id==='backdrop')hideModal()}
+function showTranslation(n){const q=questions.find(function(x){return x.n===n;});showModal('<h2>第 '+n+' 題中譯</h2><p>'+escapeHtml(q.zh)+'</p>')}
+function showOption(letter,word,zh){const v=lookupVocab(word,word,zh);showModal(vocabModalHtml('選項 ('+letter+') '+word,v));}
+function showGrammar(key){
+  const g=phraseInfo[key]||{type:'文法／用法',detail:'這個片語是本題的重要結構，請回到句子中觀察它修飾的名詞或說明的動作。',ex:''};
+  const words=key.split(/\s+/).map(function(w){return w.replace(/[^A-Za-z'-]/g,'');}).filter(Boolean);
+  const wordRows=words.filter(function(w){return !isSkipWord(w);}).map(function(w){const v=lookupVocab(w,w,'');return '<p><b>'+escapeHtml(w)+'</b>：'+escapeHtml(v.zh)+'（'+escapeHtml(v.pos)+'）</p>';}).join('');
+  showModal('<h2>'+escapeHtml(key)+'</h2><p class="muted">'+escapeHtml(g.type)+'</p><h3>每個字的意思</h3>'+wordRows+'<h3>合起來的意思／文法功能</h3><p>'+escapeHtml(g.detail)+'</p><h3>例句</h3><p>'+escapeHtml(g.ex||'（請對照題幹英文句子觀察此結構。）')+'</p>');
+}
+function showWord(key){const v=lookupVocab(key,key,'');showModal(vocabModalHtml(key,v));}
+
+render();
+</script>
+</body>
+</html>
