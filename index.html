@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>114年度第二學期｜高二英文檢討卷</title>
+<style>
+:root{
+  --bg:#f3f1ec;
+  --paper:#fffdf8;
+  --ink:#111827;
+  --pink:#ead4d8;
+  --pink-dark:#d4a8b0;
+  --muted:#6b7280;
+  --shadow:rgba(17,24,39,.13);
+  --green:#d1fae5;
+  --green-ink:#065f46;
+  --blue:#dbeafe;
+  --blue-ink:#1e40af;
+  --yellow:#fef9c3;
+  --yellow-ink:#854d0e;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  line-height:1.7;
+}
+
+/* ── HERO ── */
+.hero{
+  background:var(--pink);
+  border-bottom:2.5px solid var(--ink);
+  padding:40px 22px 32px;
+  text-align:center;
+}
+
+.hero-inner{max-width:800px;margin:auto}
+
+.hero-eyebrow{
+  display:inline-block;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:white;
+  font-size:13px;
+  font-weight:950;
+  padding:5px 14px;
+  letter-spacing:.04em;
+  margin-bottom:16px;
+  box-shadow:3px 3px 0 var(--shadow);
+}
+
+.hero h1{
+  font-size:clamp(26px,5vw,44px);
+  font-weight:950;
+  letter-spacing:-.01em;
+  line-height:1.2;
+  margin-bottom:10px;
+}
+
+.hero h1 span{
+  display:inline-block;
+  background:var(--ink);
+  color:var(--pink);
+  border-radius:12px;
+  padding:2px 14px;
+  margin:0 2px;
+}
+
+.hero-sub{
+  font-size:16px;
+  color:#4b5563;
+  margin-top:10px;
+}
+
+/* ── WRAP ── */
+.wrap{
+  max-width:800px;
+  margin:36px auto 80px;
+  padding:0 16px;
+}
+
+/* ── SEMESTER BLOCK ── */
+.semester{
+  background:var(--paper);
+  border:2.5px solid var(--ink);
+  border-radius:28px;
+  box-shadow:6px 6px 0 var(--shadow);
+  margin-bottom:28px;
+  overflow:hidden;
+}
+
+.semester-head{
+  background:var(--ink);
+  color:var(--paper);
+  padding:14px 22px;
+  font-size:17px;
+  font-weight:950;
+  letter-spacing:.04em;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.semester-head .dot{
+  width:10px;height:10px;
+  border-radius:50%;
+  background:var(--pink);
+  flex-shrink:0;
+}
+
+.exam-list{
+  padding:8px 0;
+}
+
+/* ── EXAM ROW ── */
+.exam-row{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 20px;
+  border-bottom:1px solid #e8e3d8;
+  transition:.12s;
+  text-decoration:none;
+  color:inherit;
+}
+
+.exam-row:last-child{border-bottom:0}
+
+.exam-row:hover{background:#faf8f5}
+
+.exam-num{
+  display:flex;align-items:center;justify-content:center;
+  width:36px;height:36px;
+  border:2.5px solid var(--ink);
+  border-radius:12px;
+  font-size:15px;
+  font-weight:950;
+  background:white;
+  box-shadow:3px 3px 0 var(--shadow);
+  flex-shrink:0;
+  color:var(--ink);
+}
+
+.exam-info{flex:1}
+
+.exam-title{
+  font-size:17px;
+  font-weight:900;
+  color:var(--blue-ink);
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+.exam-row:hover .exam-title{
+  color:#1d4ed8;
+}
+
+.exam-meta{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+.exam-badge{
+  display:inline-block;
+  border-radius:999px;
+  padding:3px 10px;
+  font-size:12px;
+  font-weight:950;
+  border:1.5px solid;
+  flex-shrink:0;
+}
+
+.badge-done{
+  background:var(--green);
+  color:var(--green-ink);
+  border-color:#6ee7b7;
+}
+
+.badge-soon{
+  background:#f3f4f6;
+  color:#9ca3af;
+  border-color:#d1d5db;
+}
+
+/* ── PLACEHOLDER ROWS ── */
+.exam-row.empty{
+  opacity:.45;
+  cursor:default;
+  pointer-events:none;
+}
+
+.exam-row.empty .exam-title{
+  color:var(--muted);
+  text-decoration:none;
+}
+
+/* ── FOOTER ── */
+.footer{
+  text-align:center;
+  font-size:13px;
+  color:#9ca3af;
+  padding:20px;
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">🏫 高二英文｜自學互動檢討系統</div>
+    <h1>114 年度<span>第二學期</span>高二英文檢討卷</h1>
+    <p class="hero-sub">點擊下方連結，進入互動解析頁面｜單字・文法・翻譯・答案解析一次看</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="semester">
+    <div class="semester-head">
+      <span class="dot"></span>
+      114 學年度・第二學期
+    </div>
+    <div class="exam-list">
+
+      <!-- 已完成 -->
+      <a class="exam-row" href="114-2-2Final.html">
+        <div class="exam-num">1</div>
+        <div class="exam-info">
+          <div class="exam-title">114-2-2 高二段考</div>
+          <div class="exam-meta">字彙・綜合測驗・文意選填・篇章結構・閱讀測驗・混合題・翻譯</div>
+        </div>
+        <span class="exam-badge badge-done">已上線</span>
+      </a>
+
+      <!-- 待上線佔位 -->
+      <div class="exam-row empty">
+        <div class="exam-num">2</div>
+        <div class="exam-info">
+          <div class="exam-title">待新增</div>
+          <div class="exam-meta">—</div>
+        </div>
+        <span class="exam-badge badge-soon">即將上線</span>
+      </div>
+
+      <div class="exam-row empty">
+        <div class="exam-num">3</div>
+        <div class="exam-info">
+          <div class="exam-title">待新增</div>
+          <div class="exam-meta">—</div>
+        </div>
+        <span class="exam-badge badge-soon">即將上線</span>
+      </div>
+
+      <div class="exam-row empty">
+        <div class="exam-num">4</div>
+        <div class="exam-info">
+          <div class="exam-title">待新增</div>
+          <div class="exam-meta">—</div>
+        </div>
+        <span class="exam-badge badge-soon">即將上線</span>
+      </div>
+
+      <div class="exam-row empty">
+        <div class="exam-num">5</div>
+        <div class="exam-info">
+          <div class="exam-title">待新增</div>
+          <div class="exam-meta">—</div>
+        </div>
+        <span class="exam-badge badge-soon">即將上線</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<p class="footer">114 學年度・第二學期・高二英文互動檢討系統</p>
+
+</body>
+</html>
