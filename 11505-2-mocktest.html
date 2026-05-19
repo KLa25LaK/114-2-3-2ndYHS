@@ -6821,6 +6821,110 @@ function toggleWordInFolder(folderId, wordObj) {
     return true; // added
   }
 }
+function normalizeSaveObj(obj){
+  return {
+    en: String(obj && obj.en || '').trim(),
+    zh: (obj && obj.zh) || '',
+    pos: String(obj && obj.pos || '').replace(/\s*\[L[2-6]\]/gi, '').trim() || 'n./v.',
+    level: parseInt(obj && obj.level, 10) || 0,
+    custom: true
+  };
+}
+function escapeWordId(en){
+  return String(en || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+}
+function starSvgHtml(isSaved){
+  return isSaved
+    ? '<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27z" fill="#f43f5e" stroke="#f43f5e" stroke-width="1.5" stroke-linejoin="round"/></svg>'
+    : '<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27z" fill="#FFD700" stroke="#FFD700" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+}
+function buildFolderPanelHtml(panelId, saveObj){
+  const folders = getFolders();
+  const en = saveObj.en;
+  let folderButtonsHtml = '';
+  if(folders.length === 0){
+    folderButtonsHtml = '<div style="font-size:12px;color:#cbd5e1;background:#334155;padding:6px;border-radius:6px;line-height:1.4;">💡 您尚未在 Vocab7000 中建立任何資料夾，請先至 7000單檢查器新增唷！</div>';
+  } else {
+    folders.forEach(function(f){
+      const inThis = Array.isArray(f.words) && f.words.some(function(x){ return x.en.toLowerCase() === en.toLowerCase(); });
+      folderButtonsHtml += '<button type="button" class="pop-folder-btn '+(inThis?'has-word':'')+'" onclick="toggleFolderWordSave(event,\''+String(f.id).replace(/'/g,"\\'")+'\',this)">📁 '+escHtml(f.name)+(inThis?' ✓':'')+'</button>';
+    });
+  }
+  return '<div id="'+panelId+'" style="display:none;margin-top:6px;border-top:1px dashed #475569;padding-top:6px;">'
+    +'<div class="pop-folder-title">📌 存入 Vocab7000 資料夾：</div>'
+    +'<div class="pop-folder-grid">'+folderButtonsHtml+'</div></div>';
+}
+function buildWordPopoverWithStar(opts){
+  const saveObj = normalizeSaveObj(opts.saveObj);
+  const panelId = opts.panelId || ('folders_panel_' + escapeWordId(saveObj.en));
+  const saved = isWordSavedAnywhere(saveObj.en);
+  const speakWord = String(saveObj.en).replace(/'/g, "\\'");
+  return '<div class="pop-header"><div class="pop-title-group">'
+    +'<button type="button" class="pop-star-svg-btn" onclick="toggleStarPanel(event,\''+panelId+'\')">'+starSvgHtml(saved)+'</button>'
+    +'<span class="pop-word">'+escHtml(opts.surface || saveObj.en)+'</span>'
+    +(opts.symbol ? '<span class="pop-symbol">'+escHtml(opts.symbol)+'</span>' : '')
+    +levelBadge(opts.lv)
+    +(opts.isExtended ? '<span style="font-size:10px;color:#94a3b8;margin-left:6px;">進階字詞</span>' : '')
+    +'</div><button class="pop-close" onclick="closePopover()">✕</button></div>'
+    +(opts.lemmaLine || '')
+    +'<div style="margin-bottom:4px;padding-left:2px;"><button type="button" class="pop-audio-btn" onclick="speakWord(\''+speakWord+'\');event.stopPropagation();">🔊 發音</button></div>'
+    +'<div class="pop-zh-row"><span class="pop-pos">'+escHtml(opts.plainPos || '')+'</span>'+escHtml(opts.zh || '')+'</div>'
+    +(opts.ex ? '<div class="pop-ex"><b>例：</b>'+escHtml(opts.ex)+(opts.exZh ? '<br><span style="color:#94a3b8;font-size:11.5px;">'+escHtml(opts.exZh)+'</span>' : '')+'</div>' : '')
+    +buildFolderPanelHtml(panelId, saveObj);
+}
+function showWordPopover(event, html, saveObj){
+  showCardPopover(event, html);
+  const pop = document.getElementById('thePopover');
+  if(pop && saveObj) pop.dataset.saveJson = JSON.stringify(normalizeSaveObj(saveObj));
+}
+function toggleStarPanel(event, panelId){
+  event.stopPropagation();
+  const panel = document.getElementById(panelId);
+  if(!panel) return;
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+function refreshPopoverStars(){
+  const pop = document.getElementById('thePopover');
+  let en = '';
+  if(pop && pop.dataset.saveJson){
+    try { en = JSON.parse(pop.dataset.saveJson).en || ''; } catch(e){}
+  }
+  if(!en) return;
+  const saved = isWordSavedAnywhere(en);
+  document.querySelectorAll('.pop-star-svg-btn').forEach(function(sb){
+    sb.innerHTML = starSvgHtml(saved);
+  });
+}
+function toggleFolderWordSave(event, folderId, btn){
+  event.stopPropagation();
+  const pop = document.getElementById('thePopover');
+  let wordObj = null;
+  if(pop && pop.dataset.saveJson){
+    try { wordObj = JSON.parse(pop.dataset.saveJson); } catch(e){ wordObj = null; }
+  }
+  if(!wordObj) return;
+  wordObj = normalizeSaveObj(wordObj);
+  toggleWordInFolder(folderId, wordObj);
+  const inThis = isWordInFolder(folderId, wordObj.en);
+  if(btn){
+    if(inThis){
+      btn.classList.add('has-word');
+      if(btn.textContent.indexOf('✓') < 0) btn.textContent = btn.textContent.trim() + ' ✓';
+    } else {
+      btn.classList.remove('has-word');
+      btn.textContent = btn.textContent.replace(' ✓', '');
+    }
+  }
+  refreshPopoverStars();
+}
+function speakWord(text){
+  if('speechSynthesis' in window){
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US';
+    window.speechSynthesis.speak(u);
+  }
+}
 
 const BASIC_WORDS = new Set(["a","an","the","and","or","but","if","as","at","by","for","from","in","into","of","on","to","with","is","are","was","were","be","been","being","am","do","does","did","has","have","had","will","would","can","could","should","may","might","must","it","its","they","them","their","we","our","you","your","he","she","his","her","i","my","me","us","this","that","these","those","not","no","so","than","then","there","when","where","who","what","how","all","each","every","both","some","any","many","much","more","most","other","such","only","own","same","too","very","just","also","now","even","well","back","still","way","one","two","three","four","five","six","seven","eight","nine","ten","new","old","long","great","little","big","high","low","good","bad","first","last","next","early","young","here","up","out","off","over","under","again","once","ever","never","always","often","tree","table","get","go","come","make","see","know","think","say","tell","give","use","find","want","look","take","put","set","let","keep","hold","turn","seem","feel","try","ask","work","play","run","walk","eat","live","show","help","start","leave","call","move","like","need","become","between","through","during","before","after","above","below","around","about","across","along","while","because","since","until","although","though","whether","either","neither","nor","yet","already","quite","rather","enough","almost","perhaps","per","via","etc","ar","vr","ai"]);
 
@@ -6957,6 +7061,7 @@ function showCardPopover(event, html){
     closePopover(); return;
   }
   currentActiveTarget = target;
+  delete popover.dataset.saveJson;
   popover.innerHTML = html;
   popover.style.display = 'block';
   const rect = target.getBoundingClientRect();
@@ -6966,6 +7071,7 @@ function showCardPopover(event, html){
   const top = rect.bottom + st + 8;
   popover.style.left = Math.max(10, Math.min(left, document.body.clientWidth - popover.offsetWidth - 10)) + 'px';
   popover.style.top = top + 'px';
+  if(typeof openPopoverLayer === 'function') openPopoverLayer();
 }
 function handleTargetClick(event, key){
   event.stopPropagation();
@@ -7025,15 +7131,19 @@ function handleTargetClick(event, key){
   const lemmaLine = (found && found.lemma && found.lemma !== found.surface)
     ? '<div style="font-size:12px;color:#94a3b8;margin-top:4px;">原形：<b style="color:#38bdf8;">'+escHtml(found.lemma)+'</b>'+(found.formHint ? '　'+escHtml(found.formHint) : '')+'</div>' : '';
   const saveObj = {en:found && found.lemma ? found.lemma : (data.title || normalizeKeyWord(rawKey)), zh:data.zh || '', pos:plainPos || '', level:lv || ''};
-  const saved = (typeof isWordSavedAnywhere === 'function' && isWordSavedAnywhere(saveObj.en));
-  html = `<div class="pop-header"><div class="pop-title-group">
-      <span class="pop-word">${escHtml(found && found.surface ? found.surface : (data.title || saveObj.en))}</span>${data.symbol ? `<span class="pop-symbol">${escHtml(data.symbol)}</span>` : ''}${levelBadge(lv)}${isExtended ? '<span style="font-size:10px;color:#94a3b8;margin-left:6px;">進階字詞</span>' : ''}
-    </div><button class="pop-close" onclick="closePopover()">✕</button></div>
-    ${lemmaLine}
-    <div class="pop-zh-row"><span class="pop-pos">${escHtml(plainPos)}</span>${escHtml(data.zh || '')}</div>
-    ${data.ex ? `<div class="pop-ex"><b>例：</b>${escHtml(data.ex)}${data.exZh ? `<br><span style="color:#94a3b8;font-size:11.5px;">${escHtml(data.exZh)}</span>` : ''}</div>` : ''}
-    <div class="pop-folder-title">${saved ? '★ 已在單字本中' : '可加入自訂單字本'}</div>`;
-  showCardPopover(event, html);
+  html = buildWordPopoverWithStar({
+    saveObj: saveObj,
+    surface: found && found.surface ? found.surface : (data.title || saveObj.en),
+    symbol: data.symbol || '',
+    plainPos: plainPos,
+    zh: data.zh || '',
+    ex: data.ex || '',
+    exZh: data.exZh || '',
+    lv: lv,
+    isExtended: isExtended,
+    lemmaLine: lemmaLine
+  });
+  showWordPopover(event, html, saveObj);
 }
 
 function inferBlankKeyFromText(txt){
@@ -7485,6 +7595,7 @@ function closePopover(){
   if(pop){
     pop.style.display = 'none';
     pop.classList.remove('reading-explain-pop');
+    delete pop.dataset.saveJson;
   }
   if(backdrop) backdrop.classList.remove('show');
   currentActiveTarget = null;
