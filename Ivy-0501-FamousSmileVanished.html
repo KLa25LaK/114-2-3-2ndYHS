@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>When the World’s Most Famous Smile Vanished</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f1ec;color:#111827;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;line-height:1.8;position:relative}
+.header{position:sticky;top:0;z-index:50;background:#ead4d8;border-bottom:3px solid #111827;box-shadow:0 4px 0 rgba(17,24,39,.12)}
+.header-inner{max-width:1120px;margin:auto;padding:16px}
+h1{margin:0;font-size:24px;font-weight:950;letter-spacing:.5px}
+.sub{margin-top:6px;font-size:14px;color:#374151}
+.container{max-width:1120px;margin:auto;padding:24px 14px 120px}
+.article-card{background:#fffdf8;border:2px solid #111827;border-radius:24px;padding:32px 24px;margin-bottom:20px;box-shadow:5px 5px 0 #111827}
+.article-title{font-size:24px;font-weight:950;text-align:center;margin-top:0;margin-bottom:20px;color:#111827;padding-bottom:6px}
+
+/* 最上方字群選項區塊 */
+.top-options-block{background:#f8fafc;border:2px dashed #cbd5e1;border-radius:16px;padding:16px;margin-bottom:28px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.opt-badge{background:#fff;border:1px solid #94a3b8;border-radius:10px;padding:6px 14px;font-weight:700;font-size:15px;color:#334155;cursor:pointer;transition:all .15s;box-shadow:1px 1px 2px rgba(0,0,0,0.05);display:inline-flex;align-items:center}
+.opt-badge:hover{background:#f1f5f9;border-color:#475569;transform:translateY(-1px);box-shadow:2px 2px 4px rgba(0,0,0,0.1)}
+
+/* 文章內文與單字互動樣式 */
+.para{font-size:17.5px;margin-bottom:26px;text-align:justify;letter-spacing:.3px}
+.sentence-wrap{display:inline;position:relative}
+
+/* 核心彩色單字 */
+.w-blue{color:#1e40af;font-weight:700;cursor:pointer;border-bottom:1px dashed #1e40af;padding:0 2px}
+.w-blue:hover{background:rgba(30,64,175,.08)}
+.w-orange{color:#ea580c;font-weight:700;cursor:pointer;border-bottom:1px dashed #ea580c;padding:0 2px}
+.w-orange:hover{background:rgba(234,88,12,.08)}
+
+/* 7000單其餘常態字樣式：保持黑色、黑色細虛線底紋 */
+.w-7000{color:#111827;font-weight:600;cursor:pointer;border-bottom:1px dashed #111827;padding:0 1px}
+.w-7000:hover{background:rgba(17,24,39,.06)}
+
+/* 克漏字空格 */
+.blank-btn{background:#e0f2fe;border:2px solid #0284c7;color:#0369a1;border-radius:8px;padding:2px 10px;font-weight:800;cursor:pointer;margin:0 4px;display:inline-block;transition:all .1s}
+.blank-btn:hover{background:#bae6fd}
+
+/* 句尾翻譯按鈕與顯示框 */
+.trans-btn{background:#f3f4f6;border:1px solid #9ca3af;color:#4b5563;border-radius:6px;padding:1px 6px;font-size:12px;font-weight:bold;cursor:pointer;margin-left:4px;display:inline-block;vertical-align:middle;line-height:1.2;transition:all .1s}
+.trans-btn:hover{background:#e5e7eb;color:#111827;border-color:#4b5563}
+.trans-btn.active{background:#4b5563;color:#fff}
+.sentence-trans{display:none;background:#eff6ff;border-left:3px solid #3b82f6;padding:8px 12px;margin:6px 0 12px;font-size:15.5px;color:#1e3a8a;border-radius:0 8px 8px 0;line-height:1.6}
+
+/* 右下角浮動全文翻譯按鈕 */
+.float-trans-btn{position:fixed;bottom:24px;right:24px;background:#ea580c;color:#fff;border:2px solid #111827;border-radius:50px;padding:12px 22px;font-size:16px;font-weight:900;box-shadow:4px 4px 0 #111827;cursor:pointer;z-index:999;display:flex;align-items:center;gap:6px;transition:all .1s}
+.float-trans-btn:hover{transform:scale(1.05);background:#f97316}
+
+/* 彈出式視窗通用樣式 */
+.backdrop{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);display:none;justify-content:center;align-items:flex-end;z-index:1000}
+.modal{background:#fff;border-top:4px solid #111827;border-left:2px solid #111827;border-right:2px solid #111827;border-radius:24px 24px 0 0;width:100%;max-width:768px;max-height:85vh;overflow-y:auto;box-shadow:0 -10px 25px rgba(0,0,0,.15);animation:slideUp .25s ease-out}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-header{position:sticky;top:0;background:#fff;padding:16px;border-bottom:2px solid #f3f4f6;display:flex;justify-content:space-between;align-items:center;z-index:10}
+.modal-title{font-size:20px;font-weight:950;margin:0}
+.close-btn{background:#f3f4f6;border:none;border-radius:50%;width:36px;height:36px;font-size:18px;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.close-btn:hover{background:#e5e7eb}
+.modal-body{padding:20px}
+
+/* 檔案夾選擇器的特定樣式 */
+.folder-select-title {font-size:16px;font-weight:bold;margin:10px 0;color:#374151;}
+.folder-grid {display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+@media(max-width:500px){.folder-grid{grid-template-columns:1fr;}}
+.folder-btn {background:#f8fafc;border:2px solid #cbd5e1;border-radius:12px;padding:12px;font-size:15px;font-weight:bold;color:#1e293b;text-align:left;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:between;}
+.folder-btn:hover {background:#e2e8f0;border-color:#94a3b8;}
+.folder-btn.has-word {border-color:#10b981;background:#f0fdf4;color:#14532d;}
+
+/* 全文翻譯專用排版 */
+.zh-modal-para{font-size:16px;color:#1f2937;margin-bottom:16px;text-align:justify;line-height:1.8;background:#f8fafc;padding:12px 16px;border-radius:12px;border:1px solid #e2e8f0}
+
+/* 單字卡樣式 */
+.exp-box{background:#f1f5f9;border-left:4px solid #475569;padding:8px 12px;font-weight:800;font-size:15px;margin:16px 0 10px;color:#1e293b}
+.word-card{border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:12px;background:#fafafa;position:relative}
+.word-card-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px}
+.star-btn{background:none;border:none;font-size:22px;cursor:pointer;padding:0;color:#d1d5db;transition:color .1s;line-height:1;}
+.star-btn.active{color:#eab308}
+.example-box{background:#fff;border-left:3px solid #cbd5e1;padding:6px 10px;margin-top:8px;font-size:14.5px;color:#4b5563}
+.audio-btn{background:#e0e7ff;border:none;border-radius:6px;color:#4338ca;padding:4px 10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.audio-btn:hover{background:#c7d2fe}
+.filter-link-btn{display:inline-block;margin-top:10px;background:#6c63ff;color:#fff;text-decoration:none;font-size:13.5px;font-weight:bold;padding:6px 12px;border-radius:8px;transition:background .2s}
+.filter-link-btn:hover{background:#574feb}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>《When the World’s Most Famous Smile Vanished》</h1>
+    <div class="sub">點擊<span style="color:#1e40af;font-weight:bold">藍字</span>、<span style="color:#ea580c;font-weight:bold">橘字</span>、<span style="border-bottom:1px dashed #111827;font-weight:bold">黑虛線字</span>或<span style="color:#0284c7;font-weight:bold">空格</span>查看解析。點擊 ★ 星號可直接同步至 7000單自訂檔案夾。</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="article-card">
+    <h2 class="article-title">When the World’s Most Famous Smile Vanished</h2>
+    
+    <div class="top-options-block">
+      <span class="opt-badge" onclick="showWord('flock')">(A) flocked</span>
+      <span class="opt-badge" onclick="showWord('prejudice')">(B) prejudice</span>
+      <span class="opt-badge" onclick="showWord('employee')">(C) employee</span>
+      <span class="opt-badge" onclick="showWord('former')">(D) former</span>
+      <span class="opt-badge" onclick="showWord('route')">(E) route</span>
+      <span class="opt-badge" onclick="showWord('wrap')">(F) wrapped</span>
+      <span class="opt-badge" onclick="showWord('commercial')">(G) commercial</span>
+      <span class="opt-badge" onclick="showWord('commit')">(H) committed</span>
+      <span class="opt-badge" onclick="showWord('abandoned')">(I) abandoned</span>
+      <span class="opt-badge" onclick="showWord('smooth')">(J) smooth</span>
+    </div>
+    
+    <div class="para">
+      <div class="sentence-wrap">
+        Vincenzo Peruggia looked like any other <span class="w-orange" onclick="showWord('handyman')">handyman</span> at the Louvre on a Monday <span class="w-7000" onclick="showWord('morning')">morning</span> in 1911, when the <span class="w-7000" onclick="showWord('museum')">museum</span> was <span class="w-7000" onclick="showWord('close')">closed</span> to the <span class="w-7000" onclick="showWord('public')">public</span> for <span class="w-blue" onclick="showWord('maintenance')">maintenance</span>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">1911 年在羅浮宮閉館維護的一個星期一早晨，文森佐．佩魯賈看起來就像館內普通的工友一樣。</div>
+      </div>
+      <div class="sentence-wrap">
+        In a white <span class="w-7000" onclick="showWord('worker')">worker's</span> <span class="w-orange" onclick="showWord('blouse')">blouse</span>, he <span class="w-7000" onclick="showWord('enter')">entered</span> the museum without drawing <span class="w-7000" onclick="showWord('attention')">attention</span>, took the <i>Mona Lisa</i> off the wall, and walked out into the <span class="w-7000" onclick="showWord('street')">streets</span> of Paris.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">他穿著一件白色工作罩衫，在沒引起任何注意的情況下走進了博物館、把《蒙娜麗莎》從牆上取下，然後往外走到巴黎街頭。</div>
+      </div>
+    </div>
+    
+    <div class="para">
+      <div class="sentence-wrap">
+        Throughout Monday, no one <span class="w-blue" onclick="showWord('suspect')">suspected</span> anything <span class="w-7000" onclick="showWord('unusual')">unusual</span>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">星期一一整天都沒有人懷疑有任何異樣。</div>
+      </div>
+      <div class="sentence-wrap">
+        Staff <span class="w-orange" onclick="showWord('assume')">assumed that</span> the <span class="w-7000" onclick="showWord('painting')">painting</span> was in the <span class="w-7000" onclick="showWord('studio')">studio</span> to be photographed for <button class="blank-btn" onclick="showBlank(1)">__ 1 __</button> <span class="w-orange" onclick="showWord('catalog')">postcards or museum catalogs</span>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">工作人員以為這幅畫在工作室，為商業明信片或博物館圖錄進行拍攝。</div>
+      </div>
+      <div class="sentence-wrap">
+        It wasn’t until 11 a.m. the <span class="w-7000" onclick="showWord('following')">following</span> day that a <span class="w-7000" onclick="showWord('guard')">guard</span> <span class="w-7000" onclick="showWord('discover')">discovered</span> an <button class="blank-btn" onclick="showBlank(2)">__ 2 __</button> <span class="w-blue" onclick="showWord('frame')">frame</span> on a service <span class="w-orange" onclick="showWord('staircase')">staircase</span>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">直到翌日上午十一點，一名保全才在工務樓梯發現了一個棄置的畫框。</div>
+      </div>
+      <div class="sentence-wrap">
+        That was when museum staff finally <span class="w-7000" onclick="showWord('realize')">realized</span> the painting was gone.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">那時博物館工作人員才終於意識到畫作不見了。</div>
+      </div>
+      <div class="sentence-wrap">
+        Soon, the <span class="w-7000" onclick="showWord('news')">news</span> <span class="w-7000" onclick="showWord('spread')">spread</span> internationally, <span class="w-7000" onclick="showWord('shocking')">shocking</span> the world.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">消息很快就傳遍國際、震驚全球。</div>
+      </div>
+      <div class="sentence-wrap">
+        People <button class="blank-btn" onclick="showBlank(3)">__ 3 __</button> to the Louvre to leave <span class="w-7000" onclick="showWord('flower')">flowers</span> at its <span class="w-7000" onclick="showWord('gate')">gates</span> <span class="w-orange" onclick="showWord('tribute')">in tribute to</span> the <span class="w-7000" onclick="showWord('missing')">missing</span> <span class="w-orange" onclick="showWord('masterpiece')">masterpiece</span>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">民眾湧向羅浮宮，在門口獻上鮮花以悼念這幅失竊的傑作。</div>
+      </div>
+    </div>
+    
+    <div class="para">
+      <div class="sentence-wrap">
+        The <span class="w-7000" onclick="showWord('police')">police</span> didn’t catch Peruggia until 1913, when he tried to <span class="w-7000" onclick="showWord('sell')">sell</span> the painting in Italy.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">直到 1913 年，佩魯賈試圖在義大利出售這幅畫時，警方才逮到他。</div>
+      </div>
+      <div class="sentence-wrap">
+        <span class="w-orange" onclick="showWord('pointOut')">Investigators later pointed out that</span> Peruggia was an outside <button class="blank-btn" onclick="showBlank(4)">__ 4 __</button> who had <span class="w-blue" onclick="showWord('previously')">previously</span> worked at the Louvre.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">調查人員隨後指出佩魯賈是之前曾在羅浮宮工作的外包員工。</div>
+      </div>
+      <div class="sentence-wrap">
+        On the morning of the <span class="w-blue" onclick="showWord('theft')">theft</span>, his <span class="w-7000" onclick="showWord('escape')">escape</span> was <span class="w-orange" onclick="showWord('farFrom')">far from</span> <button class="blank-btn" onclick="showBlank(5)">__ 5 __</button>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">竊案發生的當天早上，佩魯賈逃出羅浮宮的路上一點也不順利。</div>
+      </div>
+      <div class="sentence-wrap">
+        When he found his exit door was locked, Peruggia changed his <button class="blank-btn" onclick="showBlank(6)">__ 6 __</button>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">他發現自己要離開的門被鎖上時，便改變了路線。</div>
+      </div>
+      <div class="sentence-wrap">
+        He removed the painted <span class="w-7000" onclick="showWord('wooden')">wooden</span> <span class="w-blue" onclick="showWord('panel')">panel</span> from its frame on a staircase, <button class="blank-btn" onclick="showBlank(7)">__ 7 __</button> it in his blouse, and left the museum the way he entered.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">他在樓梯上將繪有圖畫的木板從畫框中取下，用罩衫裹好，然後循著進來的路離開了博物館。</div>
+      </div>
+      <div class="sentence-wrap">
+        For two years, the <i>Mona Lisa</i> remained <span class="w-7000" onclick="showWord('hidden')">hidden</span> in his <span class="w-7000" onclick="showWord('home')">home</span>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">兩年來，《蒙娜麗莎》一直被藏在他的家中。</div>
+      </div>
+    </div>
+    
+    <div class="para">
+      <div class="sentence-wrap">
+        Peruggia <span class="w-7000" onclick="showWord('avoid')">avoided</span> <span class="w-blue" onclick="showWord('arrest')">arrest</span> despite <span class="w-orange" onclick="showWord('leaveBehind')">leaving a thumbprint behind</span>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">儘管留下了拇指指紋，佩魯賈還是逃脫了逮捕。</div>
+      </div>
+      <div class="sentence-wrap">
+        As a <button class="blank-btn" onclick="showBlank(8)">__ 8 __</button> worker, he was questioned during a <span class="w-blue" onclick="showWord('routine')">routine</span> staff check, but <span class="w-blue" onclick="showWord('detective')">detectives</span> never <span class="w-7000" onclick="showWord('search')">searched</span> his home or took his <span class="w-orange" onclick="showWord('fingerprint')">fingerprints</span>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">身為前員工，他在一次例行性的員工盤查中被問話，但警探從未搜索他的住處或採集他的指紋。</div>
+      </div>
+      <div class="sentence-wrap">
+        The police remained blinded by <button class="blank-btn" onclick="showBlank(9)">__ 9 __</button>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">警方一直被偏見蒙蔽了雙眼。</div>
+      </div>
+      <div class="sentence-wrap">
+        They <span class="w-7000" onclick="showWord('believe')">believed</span> such theft could have only been <button class="blank-btn" onclick="showBlank(10)">__ 10 __</button> by someone of higher <span class="w-7000" onclick="showWord('social')">social</span> <span class="w-orange" onclick="showWord('standing')">standing</span>, never <span class="w-7000" onclick="showWord('imagine')">imagining</span> a working-class man could <span class="w-orange" onclick="showWord('responsible')">have been responsible for it</span>.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">他們認為只有社會地位較高的人才會犯下這樣的竊盜案，不曾想過一個勞動階級的人會是罪魁禍首。</div>
+      </div>
+    </div>
+    
+    <div class="para">
+      <div class="sentence-wrap">
+        Before the <span class="w-orange" onclick="showWord('heist')">heist</span>, the <i>Mona Lisa</i> was admired mainly in <span class="w-7000" onclick="showWord('art')">art</span> <span class="w-blue" onclick="showWord('circle')">circles</span>, but Peruggia’s <span class="w-7000" onclick="showWord('crime')">crime</span> <span class="w-7000" onclick="showWord('turn')">turned</span> the painting into a <span class="w-7000" onclick="showWord('cultural')">cultural</span> icon.
+        <button class="trans-btn" onclick="toggleSentenceTrans(this)">譯</button>
+        <div class="sentence-trans">在這起竊盜案發生之前，《蒙娜麗莎》主要在藝術圈內受到讚賞，佩魯賈犯下的罪行卻讓這幅畫成為了文化象徵。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="float-trans-btn" onclick="openFullTranslation()">
+  <span>📖</span> 全文翻譯對照
+</button>
+
+<div class="backdrop" id="backdrop" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title" id="mTitle">詳細資訊</h3>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="mBody"></div>
+  </div>
+</div>
+
+<script>
+// 🌟 跨網頁連動與自訂檔案夾邏輯 (vocab_folders, unknown_words)
+function getFoldersData() {
+  try {
+    const data = localStorage.getItem('vocab_folders');
+    return data ? JSON.parse(data) : {};
+  } catch(e) { return {}; }
+}
+function getUnknownWords() {
+  try {
+    const data = localStorage.getItem('unknown_words');
+    return data ? JSON.parse(data) : [];
+  } catch(e) { return []; }
+}
+function isWordSavedAnywhere(word) {
+  const w = word.toLowerCase().trim();
+  if (getUnknownWords().map(x => x.toLowerCase()).includes(w)) return true;
+  const folders = getFoldersData();
+  for (let fName in folders) {
+    if (Array.isArray(folders[fName]) && folders[fName].map(x => x.toLowerCase()).includes(w)) return true;
+  }
+  return false;
+}
+
+function promptFolderSelection(word, starElementId) {
+  const w = word.toLowerCase().trim();
+  const folders = getFoldersData();
+  const unknownWords = getUnknownWords();
+  
+  let html = `<div class="folder-select-title">選擇要同步儲存單字 <b>"${w}"</b> 的快篩檔案夾：</div>`;
+  html += `<div class="folder-grid">`;
+  
+  const inUnknown = unknownWords.map(x => x.toLowerCase()).includes(w);
+  html += `
+    <button class="folder-btn ${inUnknown ? 'has-word' : ''}" onclick="saveToTargetFolder('${word}', 'unknown_words', true, '${starElementId}')">
+      📌 未熟詞本 (預設) ${inUnknown ? '【已存在】' : ''}
+    </button>
+  `;
+  
+  let folderCount = 0;
+  for (let fName in folders) {
+    if (Array.isArray(folders[fName])) {
+      folderCount++;
+      const inThisFolder = folders[fName].map(x => x.toLowerCase()).includes(w);
+      html += `
+        <button class="folder-btn ${inThisFolder ? 'has-word' : ''}" onclick="saveToTargetFolder('${word}', '${fName.replace(/'/g, "\\'")}', false, '${starElementId}')">
+          📁 ${fName} ${inThisFolder ? '【已存在】' : ''}
+        </button>
+      `;
+    }
+  }
+  html += `</div>`;
+  
+  if (folderCount === 0) {
+    html += `<p style="color:#6b7280; font-size:13px; margin-top:12px;">💡 提示：您目前在「7000單快篩系統」中尚未建立自訂檔案夾，單字將直接儲存至未熟詞列表中。</p>`;
+  }
+
+  const container = document.getElementById('folderSection_' + starElementId);
+  if (container) {
+    container.innerHTML = html;
+    container.style.display = 'block';
+  }
+}
+
+function saveToTargetFolder(word, target, isDefaultList, starElementId) {
+  const w = word.toLowerCase().trim();
+  if (isDefaultList) {
+    let list = getUnknownWords();
+    const index = list.map(x => x.toLowerCase()).indexOf(w);
+    if (index > -1) {
+      list.splice(index, 1);
+      alert(`已將 "${w}" 從未熟詞列表中移除`);
+    } else {
+      list.push(w);
+      alert(`已成功將 "${w}" 加入未熟詞列表！`);
+    }
+    localStorage.setItem('unknown_words', JSON.stringify(list));
+  } else {
+    let folders = getFoldersData();
+    if (folders[target]) {
+      const index = folders[target].map(x => x.toLowerCase()).indexOf(w);
+      if (index > -1) {
+        folders[target].splice(index, 1);
+        alert(`已從檔案夾【${target}】中移除 "${w}"`);
+      } else {
+        folders[target].push(w);
+        alert(`已成功將 "${w}" 存入快篩檔案夾【${target}】！`);
+      }
+      localStorage.setItem('vocab_folders', JSON.stringify(folders));
+    }
+  }
+  updateAllStarIcons();
+  closeModal();
+}
+
+function updateAllStarIcons() {
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    const w = btn.getAttribute('data-word');
+    if (w) {
+      if (isWordSavedAnywhere(w)) {
+        btn.classList.add('active');
+        btn.innerText = '★';
+      } else {
+        btn.classList.remove('active');
+        btn.innerText = '☆';
+      }
+    }
+  });
+}
+
+function generateStarHtml(word) {
+  const isFav = isWordSavedAnywhere(word) ? 'active' : '';
+  const icon = isWordSavedAnywhere(word) ? '★' : '☆';
+  const elId = 'star_' + Math.random().toString(36).substr(2, 9);
+  return `<button id="${elId}" data-word="${word}" class="star-btn ${isFav}" onclick="promptFolderSelection('${word}', '${elId}')">${icon}</button>`;
+}
+
+function generateFilterLink(word) {
+  return `<br><a href="https://kla25lak.github.io/Vocab7000Filter/?search=${encodeURIComponent(word)}" target="_blank" class="filter-link-btn">🔍 於 7000單快篩 中檢視</a>`;
+}
+
+// 單句翻譯開關
+function toggleSentenceTrans(btn) {
+  const transDiv = btn.nextElementSibling;
+  if (transDiv.style.display === 'block') {
+    transDiv.style.display = 'none';
+    btn.classList.remove('active');
+  } else {
+    transDiv.style.display = 'block';
+    btn.classList.add('active');
+  }
+}
+
+// 全文翻譯對照彈窗
+function openFullTranslation() {
+  document.getElementById('mTitle').innerText = `《蒙娜麗莎》被偷走的那兩年（全文翻譯）`;
+  const bodyEl = document.getElementById('mBody');
+  bodyEl.innerHTML = `
+    <div class="zh-modal-para"><b>第一段：</b><br>1911 年在羅浮宮閉館維護的一個星期一早晨，文森佐．佩魯賈看起來就像館內普通的工友一樣。他穿著一件白色工作罩衫，在沒引起任何注意的情況下走進了博物館、把《蒙娜麗莎》從牆上取下，然後往外走到巴黎街頭。</div>
+    <div class="zh-modal-para"><b>第二段：</b><br>星期一一整天都沒有人懷疑有任何異樣。工作人員以為這幅畫在工作室，為商業明信片或博物館圖錄進行拍攝。直到翌日上午十一點，一名保全才在工務樓梯發現了一個棄置的畫框。那時博物館工作人員才終於意識到畫作不見了。消息很快就傳遍國際、震驚全球。民眾湧向羅浮宮，在門口獻上鮮花以悼念這幅失竊的傑作。</div>
+    <div class="zh-modal-para"><b>第三段：</b><br>直到 1913 年，佩魯賈試圖在義大利出售這幅畫時，警方才逮到他。調查人員隨後指出佩魯賈是之前曾在羅浮宮工作的外包員工。竊案發生的當天早上，佩魯賈逃出羅浮宮的路上一點也不順利。他發現自己要離開的門被鎖上時，便改變了路線。他在樓梯上將繪有圖畫的木板從畫框中取下，用罩衫裹好，然後循著進來的路離開了博物館。兩年來，《蒙娜麗莎》一直被藏在他的家中。</div>
+    <div class="zh-modal-para"><b>第四、五段：</b><br>儘管留下了拇指指紋，佩魯賈還是逃脫了逮捕。身為前員工，他在一次例行性的員工盤查中被問話，但警探從未搜索其住處或採集他的指紋。警方一直被偏見蒙蔽了雙眼。他們認為只有社會地位較高的人才會犯下這樣的竊盜案，不曾想過一個勞動階級的人會是罪魁禍首。<br><br>在這起竊盜案發生之前，《蒙娜麗莎》主要在藝術圈內受到讚賞，佩魯賈犯下的罪行卻讓這幅畫成為了文化象徵。</div>
+  `;
+  document.getElementById('backdrop').style.display = 'flex';
+}
+
+function speak(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+// 📖 擴充全文章 7000 單大資料庫（包含黑虛線、藍、橘字）
+const wordDb = {
+  // 選項與原核心字
+  flock: { title: "flock", symbol: "[ flɑk ]", pos: "vi. [L3]", zh: "聚集；湧向", ex: "Crowds flocked to the department store for the big sale." },
+  prejudice: { title: "prejudice", symbol: "[ ˈprɛdʒədɪs ]", pos: "n. & vt. [L6]", zh: "偏見；使產生偏見", ex: "Education is the best way to reduce social prejudice." },
+  employee: { title: "employee", symbol: "[ ɪmˈplɔɪi ]", pos: "n. [L4]", zh: "員工，受僱者，僱員", ex: "Every male employee in this company must wear a suit." },
+  former: { title: "former", symbol: "[ ˈfɔrmər ]", pos: "a. [L3]", zh: "前任的；先前的；前者的", ex: "Ann is a former teacher who now works as a lawyer." },
+  route: { title: "route", symbol: "[ rut ]", pos: "n. [L5]", zh: "路線；途徑", ex: "Bus drivers usually follow the same route every day." },
+  wrap: { title: "wrap", symbol: "[ ræp ]", pos: "vt. [L3]", zh: "裹住，覆蓋", ex: "Please wrap the broken glass in a thick cloth to avoid injury." },
+  commercial: { title: "commercial", symbol: "[ kəˈmɜrʃəl ]", pos: "a. [L4]", zh: "商業的", ex: "Jason needs a commercial license to sell food in the park." },
+  commit: { title: "commit", symbol: "[ kəˈmɪt ]", pos: "vt. [L4]", zh: "犯（罪、錯等）；承諾", ex: "Those who commit a crime must face the law." },
+  abandoned: { title: "abandoned", symbol: "[ əˈbændənd ]", pos: "a. [L4]", zh: "棄置的；廢棄的；被遺棄的", ex: "There are many abandoned cars along the old road." },
+  smooth: { title: "smooth", symbol: "[ smuð ]", pos: "a. [L3]", zh: "順利的；滑順的；流暢的", ex: "Henry hoped his first day at work would be smooth." },
+  maintenance: { title: "maintenance", symbol: "[ ˈmeɪntənəns ]", pos: "n. [L5]", zh: "維護；維修", ex: "The building requires regular maintenance to stay safe." },
+  suspect: { title: "suspect", symbol: "[ səˈspɛkt ]", pos: "vt. [L4]", zh: "懷疑", ex: "The police officer suspected the witness’s story." },
+  frame: { title: "frame", symbol: "[ freɪm ]", pos: "n. [L3]", zh: "（圖畫、門、窗等的）框", ex: "Leo bought a beautiful wooden frame for his photo." },
+  previously: { title: "previously", symbol: "[ ˈpriviəsli ]", pos: "adv. [L4]", zh: "先前", ex: "The new library stands where a small park previously existed." },
+  theft: { title: "theft", symbol: "[ θɛft ]", pos: "n. [L4]", zh: "竊盜，偷竊", ex: "The store installed new cameras to prevent the theft of goods." },
+  panel: { title: "panel", symbol: "[ ˈpænl ]", pos: "n. [L5]", zh: "板子", ex: "Before using canvas, many painters chose panels for their work." },
+  arrest: { title: "arrest", symbol: "[ əˈrɛst ]", pos: "n. & vt. [L4]", zh: "逮捕", ex: "The quick arrest of the thief brought peace to the neighborhood." },
+  routine: { title: "routine", symbol: "[ ruˈtin ]", pos: "a. & n. [L4]", zh: "例行的；常規", ex: "Checking the safety of planes is a routine job." },
+  detective: { title: "detective", symbol: "[ dɪˈtɛktɪv ]", pos: "n. [L3]", zh: "警探", ex: "Officer Miller worked with a detective to catch the jewelry thief." },
+  circle: { title: "circle", symbol: "[ ˈsɜrkl ]", pos: "n. [L3]", zh: "（因職業、利益等相同的）圈子", ex: "News of the new technology spread quickly in scientific circles." },
+  handyman: { title: "handyman", symbol: "[ ˈhændiˌmæn ]", pos: "n. [L5]", zh: "工友，雜務工", ex: "The handyman fixed the leaking pipe within minutes." },
+  blouse: { title: "blouse", symbol: "[ blaʊz ]", pos: "n. [L3]", zh: "寬鬆長罩衫；女襯衫", ex: "He wore a loose worker's blouse to protect his clothes." },
+  assume: { title: "assume", symbol: "[ əˈsum ]", pos: "vt. [L4]", zh: "以為；認為；承擔", ex: "Cindy didn’t check because she assumed that the shop was open." },
+  catalog: { title: "catalog", symbol: "[ ˈkætəlɔg ]", pos: "n. [L4]", zh: "型錄；目錄", ex: "The museum published a massive catalog for its new collection." },
+  staircase: { title: "staircase", symbol: "[ ˈstɛrˌkeɪs ]", pos: "n. [L4]", zh: "樓梯", ex: "A grand wooden staircase led to the second floor." },
+  tribute: { title: "tribute", symbol: "[ ˈtrɪbyut ]", pos: "n. [L5]", zh: "敬意；悼念", ex: "The museum held a special show in tribute to classic movies." },
+  masterpiece: { title: "masterpiece", symbol: "[ ˈmæstərˌpis ]", pos: "n. [L4]", zh: "傑作，名作", ex: "The Mona Lisa is recognized as a world-famous masterpiece." },
+  pointOut: { title: "point out", symbol: "[ pɔɪnt aʊt ]", pos: "片語", zh: "指出……", ex: "Experts point out that regular exercise can help reduce stress." },
+  farFrom: { title: "far from", symbol: "[ fɑr frʌm ]", pos: "片語", zh: "一點也不；遠非", ex: "The old house was far from comfortable." },
+  leaveBehind: { title: "leave behind", symbol: "[ liv bɪˈhaɪnd ]", pos: "片語", zh: "留下", ex: "The criminal was careful not to leave behind any clues." },
+  fingerprint: { title: "fingerprint", symbol: "[ ˈfɪŋgərˌprɪnt ]", pos: "n. [L3]", zh: "指紋", ex: "The police found his fingerprints all over the crime scene." },
+  standing: { title: "standing", symbol: "[ ˈstændɪŋ ]", pos: "n. [L4]", zh: "地位，身分", ex: "He is a gentleman of high social standing." },
+  responsible: { title: "responsible", symbol: "[ rɪˈspɑnsəbəl ]", pos: "a. [L4]", zh: "是……的原因；應負責的", ex: "The hot weather was responsible for the death of the plants." },
+  heist: { title: "heist", symbol: "[ haɪst ]", pos: "n. [L6]", zh: "竊盜行為；劫案", ex: "The movie is about a multi-million dollar diamond heist." },
+
+  // 📝 新增文章中其餘 7000 單字群（Level 2-6 黑虛線單字卡）
+  morning: { title: "morning", symbol: "[ ˈmɔrnɪŋ ]", pos: "n. [L2]", zh: "早晨；上午", ex: "He goes for a jog every morning.<br><small>他每天早晨都去慢跑。</small>" },
+  museum: { title: "museum", symbol: "[ mjuˈziəm ]", pos: "n. [L2]", zh: "博物館", ex: "The history museum is open daily except Mondays.<br><small>歷史博物館除週一外每天開放。</small>" },
+  close: { title: "close", symbol: "[ kloʊz ]", pos: "vt. & vi. [L2]", zh: "關閉；結束", ex: "Please close the window; it's getting cold.<br><small>請關上窗戶，天氣變冷了。</small>" },
+  public: { title: "public", symbol: "[ ˈpʌblɪk ]", pos: "n. & a. [L3]", zh: "大眾；公眾的", ex: "The park is open to the general public.<br><small>這座公園對一般大眾開放。</small>" },
+  worker: { title: "worker", symbol: "[ ˈwɜrkər ]", pos: "n. [L4]", zh: "工人；勞工", ex: "Social workers help families in need.<br><small>社工人員幫助有需要的家庭。</small>" },
+  enter: { title: "enter", symbol: "[ ˈɛntər ]", pos: "vt. & vi. [L2]", zh: "進入；參加", ex: "Please knock before you enter the room.<br><small>進房間前請先敲門。</small>" },
+  attention: { title: "attention", symbol: "[ ˈtɛnʃən ]", pos: "n. [L3]", zh: "注意；注意力", ex: "Pay close attention to what the teacher says.<br><small>密切注意老師所說的話。</small>" },
+  street: { title: "street", symbol: "[ strit ]", pos: "n. [L2]", zh: "街道", ex: "Be careful when you cross the street.<br><small>過馬路時要小心。</small>" },
+  unusual: { title: "unusual", symbol: "[ ʌnˈjuʒuəl ]", pos: "a. [L3]", zh: "不尋常的；獨特的", ex: "It is unusual for him to be late for school.<br><small>他上學遲到是很罕見的事。</small>" },
+  painting: { title: "painting", symbol: "[ ˈpeɪntɪŋ ]", pos: "n. [L2]", zh: "畫作；繪畫", ex: "The oil painting hangs on the living room wall.<br><small>這幅油畫掛在客廳的牆上。</small>" },
+  studio: { title: "studio", symbol: "[ ˈstudiˌoʊ ]", pos: "n. [L2]", zh: "工作室；攝影棚", ex: "The artist spends all day in her painting studio.<br><small>這位藝術家整天都待 qualitative 她的繪畫工作室裡。</small>" },
+  following: { title: "following", symbol: "[ ˈfɑloʊɪŋ ]", pos: "a. [L2]", zh: "接下來的；翌日的", ex: "He left the country the following week.<br><small>他在接下來的那一週離開了這個國家。</small>" },
+  guard: { title: "guard", symbol: "[ gɑrd ]", pos: "n. & v. [L3]", zh: "保全；警衛；看守", ex: "Security guards stand at the entrance of the bank.<br><small>銀行門口站著安全警衛。</small>" },
+  discover: { title: "discover", symbol: "[ dɪˈskʌvər ]", pos: "vt. [L3]", zh: "發現", ex: "Columbus did not discover America by accident.<br><small>哥倫布並不是偶然發現美洲的。</small>" },
+  realize: { title: "realize", symbol: "[ ˈriəˌlaɪz ]", pos: "vt. [L3]", zh: "意識到；明白；實現", ex: "I didn't realize how late it was.<br><small>我當時沒有意識到時間已經這麼晚了。</small>" },
+  news: { title: "news", symbol: "[ nuz ]", pos: "n. [L2]", zh: "新聞；消息", ex: "No news is good news.<br><small>沒有消息就是好消息。</small>" },
+  spread: { title: "spread", symbol: "[ sprɛd ]", pos: "vi. & vt. [L3]", zh: "傳播；散佈；展開", ex: "The fire spread quickly through the dry forest.<br><small>火勢在乾燥的森林中迅速蔓延。</small>" },
+  shocking: { title: "shocking", symbol: "[ ˈʃɑkɪŋ ]", pos: "a. [L2]", zh: "令人震驚的", ex: "The shocking news made everyone cry.<br><small>這則震驚的消息讓大家哭了解。</small>" },
+  flower: { title: "flower", symbol: "[ ˈflaʊər ]", pos: "n. [L2]", zh: "鮮花；花卉", ex: "She picked some beautiful flowers from the garden.<br><small>她從花園裡摘了一些漂亮的花。</small>" },
+  gate: { title: "gate", symbol: "[ geɪt ]", pos: "n. [L2]", zh: "大門；出入口", ex: "Please remember to close the front gate.<br><small>請記得關上大門。</small>" },
+  missing: { title: "missing", symbol: "[ ˈmɪsɪŋ ]", pos: "a. [L2]", zh: "失蹤的；失竊的", ex: "The police are searching for the missing child.<br><small>警方正在搜尋失蹤的兒童。</small>" },
+  police: { title: "police", symbol: "[ pəˈlis ]", pos: "n. [L2]", zh: "警方；警察", ex: "Call the police if you are in danger.<br><small>如果你有危險，請叫警察。</small>" },
+  sell: { title: "sell", symbol: "[ sɛl ]", pos: "vt. & vi. [L2]", zh: "販賣；出售", ex: "They sell fresh organic vegetables here.<br><small>他們這裡販賣新鮮的有機蔬菜。</small>" },
+  escape: { title: "escape", symbol: "[ ɪˈskeɪp ]", pos: "n. & v. [L4]", zh: "逃脫；逃跑", ex: "The prisoner made a clever escape from the jail.<br><small>囚犯聰明地從監獄中逃脫了。</small>" },
+  wooden: { title: "wooden", symbol: "[ ˈwʊdən ]", pos: "a. [L2]", zh: "木製的", ex: "They sat around a large wooden table.<br><small>他們圍坐在一張大木桌旁。</small>" },
+  hidden: { title: "hidden", symbol: "[ ˈhɪdən ]", pos: "a. [L2]", zh: "隱藏的", ex: "The map shows the location of hidden treasure.<br><small>地圖顯示了隱藏寶藏的位置。</small>" },
+  home: { title: "home", symbol: "[ hoʊm ]", pos: "n. [L2]", zh: "家；住所", ex: "East or west, home is best.<br><small>金窩銀窩不如自己的狗窩。</small>" },
+  avoid: { title: "avoid", symbol: "[ əˈvɔɪd ]", pos: "vt. [L2]", zh: "避免；逃避", ex: "We should try to avoid making the same mistakes.<br><small>我們應該努力避免犯同樣的錯誤。</small>" },
+  search: { title: "search", symbol: "[ sɜrtʃ ]", pos: "v. & n. [L2]", zh: "搜尋；搜查", ex: "The rescue team searched the mountain all night.<br><small>搜救隊整夜搜山。</small>" },
+  believe: { title: "believe", symbol: "[ bɪˈliv ]", pos: "vt. & vi. [L2]", zh: "相信", ex: "I believe that everything happens for a reason.<br><small>我相信事出必有因。</small>" },
+  social: { title: "social", symbol: "[ ˈsoʊʃəl ]", pos: "a. [L2]", zh: "社會的；社交的", ex: "The internet has changed our social lives completely.<br><small>網路徹底改變了我們的社交生活。</small>" },
+  imagine: { title: "imagine", symbol: "[ ɪˈmædʒən ]", pos: "vt. [L2]", zh: "想像", ex: "Can you imagine living without a smartphone?<br><small>你能想像沒有智慧型手機的生活嗎？</small>" },
+  art: { title: "art", symbol: "[ ɑrt ]", pos: "n. [L2]", zh: "藝術", ex: "She loves history and classic European art.<br><small>她熱愛歷史和經典的歐洲藝術。</small>" },
+  crime: { title: "crime", symbol: "[ kraɪm ]", pos: "n. [L2]", zh: "罪行；犯罪", ex: "Stealing is a serious crime in this country.<br><small>在該國，偷竊是嚴重的罪行。</small>" },
+  turn: { title: "turn", symbol: "[ tɜrn ]", pos: "v. & n. [L2]", zh: "轉向；轉變為", ex: "The leaves turn yellow in the autumn.<br><small>秋天時樹葉會變黃。</small>" },
+  cultural: { title: "cultural", symbol: "[ ˈkʌltʃərəl ]", pos: "a. [L2]", zh: "文化的", ex: "The city offers a rich variety of cultural activities.<br><small>這座城市提供了豐富多樣的文化活動。</small>" }
+};
+
+const blankDb = {
+  1: { ans: "G", reason: "名詞 postcards 前需要形容詞修飾。根據上下文，明信片是要在館內販售的商品，代表工作人員以為畫作被拿去拍攝用作「商業（commercial）」用途，故選 (G)。", opts: { G: "commercial", A: "flock", B: "prejudice", C: "employee" } },
+  2: { ans: "I", reason: "不定冠詞 an 後接母音開頭名詞。佩魯賈拆走畫作後將空畫框隨手丟在樓梯間，因此保全發現的是被「棄置的（abandoned）」畫框，故選 (I)。", opts: { I: "abandoned", D: "former", E: "route" } },
+  3: { ans: "A", reason: "主詞 People 後接過去式不及物動詞，且後方有介系詞 to + 地點。表示群眾「湧向（flocked to）」羅浮宮致哀，故選 (A)。", opts: { A: "flock", H: "commit" } },
+  4: { ans: "C", reason: "由 outside 修飾且作為關係代名詞 who 的先行詞，需填入代表「人」的單數名詞。由上下文可知他是羅浮宮的前「員工（employee）」，故選 (C)。", opts: { C: "employee", J: "smooth" } },
+  5: { ans: "J", reason: "片語 be far from 後方接形容詞。下文指出他逃跑時發現門被鎖住了，代表逃脫過程一點也不「順利（smooth）」故選 (J)。", opts: { J: "smooth", F: "wrap" } },
+  6: { ans: "E", reason: "所有格 his 後需接名詞。因為原本要走的門被鎖住了，他被迫改變逃跑的「路線（route）」故選 (E)。", opts: { E: "route", B: "prejudice" } },
+  7: { ans: "F", reason: "過去式連續動作動詞。搭配片語 in his blouse（用罩衫裹住），符合 wrap A in B 句型，故選 (F) wrapped。", opts: { F: "wrap", H: "commit" } },
+  8: { ans: "D", reason: "修飾後方的名詞 worker。根據前文，佩魯賈是以「前任（former）」員工的身分被盤查，故選 (D)。", opts: { D: "former", H: "commit" } },
+  9: { ans: "B", reason: "介系詞 by 後需填入名詞。警方因主觀階級觀念而查不出小偷，代表他們被盲目的「偏見（prejudice）」遮蔽了雙眼，故選 (B)。", opts: { B: "prejudice" } },
+  10: { ans: "H", reason: "動詞 been 後接 by，表示被動語態（been + 過去分詞）。表示犯下竊案應用 commit a theft，被動型態選 (H) committed。", opts: { H: "commit" } }
+};
+
+function showWord(key) {
+  const data = wordDb[key];
+  if (!data) return;
+  
+  document.getElementById('mTitle').innerText = `🧐 單字/短語快速檢討`;
+  const bodyEl = document.getElementById('mBody');
+  const starId = 'star_w_' + key;
+  bodyEl.innerHTML = `
+    <div class="word-card" style="background:#fffdf8; border:2px solid #111827;">
+      <div class="word-card-header">
+        <span>
+          <b style="font-size:22px; color:#111827;">${data.title}</b>
+          <span style="color:#666; font-size:14px; margin-left:8px;">${data.symbol || ''}</span>
+          <button class="audio-btn" onclick="speak('${data.title.replace(/ \+ .*/, '')}')">🔊 發音</button>
+        </span>
+        ${generateStarHtml(key)}
+      </div>
+      <p style="margin:8px 0;"><i>${data.pos}</i> <b style="font-size:16px; color:#1e40af;">${data.zh}</b></p>
+      <div class="example-box"><b>核心例句：</b><br>${data.ex || '暫無例句'}</div>
+      ${generateFilterLink(data.title.replace(/ \+ .*/, ''))}
+      <div id="folderSection_star_${key}" style="display:none; margin-top:16px; padding-top:16px; border-top:1px dashed #cbd5e1;"></div>
+    </div>
+  `;
+  document.getElementById('backdrop').style.display = 'flex';
+}
+
+function showBlank(num) {
+  const data = blankDb[num];
+  if (!data) return;
+  
+  document.getElementById('mTitle').innerText = `第 ${num} 題 詳細語法與選項檢討`;
+  const bodyEl = document.getElementById('mBody');
+  
+  let optHtml = '';
+  Object.keys(data.opts).forEach(letter => {
+    const wKey = data.opts[letter];
+    const opt = wordDb[wKey];
+    const isCorrect = (letter === data.ans) ? 'border:2px solid #10b981; background:#f0fdf4;' : '';
+    const correctBadge = (letter === data.ans) ? '<span style="background:#10b981; color:#fff; padding:2px 6px; border-radius:4px; font-size:12px; margin-left:6px;">正解選項</span>' : '';
+    
+    optHtml += `
+      <div class="word-card" style="${isCorrect}">
+        <div class="word-card-header">
+          <span>
+            <b style="color:#111827; font-size:16px;">(${letter}) ${opt.title}</b> 
+            <span style="color:#666; font-size:13px; margin-left:6px;">${opt.symbol || ''}</span>
+            <button class="audio-btn" onclick="speak('${opt.title}')">🔊 發音</button>
+            ${correctBadge}
+          </span>
+          ${generateStarHtml(wKey)}
+        </div>
+        <p style="margin:4px 0;"><i>${opt.pos}</i> <b>${opt.zh}</b></p>
+        <div class="example-box"><b>例句：</b>${opt.ex || '暫無'}</div>
+        ${generateFilterLink(opt.title)}
+        <div id="folderSection_star_${wKey}" style="display:none; margin-top:14px; padding-top:14px; border-top:1px dashed #cbd5e1;"></div>
+      </div>
+    `;
+  });
+  
+  bodyEl.innerHTML = `
+    <div class="exp-box">💡 為什麼選這個答案？（解題核心）</div>
+    <p style="margin-bottom: 18px; font-size:15.5px; padding:0 4px; text-align:justify;">${data.reason}</p>
+    <div class="exp-box">🔍 本題核心選項單字卡</div>
+    ${optHtml}
+  `;
+  document.getElementById('backdrop').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('backdrop').style.display = 'none';
+}
+</script>
+</body>
+</html>
