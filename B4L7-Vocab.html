@@ -515,7 +515,33 @@ function lookupVocab(key, displayWord, zhHint){
   return {pos:'—',zh:zhHint||'（可參考題幹或選項中文）',forms:'（詞彙庫可再補充字形變化）',coll:'—',ex:w?'例：請對照題幹中「'+w+'」的用法。':'—'};
 }
 function vocabModalHtml(title,v){
-  return '<h2>'+escapeHtml(title)+'</h2><h3>詞性</h3><p>'+escapeHtml(v.pos)+'</p><h3>中文</h3><p>'+escapeHtml(v.zh)+'</p><h3>其他詞性／字形變化</h3><p>'+escapeHtml(v.forms)+'</p><h3>搭配詞</h3><p>'+escapeHtml(v.coll)+'</p><h3>例句</h3><p>'+escapeHtml(v.ex)+'</p>';
+  // Store current word for import button
+  window._currentModalWord={en:title,zh:v.zh,pos:v.pos};
+  return '<h2>'+escapeHtml(title)+'</h2>'+
+    '<h3>詞性</h3><p>'+escapeHtml(v.pos)+'</p>'+
+    '<h3>中文</h3><p>'+escapeHtml(v.zh)+'</p>'+
+    '<h3>其他詞性／字形變化</h3><p>'+escapeHtml(v.forms)+'</p>'+
+    '<h3>搭配詞</h3><p>'+escapeHtml(v.coll)+'</p>'+
+    '<h3>例句</h3><p>'+escapeHtml(v.ex)+'</p>'+
+    '<button onclick="addToVocab7000()" style="margin-top:14px;width:100%;background:#6c63ff;color:#fff;border:none;border-radius:12px;padding:12px;font-size:1rem;font-weight:700;cursor:pointer;">＋ 加入 Vocab7000 單字本</button>'+
+    '<div id="addStatus" style="text-align:center;font-size:.85rem;color:#43d9ad;margin-top:6px;min-height:20px;"></div>';
+}
+
+function addToVocab7000(){
+  var w=window._currentModalWord;
+  if(!w)return;
+  try{
+    var queue=JSON.parse(localStorage.getItem('vocab7000_import')||'[]');
+    if(queue.find(function(x){return x.en===w.en;})){
+      document.getElementById('addStatus').textContent='已在清單中';
+      return;
+    }
+    queue.push({en:w.en,zh:w.zh,pos:w.pos,source:'B4L7'});
+    localStorage.setItem('vocab7000_import',JSON.stringify(queue));
+    document.getElementById('addStatus').textContent='已加入！共 '+queue.length+' 個字待匯入';
+  }catch(e){
+    document.getElementById('addStatus').textContent='儲存失敗';
+  }
 }
 function phraseWords(phrase){return phrase.split(/\s+/).map(function(w){return cleanKey(w.replace(/[^A-Za-z'-]/g,''));}).filter(Boolean);}
 function findGrammarRanges(tokens,grammarList){
