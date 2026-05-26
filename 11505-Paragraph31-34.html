@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>11505 學測第2回｜篇章結構 31～34 檢討卷</title>
+<link rel="stylesheet" href="11505-review.css"/>
+</head>
+<body>
+<div class="container" id="app">
+<section class="card top-header">
+<h1>11505 學測第2回｜篇章結構 31～34 檢討卷</h1>
+<div class="small">互動博物館 AR／VR｜點空格看 A～E 選項解析</div>
+<div class="legend">
+  <span style="color:var(--lv2);border-color:#93c5fd;background:var(--lv2bg)">Level 2</span>
+  <span style="color:var(--lv3);border-color:#6ee7b7;background:var(--lv3bg)">Level 3</span>
+  <span style="color:var(--lv4);border-color:#c4b5fd;background:var(--lv4bg)">Level 4</span>
+  <span style="color:var(--lv5);border-color:#fdba74;background:var(--lv5bg)">Level 5</span>
+  <span style="color:var(--lv6);border-color:#fca5a5;background:var(--lv6bg)">Level 6</span>
+</div>
+</section>
+<section class="card passage" id="passage"></section>
+</div>
+<div class="fab">
+  <button onclick="Review.toggleLevelColors()">🎨 Level 顏色</button>
+  <button onclick="Review.showFullTranslation(fullTranslation)">📖 全文翻譯</button>
+  <button onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 頂端</button>
+  <button class="btn-home" onclick="Review.goHome()">🏠 首頁</button>
+</div>
+<script src="11505-7000-core.js"></script>
+<script src="11505-review.js"></script>
+<script src="11505-vocab-config.js"></script>
+<script src="11505-custom-vocab.js"></script>
+<script src="11505-vocab-popover.js"></script>
+<script src="11505-nav.js"></script>
+<script src="11505-explanations.js"></script>
+<script src="11505-apply-detail.js"></script>
+<script>window.EXP_SECTION='paragraph';</script>
+<script>
+
+const fullTranslation = `互動博物館運用 AR、VR 與觸控螢幕，把傳統展覽變成沉浸式體驗。AR 可讓恐龍骨架彷彿在棲地中活動；VR 讓訪客進入重建的三維環境。觸控螢幕提供背景資訊、放大細節與互動遊戲。對學生而言，這些科技把抽象資訊變成可感知的經驗，提升學習參與。數位工具也能保護易碎文物，並透過 app 服務更多元觀眾，讓文化持續啟發下一代。`;
+
+const vocab = {
+  interactive: Review.V(4,'adj.','互動的','/ˌɪntərˈæktɪv/','interactive museums','Interactive museums use new tech.'),
+  museums: Review.V(3,'n.','博物館','/mjuˈziːəmz/','interactive museums','Museums are redefining engagement.','museum'),
+  engage: Review.V(3,'v.','參與','/ɪnˈɡeɪdʒ/','engage with history','Visitors engage with culture.'),
+  augmented: Review.V(5,'adj.','擴增的','/ɔːɡˈmentɪd/','augmented reality','AR combines digital and real displays.'),
+  virtual: Review.V(4,'adj.','虛擬的','/ˈvɜːrtʃuəl/','virtual reality','VR creates 3D environments.'),
+  immersive: Review.V(5,'adj.','沉浸式的','/ɪˈmɜːrsɪv/','immersive experiences','Exhibits become immersive.'),
+  reconstruction: Review.V(4,'n.','重建','/ˌriːkənˈstrʌkʃn/','digital reconstructions','AR shows digital reconstructions.'),
+  touchscreens: Review.V(4,'n.','觸控螢幕','/ˈtʌtʃskriːnz/','touch-based displays','Touchscreens enable interaction.'),
+  participation: Review.V(4,'n.','參與','/pɑːrˌtɪsɪˈpeɪʃn/','active participation','Games encourage participation.'),
+  fragile: Review.V(4,'adj.','脆弱的','/ˈfrædʒl/','fragile items','Digital tools protect fragile items.'),
+  audiences: Review.V(4,'n.','觀眾','/ˈɔːdiənsɪz/','diverse audiences','Apps adapt content for audiences.','audience'),
+};
+
+const options = {
+  A:'Modern museums aim to preserve culture while adopting new educational methods.',
+  B:'Instead of simply reading text on a wall, students interact with events from the past.',
+  C:'As museums become more technologically advanced, concerns about screen time also arise.',
+  D:'The technology combines digital images with real-world displays, making exhibits come alive.',
+  E:'Visitors can access background information, zoom in on details, and take part in quizzes and games.'
+};
+
+const answerMap = {31:'D',32:'E',33:'B',34:'A'};
+const passageParts = [
+  {html:'{Interactive} {museums} are redefining how people {engage} with history, culture, and art by employing technologies such as {augmented} reality (AR), {virtual} reality (VR), and touch-based displays.', trans:'互動博物館運用擴增實境（AR）、虛擬實境（VR）與觸控顯示等科技，重新定義人們如何參與歷史、文化與藝術。'},
+  {html:'These tools are transforming traditional exhibits into dynamic, {immersive} experiences.', trans:'這些工具正把傳統展覽轉變為充滿動感、沉浸式的體驗。'},
+  {html:'With AR, visitors can use a smartphone or tablet to view digital {reconstructions} over physical objects. [[31]]', trans:'透過 AR，訪客可用智慧型手機或平板，在實體展品上觀看數位重建影像。'},
+  {html:'A dinosaur skeleton can seem to move within its natural habitat, and a historical scene can unfold around viewers.', trans:'恐龍骨架彷彿能在自然棲地中活動，歷史場景也能在觀眾四周展開。'},
+  {html:'VR takes this concept a step further. Visitors wear a headset and enter fully reconstructed three-dimensional environments.', trans:'VR 則把這個概念再推進一步：訪客戴上頭戴裝置，進入完整重建的三維環境。'},
+  {html:'Meanwhile, touchscreens enable deeper interaction within exhibits. [[32]]', trans:'同時，觸控螢幕讓展覽內的互動更加深入。'},
+  {html:'These features make learning more engaging and encourage active {participation}.', trans:'這些功能讓學習更有趣，也鼓勵訪客主動參與。'},
+  {html:'For students, these technologies deepen understanding of historical events, cultures, and social change.', trans:'對學生而言，這些科技能加深他們對歷史事件、文化與社會變遷的理解。'},
+  {html:'They turn abstract information into tangible experiences. [[33]]', trans:'它們把抽象資訊轉化為可具體感知的體驗。'},
+  {html:'Research indicates that this form of interactive learning enhances engagement and makes modern museum visits valuable additions to classroom learning.', trans:'研究指出，這種互動式學習能提升參與度，也使現代博物館參觀成為課堂學習的有價值延伸。'},
+  {html:'[[34]] Digital tools not only help create vivid experiences but also protect {fragile} items by allowing digital versions to be handled without actual physical contact.', trans:'數位工具不僅有助於創造生動體驗，也能透過數位版本讓人「操作」文物，而無需實際觸碰易碎真品，藉此保護文物。'},
+  {html:'Moreover, museums can use mobile apps and digital guides to adapt content for more diverse {audiences}.', trans:'此外，博物館還能透過手機應用程式與數位導覽，為更多元化的觀眾調整內容。'},
+  {html:'In doing so, they ensure that culture and history continue to inspire future generations.', trans:'如此一來，他們確保文化與歷史能持續啟發下一代。'},
+];
+const explanations = {
+  31:{title:'31. D',why:'前句說 AR 在實物上看到 digital reconstructions，D 說 technology combines digital images with real-world displays，直接承接。',zh:'科技結合數位影像與實體展示。',wrong:['E 在講 touchscreens 功能，時序在後。','B 主題是學生互動，尚未到該段。','A 是總結段，不宜放此。','C 談 screen time，全文未發展。'],choices:{A:options.A,B:options.B,C:options.C,D:options.D+'（正解）',E:options.E}},
+  32:{title:'32. E',why:'Meanwhile, touchscreens enable... 後需具體說明 touchscreens 能做什麼：查背景、放大、玩 quiz。',zh:'訪客可查資訊、放大細節、參與遊戲。',wrong:['D 是 AR 說明，已出現過。','B 談 students，此段焦點是 touchscreens。','A 是結尾總括。','C 偏題。'],choices:{A:options.A,B:options.B,C:options.C,D:options.D,E:options.E+'（正解）'}},
+  33:{title:'33. B',why:'前句 turn abstract information into tangible experiences，B 說 students interact with events instead of reading wall text，具體化「可感知」。',zh:'學生與過去事件互動而非只讀文字。',wrong:['D、E 已用於 AR/ touchscreens 段。','A 是末段總結。','C 未在後文呼應。'],choices:{A:options.A,B:options.B+'（正解）',C:options.C,D:options.D,E:options.E}},
+  34:{title:'34. A',why:'末段談 digital tools 保護文物、服務觀眾、啟發下一代；A 總述 museums preserve culture while adopting new methods，適合開啟總結。',zh:'博物館在保存文化之餘採新教育方法。',wrong:['B 是學生段細節。','D、E 是中段功能說明。','C 與後文無呼應。'],choices:{A:options.A+'（正解）',B:options.B,C:options.C,D:options.D,E:options.E}},
+};
+Review.initPassagePage({passageParts, choices: [], answerMap, explanations, vocab});
+
+</script>
+</body>
+</html>

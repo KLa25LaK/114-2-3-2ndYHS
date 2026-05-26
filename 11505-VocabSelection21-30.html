@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>11505 學測第2回｜文意選填 21～30 檢討卷</title>
+<link rel="stylesheet" href="11505-review.css"/>
+</head>
+<body>
+<div class="container" id="app">
+<section class="card top-header">
+<h1>11505 學測第2回｜文意選填 21～30 檢討卷</h1>
+<div class="small">外送與幽靈廚房｜選項 A～J 可點｜藍格為正解</div>
+<div class="legend">
+  <span style="color:var(--lv2);border-color:#93c5fd;background:var(--lv2bg)">Level 2</span>
+  <span style="color:var(--lv3);border-color:#6ee7b7;background:var(--lv3bg)">Level 3</span>
+  <span style="color:var(--lv4);border-color:#c4b5fd;background:var(--lv4bg)">Level 4</span>
+  <span style="color:var(--lv5);border-color:#fdba74;background:var(--lv5bg)">Level 5</span>
+  <span style="color:var(--lv6);border-color:#fca5a5;background:var(--lv6bg)">Level 6</span>
+</div>
+</section>
+<section class="card choice-section"><h2>選項區（A～J）</h2><div class="bank cols5" id="choiceBank"></div></section>
+<section class="card passage" id="passage"></section>
+</div>
+<div class="fab">
+  <button onclick="Review.toggleLevelColors()">🎨 Level 顏色</button>
+  <button onclick="Review.showFullTranslation(fullTranslation)">📖 全文翻譯</button>
+  <button onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 頂端</button>
+  <button class="btn-home" onclick="Review.goHome()">🏠 首頁</button>
+</div>
+<script src="11505-7000-core.js"></script>
+<script src="11505-review.js"></script>
+<script src="11505-vocab-config.js"></script>
+<script src="11505-custom-vocab.js"></script>
+<script src="11505-vocab-popover.js"></script>
+<script src="11505-nav.js"></script>
+<script src="11505-explanations.js"></script>
+<script src="11505-apply-detail.js"></script>
+<script>window.EXP_SECTION='vocabSel';</script>
+<script>
+
+const fullTranslation = `近年來，人們體驗食物的方式經歷重大轉變，這在很大程度上是由外送服務快速成長所推動。如今輕點手機即可叫餐到家，也改變了消費者與食物的關係。幽靈廚房興起，不設內用空間，業主省租金與裝潢，以具競爭力價格提供多樣菜單。外送 app 改變點餐決策，數位平台讓調整訂單更彈性。在家吃高品質餐越來越普遍，有時取代外出高級餐廳。AI 可能依偏好推薦餐點，消費者隨時隨地享受喜愛菜色。`;
+
+const vocab = {
+  recent: Review.V(2,'adj.','最近的','/ˈriːsnt/','in recent years','Technology changed in recent years.'),
+  experience: Review.V(2,'v.','體驗','/ɪkˈspɪriəns/','experience food','People experience food differently.'),
+  undergone: Review.V(4,'v.','經歷（過分）','/ˌʌndərˈɡoʊn/','undergo a transformation','Society has undergone change.','undergo'),
+  significant: Review.V(3,'adj.','重大的','/sɪɡˈnɪfɪkənt/','significant change','A significant transformation occurred.'),
+  transformation: Review.V(4,'n.','轉變','/ˌtrænsfərˈmeɪʃn/','undergo transformation','Delivery caused a transformation.'),
+  driven: Review.V(2,'v.','驅動（過分）','/ˈdrɪvn/','be driven by','Change was driven by apps.','drive'),
+  rapid: Review.V(3,'adj.','快速的','/ˈræpɪd/','rapid growth','Rapid growth of delivery services.'),
+  growth: Review.V(2,'n.','成長','/ɡroʊθ/','economic growth','The industry saw rapid growth.'),
+  delivery: Review.V(3,'n.','外送','/dɪˈlɪvəri/','delivery services','Food delivery is popular.'),
+  services: Review.V(2,'n.','服務','/ˈsɜːrvɪsɪz/','delivery services','Online services grew fast.','service'),
+  smartphone: Review.V(4,'n.','智慧型手機','/ˈsmɑːrtfoʊn/','on a smartphone','Order with a few taps on a smartphone.'),
+  variety: Review.V(3,'n.','多樣性','/vəˈraɪəti/','a wide variety of','A wide variety of meals.'),
+  delivered: Review.V(2,'v.','外送（過分）','/dɪˈlɪvərd/','deliver to doorstep','Meals can be delivered directly.','deliver'),
+  doorstep: Review.V(4,'n.','門口','/ˈdɔːrstep/','on your doorstep','Food arrives on your doorstep.'),
+  shift: Review.V(3,'n.','轉變','/ʃɪft/','a shift in','This shift changed dining.'),
+  convenient: Review.V(3,'adj.','便利的','/kənˈviːniənt/','make dining convenient','Delivery made dining more convenient.'),
+  consumers: Review.V(3,'n.','消費者','/kənˈsuːmərz/','consumers and food','Consumers changed habits.','consumer'),
+  notable: Review.V(4,'adj.','值得注意的','/ˈnoʊtəbl/','notable development','A notable development in the industry.'),
+  ghost: Review.V(4,'n.','幽靈（廚房）','/ɡoʊst/','ghost kitchen','Ghost kitchens have no dine-in area.'),
+  kitchens: Review.V(2,'n.','廚房','/ˈkɪtʃɪnz/','ghost kitchens','These kitchens prepare delivery food.','kitchen'),
+  establishments: Review.V(4,'n.','店家','/ɪˈstæblɪʃmənts/','these establishments','Establishments do not provide dine-in.','establishment'),
+  solely: Review.V(4,'adv.','僅僅','/ˈsoʊlli/','exist solely to','They exist solely to prepare food.'),
+  decorations: Review.V(3,'n.','裝潢','/ˌdekəˈreɪʃnz/','rent and decorations','Save on rent and decorations.','decoration'),
+  competitive: Review.V(4,'adj.','具競爭力的','/kəmˈpetətɪv/','competitive prices','Offer menus at competitive prices.'),
+  apps: Review.V(3,'n.','應用程式','/æps/','delivery apps','Delivery apps change selection.','app'),
+  pressured: Review.V(4,'adj.','感到壓力的','/ˈpreʃərd/','feel pressured to','Customers feel pressured to order.','pressure'),
+  digital: Review.V(4,'adj.','數位的','/ˈdɪdʒɪtl/','digital platform','Order through a digital platform.'),
+  platform: Review.V(4,'n.','平台','/ˈplætfɔːrm/','online platform','The platform allows adjustments.'),
+  remove: Review.V(3,'v.','移除','/rɪˈmuːv/','remove onions','Remove onions from a burger.'),
+  fancy: Review.V(4,'adj.','高級的','/ˈfænsi/','fancy restaurants','Outings to fancy restaurants.'),
+  recommend: Review.V(3,'v.','推薦','/ˌrekəˈmend/','recommend meals','AI may recommend meals.'),
+  artificial: Review.V(4,'adj.','人工的','/ˌɑːrtɪˈfɪʃl/','artificial intelligence','Artificial intelligence may help.'),
+  intelligence: Review.V(4,'n.','智慧','/ɪnˈtelɪdʒəns/','artificial intelligence','AI learns from orders.'),
+  preferences: Review.V(4,'n.','偏好','/ˈprefərənsɪz/','personal preferences','Based on personal preferences.','preference'),
+  taps: Review.V(3,'n.','輕點','/tæps/','a few taps','With a few taps on a phone.','tap'),
+};
+
+const choices = [
+  ['A','competitive'],['B','remove'],['C','pressured'],['D','taps'],['E','recommend'],
+  ['F','establishments'],['G','driven'],['H','decorations'],['I','fancy'],['J','convenient']
+];
+const answerMap = {21:'G',22:'D',23:'J',24:'F',25:'H',26:'A',27:'C',28:'B',29:'I',30:'E'};
+const passageParts = [
+  {html:'In {recent} years, the way people {experience} food has {undergone} a {significant} {transformation}.', trans:'近年來，人們體驗食物的方式經歷了重大的轉變。'},
+  {html:'This has been [[21:driven]] largely by the {rapid} {growth} of {delivery} {services}.', trans:'這在很大程度上是由外送服務的快速成長所推動的。'},
+  {html:'Today, with just a few [[22:taps]] on a {smartphone}, a wide {variety} of hot meals can be {delivered} directly to a person\'s {doorstep}.', trans:'如今，只要在智慧型手機上輕點幾下，各式各樣的熱食就能直接送到家門口。'},
+  {html:'This {shift} has made dining more [[23:convenient]] and fundamentally altered the relationship between {consumers} and their food.', trans:'這種轉變讓用餐更加便利，也從根本上改變了消費者與食物之間的關係。'},
+  {html:'One of the most {notable} developments in this industry is the rise of {ghost} {kitchens}.', trans:'在這個產業中，最值得注意的發展之一，就是幽靈廚房的興起。'},
+  {html:'Unlike traditional restaurants, these [[24:establishments]] do not provide a dine-in space for customers.', trans:'與傳統餐廳不同，這些店家並不提供顧客內用的空間。'},
+  {html:'Instead, they exist {solely} to prepare food for delivery.', trans:'相反地，它們僅僅是為了準備外送食物而存在。'},
+  {html:'This business model allows owners to save money on rent and [[25:decorations]] and focus entirely on food preparation.', trans:'這種商業模式讓業主能省下租金與裝潢費用，並把心力完全放在備餐上。'},
+  {html:'Because these kitchens can be located in cheaper areas, they can offer diverse menu choices at [[26:competitive]] prices.', trans:'由於這些廚房可以設在較便宜的區域，它們得以用具競爭力的價格提供多樣化的菜單選擇。'},
+  {html:'{Furthermore}, delivery {apps} are changing the decision-making process behind meal selection.', trans:'此外，外送應用程式也正在改變人們選擇餐點時的決策過程。'},
+  {html:'In a busy restaurant, a customer might feel [[27:pressured]] to order quickly.', trans:'在忙碌的餐廳裡，顧客可能會覺得必須趕快點餐。'},
+  {html:'However, ordering through a {digital} {platform} allows users to adjust orders without feeling rushed.', trans:'然而，透過數位平台點餐，使用者可以在不感到倉促的情況下調整訂單。'},
+  {html:'Whether choosing to add extra cheese or [[28:remove]] onions from a burger, the process becomes more flexible.', trans:'無論是要在漢堡上加更多起司，或是把洋蔥拿掉，整個過程都變得更具彈性。'},
+  {html:'Consequently, eating high-quality foods at home has become common, replacing outings to [[29:fancy]] restaurants.', trans:'因此，在家享用高品質食物已變得普遍，有時甚至取代了外出到高級餐廳用餐。'},
+  {html:'{Artificial} {intelligence} may soon [[30:recommend]] meals based on {personal} {preferences}.', trans:'人工智慧可能很快就會依據個人偏好來推薦餐點。'},
+];
+const explanations = {
+  21:{title:'21. G driven',why:'has been ___ largely by → be driven by 被……推動。',zh:'由外送成長所驅動。',wrong:['taps 不能接 has been。','convenient 是形容詞。','remove 是動詞原形。'],choices:{G:'driven（正解）',D:'taps',J:'convenient',B:'remove'}},
+  22:{title:'22. D taps',why:'a few ___ on a smartphone → a few taps 輕點幾下。',zh:'在智慧型手機上輕點幾下。',wrong:['driven 非名詞。','establishments 不能 on phone。'],choices:{D:'taps（正解）',G:'driven',F:'establishments',H:'decorations'}},
+  23:{title:'23. J convenient',why:'made dining more ___ → 形容詞 convenient。',zh:'讓用餐更便利。',wrong:['competitive 多修飾 price。','pressured 語意不合。'],choices:{J:'convenient（正解）',A:'competitive',C:'pressured',I:'fancy'}},
+  24:{title:'24. F establishments',why:'these ___ do not provide → 複數名詞「店家」。',zh:'這些店家不提供內用。',wrong:['driven 非名詞。','taps 非店家。'],choices:{F:'establishments（正解）',G:'driven',D:'taps',B:'remove'}},
+  25:{title:'25. H decorations',why:'rent and ___ → 並列名詞 decorations。',zh:'省下租金與裝潢。',wrong:['competitive 是形容詞。','recommend 是動詞。'],choices:{H:'decorations（正解）',A:'competitive',E:'recommend',C:'pressured'}},
+  26:{title:'26. A competitive',why:'at ___ prices → competitive prices。',zh:'具競爭力的價格。',wrong:['fancy prices 不自然。','convenient prices 不合。'],choices:{A:'competitive（正解）',I:'fancy',J:'convenient',G:'driven'}},
+  27:{title:'27. C pressured',why:'feel ___ to order → feel pressured to V。',zh:'感到必須趕快點餐。',wrong:['feel convenient 不自然。','feel fancy 不合。'],choices:{C:'pressured（正解）',J:'convenient',I:'fancy',A:'competitive'}},
+  28:{title:'28. B remove',why:'add cheese or ___ onions → remove onions。',zh:'拿掉洋蔥。',wrong:['add ... driven 不合。','add ... establishments 不合。'],choices:{B:'remove（正解）',G:'driven',F:'establishments',D:'taps'}},
+  29:{title:'29. I fancy',why:'outings to ___ restaurants → fancy restaurants。',zh:'外出到高級餐廳。',wrong:['competitive restaurants 強調價格非檔次。'],choices:{I:'fancy（正解）',A:'competitive',C:'pressured',J:'convenient'}},
+  30:{title:'30. E recommend',why:'AI may soon ___ meals → 原形動詞 recommend。',zh:'推薦餐點。',wrong:['may soon driven 文法錯。','may soon taps 不合。'],choices:{E:'recommend（正解）',G:'driven',D:'taps',H:'decorations'}},
+};
+Review.initPassagePage({passageParts, choices, answerMap, explanations, vocab});
+
+</script>
+</body>
+</html>

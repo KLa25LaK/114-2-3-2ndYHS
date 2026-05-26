@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>11505 學測第2回｜詞彙題 1～10 檢討卷</title>
+<link rel="stylesheet" href="11505-review.css"/>
+</head>
+<body>
+<div class="container" id="app">
+<section class="card top-header">
+<h1>11505 學測第2回｜詞彙題 1～10 檢討卷</h1>
+<div class="small">詞彙四選一｜正解已標｜選項可點查字義</div>
+<div class="legend">
+  <span style="color:var(--lv2);border-color:#93c5fd;background:var(--lv2bg)">Level 2</span>
+  <span style="color:var(--lv3);border-color:#6ee7b7;background:var(--lv3bg)">Level 3</span>
+  <span style="color:var(--lv4);border-color:#c4b5fd;background:var(--lv4bg)">Level 4</span>
+  <span style="color:var(--lv5);border-color:#fdba74;background:var(--lv5bg)">Level 5</span>
+  <span style="color:var(--lv6);border-color:#fca5a5;background:var(--lv6bg)">Level 6</span>
+</div>
+</section>
+<section class="card" id="vocabQuestions"></section>
+</div>
+<div class="fab">
+  <button onclick="Review.toggleLevelColors()">🎨 Level 顏色</button>
+  <button onclick="Review.showFullTranslation(fullTranslation)">📖 全文翻譯</button>
+  <button onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 頂端</button>
+  <button class="btn-home" onclick="Review.goHome()">🏠 首頁</button>
+</div>
+<script src="11505-7000-core.js"></script>
+<script src="11505-review.js"></script>
+<script src="11505-vocab-config.js"></script>
+<script src="11505-custom-vocab.js"></script>
+<script src="11505-vocab-popover.js"></script>
+<script src="11505-nav.js"></script>
+<script src="11505-explanations.js"></script>
+<script src="11505-apply-detail.js"></script>
+<script>
+
+const fullTranslation = `本頁為詞彙選擇題 1～10，每題四選一。正確答案已標示於各題選項與徽章。`;
+
+const vocab = {
+  load: Review.V(3,'n.','載運量；負荷','/loʊd/','a heavy load of','A truck carried a heavy load of materials.'),
+  beat: Review.V(2,'n.','節拍；打擊','/biːt/','a heavy beat','The drum has a steady beat.'),
+  means: Review.V(3,'n.','方法；手段','/miːnz/','by means of','We travel by means of public transport.'),
+  wealth: Review.V(3,'n.','財富','/welθ/','a great wealth of','The region has a wealth of resources.'),
+  claimed: Review.V(3,'v.','聲稱；宣稱','/kleɪmd/','claim that','Sources claimed the company would close.','claim'),
+  claim: Review.V(3,'v.','聲稱','/kleɪm/','claim that','He claimed he was innocent.'),
+  settled: Review.V(3,'v.','解決；定居','/ˈsetld/','settle a dispute','They settled the case out of court.','settle'),
+  replied: Review.V(2,'v.','回覆','/rɪˈplaɪd/','reply to','She replied to the email quickly.','reply'),
+  forced: Review.V(3,'v.','強迫','/fɔːrst/','force someone to','Bad weather forced us to stay home.','force'),
+  response: Review.V(3,'n.','回應','/rɪˈspɑːns/','in response to','She held a press conference in response to the scandal.'),
+  deed: Review.V(4,'n.','行為；契據','/diːd/','a good deed','Helping others is a good deed.'),
+  mission: Review.V(3,'n.','任務；使命','/ˈmɪʃn/','on a mission','The team is on a mission to help.'),
+  comparison: Review.V(3,'n.','比較','/kəmˈpærɪsn/','in comparison to','Prices rose in comparison to last year.'),
+  bold: Review.V(3,'adj.','大膽的','/boʊld/','a bold decision','She made a bold decision to start a business.'),
+  neat: Review.V(2,'adj.','整潔的','/niːt/','neat handwriting','Her room is always neat.'),
+  handy: Review.V(3,'adj.','方便的；手巧的','/ˈhændi/','come in handy','This tool comes in handy.'),
+  scarce: Review.V(4,'adj.','稀少的','/skers/','scarce resources','Water is scarce in the desert.'),
+  construction: Review.V(3,'n.','建築；建造','/kənˈstrʌkʃn/','construction materials','The site needs construction materials.'),
+  materials: Review.V(3,'n.','材料','/məˈtɪriəlz/','building materials','They ordered building materials.'),
+  scandal: Review.V(4,'n.','醜聞','/ˈskændl/','a recent scandal','The scandal made headlines.'),
+  leaks: Review.V(3,'n.','外洩；洩漏消息','/liːks/','information leaks','Several leaks created excitement.','leak'),
+  leak: Review.V(3,'v./n.','洩漏','/liːk/','leak information','The pipe began to leak.'),
+  gestures: Review.V(3,'n.','手勢','/ˈdʒestʃərz/','make gestures','He made friendly gestures.','gesture'),
+  pauses: Review.V(3,'n.','暫停','/ˈpɔːzɪz/','long pauses','There were pauses in the speech.','pause'),
+  sums: Review.V(2,'n.','總額；總和','/sʌmz/','large sums','They paid large sums of money.','sum'),
+  odd: Review.V(3,'adj.','奇怪的','/ɑːd/','an odd habit','She had an odd habit as a child.'),
+  eager: Review.V(3,'adj.','渴望的','/ˈiːɡər/','eager to learn','Students are eager to learn.'),
+  inferior: Review.V(4,'adj.','較差的','/ɪnˈfɪriər/','feel inferior','Do not feel inferior to others.'),
+  accurate: Review.V(3,'adj.','準確的','/ˈækjərət/','accurate data','The report is accurate.'),
+  budgeted: Review.V(4,'v.','編列預算','/ˈbʌdʒɪtɪd/','budget time and money','We budgeted carefully for the trip.','budget'),
+  budget: Review.V(4,'n./v.','預算','/ˈbʌdʒɪt/','on a budget','We traveled on a tight budget.'),
+  discounted: Review.V(4,'v.','打折','/ˈdɪskaʊntɪd/','discount prices','The store discounted old items.','discount'),
+  subtracted: Review.V(4,'v.','減去','/səbˈtræktɪd/','subtract from','Tax was subtracted from pay.','subtract'),
+  detected: Review.V(4,'v.','偵測到','/dɪˈtektɪd/','detect a problem','The sensor detected smoke.','detect'),
+  merely: Review.V(4,'adv.','僅僅','/ˈmɪrli/','merely defeating','He did not merely defeat his rival.'),
+  namely: Review.V(4,'adv.','也就是','/ˈneɪmli/','one person, namely','One student, namely Tom, won.'),
+  leisurely: Review.V(4,'adv.','從容地','/ˈliːʒərli/','walk leisurely','They walked leisurely in the park.'),
+  visually: Review.V(4,'adv.','視覺上','/ˈvɪʒuəli/','visually appealing','The design is visually appealing.'),
+  thoughtful: Review.V(4,'adj.','體貼的','/ˈθɔːtfl/','thoughtful boyfriend','He is thoughtful about her mood.'),
+  respectful: Review.V(4,'adj.','尊重的','/rɪˈspektfl/','be respectful to','Be respectful to elders.'),
+  doubtful: Review.V(3,'adj.','懷疑的','/ˈdaʊtfl/','feel doubtful','I feel doubtful about the plan.'),
+  grateful: Review.V(3,'adj.','感激的','/ˈɡreɪtfl/','be grateful for','We are grateful for your help.'),
+  swayed: Review.V(4,'v.','搖晃','/sweɪd/','sway in the wind','The lamp swayed in the wind.','sway'),
+  ceased: Review.V(4,'v.','停止','/siːst/','cease to do','Rain ceased at noon.','cease'),
+  foamed: Review.V(5,'v.','起泡沫','/foʊmd/','foam at the mouth','The sea foamed on the rocks.','foam'),
+  bloomed: Review.V(3,'v.','開花','/bluːmd/','flowers bloomed','Cherry trees bloomed in spring.','bloom'),
+  truck: Review.V(2,'n.','卡車','/trʌk/','a large truck','A large truck crossed the city.'),
+  carrying: Review.V(2,'v.','運送','/ˈkæriɪŋ/','carry materials','The truck was carrying materials.','carry'),
+  projects: Review.V(3,'n.','工程；計畫','/ˈprɑːdʒekts/','building projects','Several building projects need supplies.','project'),
+  sources: Review.V(3,'n.','消息來源','/ˈsɔːrsɪz/','several sources','Several sources claimed the news.','source'),
+  actress: Review.V(3,'n.','女演員','/ˈæktrəs/','a famous actress','The actress held a press conference.'),
+  conference: Review.V(3,'n.','記者會','/ˈkɑːnfərəns/','press conference','She spoke at a press conference.'),
+  admire: Review.V(3,'v.','欽佩','/ədˈmaɪər/','admire someone for','Friends admire her courage.'),
+  graduation: Review.V(3,'n.','畢業','/ˌɡrædʒuˈeɪʃn/','after graduation','She started a business after graduation.'),
+  album: Review.V(3,'n.','專輯','/ˈælbəm/','upcoming album','Fans waited for the upcoming album.'),
+  fans: Review.V(2,'n.','粉絲','/fænz/','boy band fans','The boy band has many fans.','fan'),
+  vacation: Review.V(2,'n.','假期','/veɪˈkeɪʃn/','family vacation','We planned a family vacation.'),
+  tennis: Review.V(2,'n.','網球','/ˈtenɪs/','tennis player','The tennis player set a record.'),
+  rival: Review.V(3,'n.','對手','/ˈraɪvl/','experienced rival','He defeated his experienced rival.'),
+  champion: Review.V(3,'n.','冠軍','/ˈtʃæmpiən/','youngest champion','She became the youngest champion.'),
+  boyfriend: Review.V(2,'n.','男朋友','/ˈbɔɪfrend/','thoughtful boyfriend','Her boyfriend notices small changes.'),
+  mood: Review.V(2,'n.','心情','/muːd/','changes in mood','He notices changes in her mood.'),
+  hanging: Review.V(3,'adj.','懸掛的','/ˈhæŋɪŋ/','hanging lamp','The hanging lamp swayed slightly.'),
+  lamp: Review.V(2,'n.','燈','/læmp/','a hanging lamp','The lamp swayed in the wind.'),
+};
+
+const questions = [
+  {no:1, answer:'B', stem:'A large {truck} was {carrying} a heavy {load} of {construction} {materials} across the city to supply several building {projects} in different neighborhoods.', options:[['A','beat'],['B','load'],['C','means'],['D','wealth']], note:'名詞修飾：a heavy load of + 材料。'},
+  {no:2, answer:'D', stem:'Several {sources} {claimed} that the company would close down by the end of the year, but there was no official announcement.', options:[['A','settled'],['B','replied'],['C','forced'],['D','claimed']], note:'claim that + 子句 = 聲稱……'},
+  {no:3, answer:'C', stem:'The famous {actress} held a press {conference} in {response} to the recent {scandal} that made headlines.', options:[['A','deed'],['B','mission'],['C','response'],['D','comparison']], note:'in response to = 回應……'},
+  {no:4, answer:'A', stem:'Penny\'s friends {admire} her because she made a {bold} decision to start her own business from scratch right after {graduation}.', options:[['A','bold'],['B','neat'],['C','handy'],['D','scarce']], note:'bold decision = 大膽的決定'},
+  {no:5, answer:'C', stem:'Several {leaks} about the upcoming {album} created excitement and discussion among the boy band\'s {fans}.', options:[['A','gestures'],['B','pauses'],['C','leaks'],['D','sums']], note:'information leaks = 消息外洩'},
+  {no:6, answer:'A', stem:'My sister used to have an {odd} habit of talking to her dolls, but she stopped after she grew up.', options:[['A','odd'],['B','eager'],['C','inferior'],['D','accurate']], note:'odd habit = 奇怪的習慣'},
+  {no:7, answer:'C', stem:'On our family {vacation}, we carefully {budgeted} our time and money to make it stress-free and fun for everyone.', options:[['A','discounted'],['B','subtracted'],['C','budgeted'],['D','detected']], note:'budget time and money = 編列時間與金錢'},
+  {no:8, answer:'B', stem:'Rather than {merely} defeating his experienced {rival}, the talented {tennis} player took full control of the match and set a record as the youngest {champion} in history.', options:[['A','namely'],['B','merely'],['C','leisurely'],['D','visually']], note:'rather than merely = 不只是僅僅'},
+  {no:9, answer:'B', stem:'Mia\'s {boyfriend} is so {thoughtful} that he notices even the smallest changes in her {mood} and tries to cheer her up.', options:[['A','respectful'],['B','thoughtful'],['C','doubtful'],['D','grateful']], note:'thoughtful = 體貼的'},
+  {no:10, answer:'D', stem:'The {hanging} {lamp} {swayed} slightly in the quiet room as the cold wind blew through the window.', options:[['A','ceased'],['B','foamed'],['C','bloomed'],['D','swayed']], note:'sway = 搖晃'},
+];
+
+Review.initVocabMCData(questions);
+Review.initVocabMCPage({questions, vocab});
+
+</script>
+</body>
+</html>

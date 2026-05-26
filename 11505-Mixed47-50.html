@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>11505 學測第2回｜混合題 47～50 檢討卷</title>
+<link rel="stylesheet" href="11505-review.css"/>
+</head>
+<body>
+<div class="container wide" id="app">
+<section class="card top-header">
+<h1>11505 學測第2回｜混合題 47～50 檢討卷</h1>
+<div class="small">希臘沙拉 & Caprese 沙拉｜左文右題</div>
+<div class="legend">
+  <span style="color:var(--lv2);border-color:#93c5fd;background:var(--lv2bg)">Level 2</span>
+  <span style="color:var(--lv3);border-color:#6ee7b7;background:var(--lv3bg)">Level 3</span>
+  <span style="color:var(--lv4);border-color:#c4b5fd;background:var(--lv4bg)">Level 4</span>
+  <span style="color:var(--lv5);border-color:#fdba74;background:var(--lv5bg)">Level 5</span>
+  <span style="color:var(--lv6);border-color:#fca5a5;background:var(--lv6bg)">Level 6</span>
+</div>
+</section>
+<div class="grid2">
+<section class="card passage" id="passage"></section>
+<aside>
+<section class="card q-card">
+<div class="q-title">第 49 題（多選）｜正解：B、D</div>
+<div class="answer-badge">正確答案：(B)(D)</div>
+<div class="opts">
+<div class="opt-btn" onclick="showMixed49('A',this)">(A) Lettuce is included in both salads.</div>
+<div class="opt-btn correct-ans" onclick="showMixed49('B',this)">(B) Tomatoes are used in both salads.</div>
+<div class="opt-btn" onclick="showMixed49('C',this)">(C) Bread is eaten at the end of both salads.</div>
+<div class="opt-btn correct-ans" onclick="showMixed49('D',this)">(D) Both salads are commonly enjoyed in summer.</div>
+<div class="opt-btn" onclick="showMixed49('E',this)">(E) Both salads originated from a certain philosophy.</div>
+<div class="opt-btn" onclick="showMixed49('F',this)">(F) Both salads emphasize how the ingredients are arranged.</div>
+</div>
+</section>
+<section class="card q-card">
+<div class="q-title">第 50 題（簡答）｜正解：Local twists</div>
+<div class="answer-badge">正確答案：Local twists</div>
+<div class="mini">點下方按鈕看教師版完整解析。</div>
+<button type="button" class="sound" onclick="showMixed50()">📖 第 50 題詳解</button>
+</section>
+</aside>
+</div>
+</div>
+<div class="fab">
+  <button onclick="Review.toggleLevelColors()">🎨 Level 顏色</button>
+  <button onclick="Review.showFullTranslation(fullTranslation)">📖 全文翻譯</button>
+  <button onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 頂端</button>
+  <button class="btn-home" onclick="Review.goHome()">🏠 首頁</button>
+</div>
+<script src="11505-7000-core.js"></script>
+<script src="11505-review.js"></script>
+<script src="11505-vocab-config.js"></script>
+<script src="11505-custom-vocab.js"></script>
+<script src="11505-vocab-popover.js"></script>
+<script src="11505-nav.js"></script>
+<script src="11505-explanations.js"></script>
+<script src="11505-apply-detail.js"></script>
+<script>window.EXP_SECTION='mixed';</script>
+<script>
+
+const fullTranslation = `沙拉在世界各地種類繁多。希臘沙拉 horiatiki 成分固定：番茄、小黃瓜、青椒、紅洋蔥、橄欖與羊奶 feta，灑奧regano 淋橄欖油，常配麵包沾汁，不加肉或生菜。Caprese 沙拉起源有爭議，經典以番茄、水牛 mozarella、羅勒與橄欖油交替擺盤；各地也有 local twists，如改用 cherry tomato 或加鮪魚。`;
+
+const vocab = {
+  salads: Review.V(2,'n.','沙拉','/ˈsælədz/','Greek and Caprese salads','Two well-known salads.','salad'),
+  regarded: Review.V(4,'v.','被視為','/rɪˈɡɑːrdɪd/','widely regarded as','Salads are regarded as healthy.','regard'),
+  varieties: Review.V(3,'n.','種類','/vəˈraɪətiz/','countless varieties','Countless varieties exist.','variety'),
+  ingredients: Review.V(3,'n.','食材','/ɪnˈɡriːdiənts/','traditional ingredients','Greek salad has fixed ingredients.','ingredient'),
+  oregano: Review.V(4,'n.','奧勒岡葉（香料）','/ɔːˈreɡənoʊ/','sprinkled with oregano','Sprinkled with oregano and olive oil.'),
+  mozzarella: Review.V(4,'n.','莫札瑞拉起司','/ˌmɑːtsəˈrelə/','buffalo mozzarella','Caprese uses buffalo mozzarella.'),
+  alternating: Review.V(4,'adj.','交替的','/ˈɔːltərneɪtɪŋ/','alternating pattern','Slices in an alternating pattern.'),
+  adhere: Review.V(5,'v.','遵守； adhering','/ədˈhɪr/','adhere to tradition','Must adhere to traditional ingredients.'),
+  inspiration: Review.V(4,'n.','靈感','/ˌɪnspəˈreɪʃn/','inspiration for creation','The flag was the inspiration for its creation.'),
+  twists: Review.V(4,'n.','變化','/twɪsts/','local twists','Local twists are common.','twist'),
+  origins: Review.V(3,'n.','起源','/ˈɔːrɪdʒɪnz/','origins remain debated','Origins of Caprese remain debated.','origin'),
+  refreshing: Review.V(3,'adj.','清爽的','/rɪˈfreʃɪŋ/','light and refreshing','Greek salad is refreshing in summer.'),
+};
+
+const answerMap = {47:'strictly',48:'inspiration'};
+const passageParts = [
+  {html:'<b>【閱讀文章】</b> {Salads} are widely {regarded} as both simple and healthy, and countless {varieties} can be found around the world.', trans:'沙拉普遍被視為既簡單又健康，世界各地都能找到無數種類。'},
+  {html:'Two well-known examples are the Greek and Caprese salads, both of which have had a significant impact outside the borders of their countries.', trans:'兩個著名的例子是希臘沙拉與卡布里沙拉（Caprese），兩者都在各自國境之外產生重大影響。'},
+  {html:'An absolute must-try on any visit to Greece, a Greek salad is unlike any other in the world.', trans:'到希臘旅遊時絕對必嚐，希臘沙拉與世上任何其他沙拉都不相同。'},
+  {html:'The {ingredients} include chunks of tomato, slices of cucumber, strips of green pepper, thin slices of red onions, Kalamata olives, and a slab of sheep\'s milk feta cheese.', trans:'食材包括番茄塊、小黃瓜片、青椒條、紅洋蔥薄片、卡拉馬塔橄欖，以及一塊羊奶製成的 feta 起司。'},
+  {html:'Once everything is put in a bowl, the mixture is sprinkled with {oregano} and served with olive oil.', trans:'所有食材放入碗中後，會撒上奧勒岡葉並淋上橄欖油上桌。'},
+  {html:'Also, no Greek salad is complete without a piece of bread that is used to soak up the last drops of olive oil and juices at the bottom of the bowl.', trans:'此外，希臘沙拉若沒有一塊麵包用來沾取碗底最後的橄欖油與汁液，就不算完整。'},
+  {html:'Additions like meat or lettuce are not allowed. Greeks especially enjoy this salad during the summer months because it is light, {refreshing}, and vibrant.', trans:'不允許加入肉類或生菜之類的配料；希臘人尤其喜歡在夏季享用這道沙拉，因為它清爽、輕盈又鮮明。'},
+  {html:'The {origins} of the Caprese salad remain a subject of debate.', trans:'卡布里沙拉的起源仍是爭論的話題。'},
+  {html:'Some say it was created to reflect the colors of the Italian flag. Others believe that the dish was first served at the Hotel Quisisana in Capri during a Futurist dinner.', trans:'有人說它是為了呼應義大利國旗的顏色而創造；也有人認為這道菜最早是在卡布里島 Quisisana 飯店的一場未來主義晚宴上供應。'},
+  {html:'Regardless of how it began, the classic Caprese salad is made with beefsteak tomatoes, {mozzarella} cheese, basil leaves, and olive oil.', trans:'無論它如何起源，經典的卡布里沙拉以牛排番茄、莫札瑞拉起司、羅勒葉與橄欖油製成。'},
+  {html:'For proper presentation, slices of tomato and mozzarella should be placed in an {alternating} pattern on the plate and topped with basil.', trans:'為了呈現得體，番茄片與起司片應在盤上以交替方式排列，並放上羅勒。'},
+  {html:'<b>Local twists</b> are also common. Some versions use cherry tomatoes or mozzarella made from cow\'s milk, while others add protein in the form of tuna, anchovies, or chicken.', trans:'各地變化也很常見：有些版本改用聖女番茄或牛奶製莫札瑞拉，有些則加入鮪魚、鯷魚或雞肉等蛋白質。'},
+  {html:'<b>【填充題 47-48】</b> Greek salad must [[47:strictly]] adhere to its traditional ingredients to be considered authentic.', trans:'希臘沙拉必須嚴格遵守傳統食材，才會被視為正宗。'},
+  {html:'Meanwhile, the origins of Caprese salad remain disputed, and one account identifies the Italian flag as the [[48:inspiration]] for its creation.', trans:'與此同時，卡布里沙拉的起源仍有爭議，其中一種說法認為義大利國旗是其創作靈感。'},
+];
+
+const explanations = {
+  47:{title:'47. strictly',why:'',zh:'',wrong:[]},
+  48:{title:'48. inspiration',why:'',zh:'',wrong:[]},
+};
+
+const vocab2 = vocab;
+Review.initPassagePage({passageParts, choices: [], answerMap, explanations, vocab: vocab2});
+
+</script>
+</body>
+</html>

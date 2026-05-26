@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>11505 學測第2回｜閱讀 35～38 駭客三帽</title>
+<link rel="stylesheet" href="11505-review.css"/>
+</head>
+<body>
+<div class="container wide" id="app">
+<section class="card top-header">
+<h1>11505 學測第2回｜閱讀測驗 35～38｜駭客三帽</h1>
+<div class="small">點「完整解析」→ 左側黃底為證據句｜選項與詳解以彈窗顯示</div>
+<nav class="reading-nav">
+  <a class="reading-nav-link is-current" href="11505-Reading35-38.html">35～38 駭客</a>
+  <a class="reading-nav-link" href="11505-Reading39-42.html">39～42 槓鈴</a>
+  <a class="reading-nav-link" href="11505-Reading43-46.html">43～46 豬籠草</a>
+  <a class="reading-nav-link muted" href="11505-Reading35-46.html">閱讀總覽</a>
+</nav>
+</section>
+<div class="reading-layout">
+<div class="reading-pane reading-pane--article">
+<section class="card article" id="article"></section>
+</div>
+<div class="reading-pane reading-pane--questions">
+<div class="reading-aside-inner">
+<section class="card" id="questions"></section>
+</div>
+</div>
+</div>
+</div>
+<div class="fab">
+  <button onclick="Review.toggleLevelColors()">🎨 Level 顏色</button>
+  <button type="button" id="btnFullTrans">📖 全文翻譯</button>
+  <button type="button" onclick="document.querySelector('.reading-pane--article')?.scrollTo({top:0,behavior:'smooth'})">⬆ 頂端</button>
+</div>
+<script src="11505-review.js"></script>
+<script src="11505-vocab-config.js"></script>
+<script src="11505-custom-vocab.js"></script>
+<script src="11505-vocab-popover.js"></script>
+<script src="11505-reading-data.js"></script>
+<script src="11505-reading-vocab.js"></script>
+<script src="11505-explanations.js"></script>
+<script src="11505-apply-detail.js"></script>
+<script src="11505-nav.js"></script>
+<script src="11505-reading-boot.js"></script>
+<script src="11505-7000-core.js" defer></script>
+<script>bootReadingPage('hackers');</script>
+</body>
+</html>

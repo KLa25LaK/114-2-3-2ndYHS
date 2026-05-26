@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>11505 學測第2回｜綜合測驗 11～20 檢討卷</title>
+<link rel="stylesheet" href="11505-review.css"/>
+</head>
+<body>
+<div class="container" id="app">
+<section class="card top-header">
+<h1>11505 學測第2回｜綜合測驗 11～20 檢討卷</h1>
+<div class="small">Médoc 馬拉松／斯拉夫姓氏｜藍格為正解｜點格看 ABCD 解析</div>
+<div class="legend">
+  <span style="color:var(--lv2);border-color:#93c5fd;background:var(--lv2bg)">Level 2</span>
+  <span style="color:var(--lv3);border-color:#6ee7b7;background:var(--lv3bg)">Level 3</span>
+  <span style="color:var(--lv4);border-color:#c4b5fd;background:var(--lv4bg)">Level 4</span>
+  <span style="color:var(--lv5);border-color:#fdba74;background:var(--lv5bg)">Level 5</span>
+  <span style="color:var(--lv6);border-color:#fca5a5;background:var(--lv6bg)">Level 6</span>
+</div>
+</section>
+<section class="card passage" id="passage"></section>
+</div>
+<div class="fab">
+  <button onclick="Review.toggleLevelColors()">🎨 Level 顏色</button>
+  <button onclick="Review.showFullTranslation(fullTranslation)">📖 全文翻譯</button>
+  <button onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 頂端</button>
+  <button class="btn-home" onclick="Review.goHome()">🏠 首頁</button>
+</div>
+<script src="11505-7000-core.js"></script>
+<script src="11505-review.js"></script>
+<script src="11505-vocab-config.js"></script>
+<script src="11505-custom-vocab.js"></script>
+<script src="11505-vocab-popover.js"></script>
+<script src="11505-nav.js"></script>
+<script src="11505-explanations.js"></script>
+<script src="11505-apply-detail.js"></script>
+<script>window.EXP_SECTION='cloze';</script>
+<script>
+const fullTranslation = `每年，數以千計的跑者參加艱難的馬拉松，這需要強度極高的體能訓練與嚴格紀律。相對地，法國 Médoc 馬拉松更重視慶祝與享受。賽前夜跑者聚集享用美食與娛樂；賽後還有正式舞會與煙火。沿途設有美食站與現場表演，許多人從容完成賽事。<br><br>在許多斯拉夫語言中，女兒的姓氏與父親略有不同，兒子則通常不變。例如 Ivanov 的女兒叫 Ivanova。21 世紀有人認為這反映性別不平等。2021 年捷克法律允許女性選用較短的陽性姓氏形式。調查顯示約 25% 女性偏好陽性形式，但法律生效後多數仍偏好傳統命名。語言學家認為陰陽性姓氏是文化遺產的重要部分。`;
+
+const vocab = {
+  marathon: Review.V(3,'n.','馬拉松','/ˈmærəθɑːn/','run a marathon','Thousands run demanding marathons.'),
+  marathons: Review.V(3,'n.','馬拉松（複）','/ˈmærəθɑːnz/','demanding marathons','Demanding marathons push runners.','marathon'),
+  runners: Review.V(2,'n.','跑者','/ˈrʌnərz/','marathon runners','Runners push themselves to the limit.','runner'),
+  demanding: Review.V(4,'adj.','高要求的','/dɪˈmændɪŋ/','demanding training','Marathon running is demanding.'),
+  intense: Review.V(4,'adj.','強烈的；強度的','/ɪnˈtens/','intense training','It requires intense physical training.'),
+  discipline: Review.V(3,'n.','紀律','/ˈdɪsəplɪn/','strict discipline','Success needs strict discipline.'),
+  athletic: Review.V(3,'adj.','運動的','/æθˈletɪk/','athletic competitions','It is a difficult athletic competition.'),
+  contrast: Review.V(3,'n.','對比','/ˈkɑːntræst/','in contrast','In contrast, this event emphasizes enjoyment.'),
+  celebration: Review.V(3,'n.','慶祝','/ˌselɪˈbreɪʃn/','celebration and enjoyment','The event places emphasis on celebration.'),
+  festive: Review.V(4,'adj.','節慶的','/ˈfestɪv/','festive atmosphere','The race has a festive atmosphere.'),
+  participants: Review.V(3,'n.','參與者','/pɑːrˈtɪsɪpənts/','participants gather','Participants gather before the event.','participant'),
+  fireworks: Review.V(3,'n.','煙火','/ˈfaɪərwɜːrks/','fireworks display','A fireworks display followed the ball.'),
+  attractions: Review.V(3,'n.','吸引物；活動','/əˈtrækʃnz/','many attractions','With so many attractions available.','attraction'),
+  costume: Review.V(3,'n.','服裝；戲服','/ˈkɑːstuːm/','wear a costume','Every runner must wear a costume.'),
+  proceed: Review.V(4,'v.','前進；進行','/prəˈsiːd/','proceed at a relaxed pace','Many proceed at a relaxed pace.'),
+  slavic: Review.V(5,'adj.','斯拉夫的','/ˈslɑːvɪk/','Slavic languages','In many Slavic languages...'),
+  traditionally: Review.V(3,'adv.','傳統上','/trəˈdɪʃənəli/','traditionally have','Daughters traditionally have different surnames.'),
+  surname: Review.V(4,'n.','姓氏','/ˈsɜːrneɪm/','Slavic surname','Women choose a masculine surname form.'),
+  surnames: Review.V(4,'n.','姓氏（複）','/ˈsɜːrneɪmz/','masculine surnames','Masculine and feminine surnames differ.','surname'),
+  outdated: Review.V(4,'adj.','過時的','/aʊtˈdeɪtɪd/','outdated system','The naming system is outdated.'),
+  inequality: Review.V(4,'n.','不平等','/ˌɪnɪˈkwɑːləti/','gender inequality','It reflects gender inequality.'),
+  reform: Review.V(4,'n.','改革','/rɪˈfɔːrm/','before this reform','A law passed in 2021 as a reform.'),
+  permitted: Review.V(4,'v.','被允許','/pərˈmɪtɪd/','permitted to use','Women were permitted to use the form.','permit'),
+  conducted: Review.V(4,'v.','進行（調查）','/kənˈdʌktɪd/','surveys conducted','Surveys were conducted before the law.','conduct'),
+  effect: Review.V(3,'n.','生效；效果','/ɪˈfekt/','take effect','The law took effect last year.'),
+  heritage: Review.V(4,'n.','遺產','/ˈherɪtɪdʒ/','linguistic heritage','Surnames are part of linguistic heritage.'),
+  linguists: Review.V(5,'n.','語言學家','/ˈlɪŋwɪsts/','Czech linguists','Most Czech linguists support the practice.','linguist'),
+};
+
+passageParts = [
+  {html:'Every year, thousands of {runners} take part in {demanding} {marathons} that push them to their limits.', trans:'每年，數以千計的跑者參加艱難的馬拉松賽事，挑戰自身極限。'},
+  {html:'Marathon running requires [[11:intense]] physical training and strict {discipline}, making it one of the most difficult {athletic} competitions.', trans:'馬拉松需要強度極高的體能訓練與嚴格紀律，因而成為最艱難的運動競賽之一。'},
+  {html:'In {contrast}, the Marathon des Châteaux du Médoc in France takes a different approach.', trans:'相對地，法國的 Médoc 城堡馬拉松採取了不同的做法。'},
+  {html:'Rather than focusing solely on speed, the event [[12:places emphasis on]] {celebration} and enjoyment.', trans:'這項賽事與其只著重速度，不如說更強調慶祝與享受。'},
+  {html:'One of the most remarkable aspects of the race is its {festive} atmosphere.', trans:'這場比賽最引人注目的是它的節慶氣氛。'},
+  {html:'On the night before the event, {participants} gather to enjoy food and entertainment.', trans:'賽事前一晚，參與者聚集在一起享用美食與娛樂。'},
+  {html:'The celebration [[13:picks up]] again immediately after the race.', trans:'比賽結束後，慶祝活動立刻再次展開。'},
+  {html:'Runners are invited to attend a formal ball followed by a {fireworks} display.', trans:'跑者受邀參加正式舞會，隨後還有煙火表演。'},
+  {html:'With so many [[14:attractions]] available, it is difficult to concentrate only on the competition.', trans:'由於有這麼多精彩活動，跑者很難只專心於比賽本身。'},
+  {html:'What truly sets this marathon apart is that every runner must wear a {costume} while competing.', trans:'真正讓這場馬拉松與眾不同的是：每位跑者在比賽時都必須穿著服裝。'},
+  {html:'In addition to the yearly costume theme, food stations and live shows are set up [[15:along the route]], allowing runners to pause and enjoy the experience.', trans:'除了每年的服裝主題外，沿途還設有美食站與現場表演，讓跑者能停下來享受過程。'},
+  {html:'Since participants are given six and a half hours to finish the race, many choose to {proceed} at a relaxed pace rather than rush to the finish line.', trans:'由於主辦單位給予六個半小時的完賽時間，許多人選擇從容前進，而不是衝向終點。'},
+  {html:'<b>【第16～20題｜斯拉夫姓氏】</b> In many {Slavic} languages, daughters {traditionally} have {surnames} that slightly differ from their father\'s, with one to three extra letters added at the end.', trans:'在許多斯拉夫語言中，女兒傳統上會擁有與父親略有不同的姓氏，字尾通常多加一至三個字母。'},
+  {html:'Contrarily, sons generally keep the same surname without any changes. [[16:For example]], Mr. Ivanov\'s son would be named Dmitry Ivanov, but his daughter would be called Maria Ivanova.', trans:'相反地，兒子通常維持相同姓氏、不做改變；例如，Ivanov 先生的兒子會叫 Dmitry Ivanov，女兒則叫 Maria Ivanova。'},
+  {html:'In the 21st century, however, some people argue that this traditional naming system is {outdated} and reflects [[17:gender inequality]].', trans:'然而到了二十一世紀，有些人認為這種傳統命名制度已經過時，並反映了性別不平等。'},
+  {html:'In the Czech Republic, a law passed in 2021 allows women to choose the shorter, masculine form of their surname for legal purposes.', trans:'在捷克，2021 年通過的法律允許女性為了法律用途，選擇較短的陽性姓氏形式。'},
+  {html:'Before this {reform}, only women with foreign citizenship or those married to foreigners were [[18:permitted to use]] the masculine form of a Slavic surname.', trans:'在這項改革之前，只有具外國國籍的女性，或嫁給外國人的女性，才被允許使用斯拉夫姓氏的陽性形式。'},
+  {html:'Although the change was introduced due to growing public discussion about equality and personal choice, the outcome has been more complex than expected.', trans:'雖然這項改變是因為社會對平等與個人選擇的討論日益增多而推出，但結果卻比預期更為複雜。'},
+  {html:'According to surveys [[19:conducted]] before the law was passed, around 25 percent of Czech women said they would prefer to use the masculine form of their surname.', trans:'根據法律通過前進行的調查，大約有百分之二十五的捷克女性表示，她們會偏好使用陽性形式的姓氏。'},
+  {html:'However, many women still prefer the traditional naming system even after the law [[20:took effect]].', trans:'然而，即使在法律生效之後，仍有許多女性偏好傳統的命名方式。'},
+  {html:'Most Czech {linguists} also support continuing the practice.', trans:'大多數捷克語言學家也支持繼續維持這種做法。'},
+  {html:'They argue that masculine and feminine {surnames} are an important part of the country\'s linguistic {heritage} and cultural history.', trans:'他們認為，陰性與陽性姓氏是該國語言遺產與文化史中重要的一部分。'},
+];
+
+answerMap = {11:'B',12:'D',13:'A',14:'A',15:'C',16:'D',17:'B',18:'C',19:'B',20:'A'};
+
+explanations = {
+  11:{title:'11. B intense',why:'requires ___ physical training 需要形容詞修飾 physical training。intense = 強度的、強烈的。',zh:'馬拉松需要強度極高的體能訓練。',wrong:['anxious 常修飾人，不適合修飾 training。','effortless 與 demanding marathon 矛盾。','objective 不能修飾 physical training。'],choices:{A:'anxious = 焦慮的',B:'intense = 強烈的（正解）',C:'effortless = 不費力的',D:'objective = 客觀的'}},
+  12:{title:'12. D places emphasis on',why:'the event ___ celebration and enjoyment 需要動詞片語，places emphasis on = 強調、著重於。',zh:'賽事著重慶祝與享受。',wrong:['draws praise from 後面通常接人，不是 celebration。','gives recognition to 較像「給予認可」。','raises awareness about 是「提高對……的意識」。'],choices:{A:'draws praise from = 獲得……讚美',B:'gives recognition to = 給予認可',C:'raises awareness about = 提高意識',D:'places emphasis on = 強調（正解）'}},
+  13:{title:'13. A picks up',why:'The celebration ___ again 需要「再次開始、再度展開」。pick up = 重新開始、再度進行。',zh:'賽後慶祝再度展開。',wrong:['shuts down = 關閉，與 again 矛盾。','meets up = 會面，主詞 celebration 不合。','turns down = 拒絕。'],choices:{A:'picks up = 再度開始（正解）',B:'shuts down = 關閉',C:'meets up = 會面',D:'turns down = 拒絕'}},
+  14:{title:'14. A attractions',why:'so many ___ available 需要可數複數名詞，attractions = 吸引物、精彩活動。',zh:'有這麼多精彩活動。',wrong:['facilities 多指設施，較不像「難以只專心比賽」的原因。','obstacles = 障礙，語意不合。','surroundings = 環境，不指具體活動。'],choices:{A:'attractions = 吸引物／活動（正解）',B:'facilities = 設施',C:'obstacles = 障礙',D:'surroundings = 周遭環境'}},
+  15:{title:'15. C along the route',why:'food stations ... set up ___ 表示「沿著路線」設置。along the route = 沿途。',zh:'沿途設置美食站與表演。',wrong:['beyond the reach = 超出可及範圍。','in the distance = 在遠方。','on the horizon = 在地平線上。'],choices:{A:'beyond the reach = 力所不及',B:'in the distance = 在遠處',C:'along the route = 沿途（正解）',D:'on the horizon = 在地平線上'}},
+  16:{title:'16. D For example',why:'前句說兒女姓氏不同，後句舉 Ivanov / Ivanova 為例，用 For example 引出例證。',zh:'例如 Ivanov 與 Ivanova。',wrong:['On the contrary 表相反，但後句是舉例不是反駁。','To this end = 為此目的。','What\'s more = 此外。'],choices:{A:'On the contrary = 相反地',B:'To this end = 為此目的',C:'What\'s more = 此外',D:'For example = 例如（正解）'}},
+  17:{title:'17. B gender inequality',why:'naming system reflects ___ 需要「性別不平等」才符合後文關於女性姓氏選擇的討論。',zh:'反映性別不平等。',wrong:['legal status 較窄，非全文重點。','social behavior 太籠統。','political philosophy 不合語境。'],choices:{A:'legal status = 法律地位',B:'gender inequality = 性別不平等（正解）',C:'social behavior = 社會行為',D:'political philosophy = 政治哲學'}},
+  18:{title:'18. C permitted to use',why:'only women ... were ___ the masculine form 需要「被允許使用」。permitted to use = 被允許使用。',zh:'被允許使用陽性姓氏形式。',wrong:['advised to take 只是建議，不是法律允許。','interested in sharing 不合結構。','restricted from adopting 語意相反。'],choices:{A:'advised to take = 被建議採用',B:'interested in sharing = 有興趣分享',C:'permitted to use = 被允許使用（正解）',D:'restricted from adopting = 被限制不得採用'}},
+  19:{title:'19. B conducted',why:'surveys ___ before the law 需要「進行（調查）」。conducted = 進行。',zh:'法律通過前進行的調查。',wrong:['deposited = 存放。','reserved = 保留。','memorized = 背誦。'],choices:{A:'deposited = 存放',B:'conducted = 進行（正解）',C:'reserved = 保留',D:'memorized = 背誦'}},
+  20:{title:'20. A took effect',why:'even after the law ___ 需要「生效」。took effect = 生效。',zh:'即使法律生效後。',wrong:['took notice = 注意到。','took charge = 負責。','took place = 發生（事件用）。'],choices:{A:'took effect = 生效（正解）',B:'took notice = 注意到',C:'took charge = 負責',D:'took place = 發生'}},
+};
+
+Review.initPassagePage({passageParts, choices: [], answerMap, explanations, vocab});
+</script>
+</body>
+</html>
