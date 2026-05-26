@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>11505 學測第2回｜文意選填 21～30 檢討卷</title>
+<style>
+:root{
+  --bg:#f3f1ec;
+  --card:#fffdf8;
+  --text:#111827;
+  --muted:#4b5563;
+  --line:#d6d3d1;
+  --lv2:#1d4ed8;
+  --lv2bg:#eff6ff;
+  --lv3:#047857;
+  --lv3bg:#ecfdf5;
+  --lv4:#6d28d9;
+  --lv4bg:#f5f3ff;
+  --lv5:#b45309;
+  --lv5bg:#fff7ed;
+  --lv6:#b91c1c;
+  --lv6bg:#fef2f2;
+  --answer:#1d3557;
+  --answerbg:#eaf3fb;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;
+  color:var(--text);
+  line-height:1.72;
+}
+
+.container{
+  max-width:960px;
+  margin:auto;
+  padding:22px 15px 130px;
+}
+
+.card{
+  background:var(--card);
+  border:2px solid #111827;
+  border-radius:28px;
+  padding:18px 22px;
+  margin-bottom:14px;
+  box-shadow:4px 4px 0 rgba(17,24,39,.12);
+}
+
+.top-header{
+  position:sticky;
+  top:0;
+  z-index:1200;
+  background:#dfe7ec;
+}
+
+.choice-section{background:#ead4d8}
+
+h1{font-size:26px;margin:4px 0 10px;font-weight:950}
+h2{font-size:20px;margin:2px 0 8px;font-weight:900}
+.small{font-size:15px;color:var(--muted)}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.legend span{
+  font-size:13px;font-weight:800;padding:4px 10px;border-radius:999px;border:1px solid;
+}
+
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(min-width:720px){.bank{grid-template-columns:repeat(5,1fr)}}
+
+.choice{
+  border:2px solid #111827;
+  border-radius:18px;
+  padding:9px 12px;
+  background:#fff;
+  cursor:pointer;
+  font-weight:900;
+  font-size:16px;
+  box-shadow:3px 3px 0 rgba(17,24,39,.14);
+  transition:.15s ease;
+}
+.choice:hover{transform:translate(-1px,-1px);background:#f7f3ef}
+
+.passage{font-size:20px}
+.sentence{
+  margin:0 0 10px;
+  padding-bottom:8px;
+  border-bottom:1px dashed #d8d4cf;
+}
+.sentence:last-child{border-bottom:0}
+
+/* 答案格：檢討卷直接顯示 */
+.blank{
+  color:var(--answer);
+  font-weight:950;
+  cursor:pointer;
+  border:1px solid #bfd0e2;
+  padding:2px 8px;
+  background:var(--answerbg);
+  border-radius:10px;
+}
+
+/* Level 2+：虛線底線 + 分色 */
+.word{
+  cursor:pointer;
+  border-radius:6px;
+  padding:1px 4px;
+  font-weight:850;
+  border-bottom:2px dashed currentColor;
+}
+.word.lv2{color:var(--lv2);background:var(--lv2bg)}
+.word.lv3{color:var(--lv3);background:var(--lv3bg)}
+.word.lv4{color:var(--lv4);background:var(--lv4bg)}
+.word.lv5{color:var(--lv5);background:var(--lv5bg)}
+.word.lv6{color:var(--lv6);background:var(--lv6bg)}
+
+.trans{
+  color:#7b5c8e;
+  border-bottom:2px dashed #c7a7b7;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:900;
+  margin-left:4px;
+}
+
+.popup{
+  position:absolute;
+  background:#fffdf8;
+  border:2px solid #111827;
+  border-radius:24px;
+  padding:20px 20px 16px;
+  box-shadow:6px 6px 0 rgba(17,24,39,.18);
+  max-width:min(480px,calc(100vw - 28px));
+  z-index:999;
+  font-size:16px;
+  line-height:1.65;
+}
+.popup .close{
+  position:absolute;right:10px;top:6px;
+  cursor:pointer;font-weight:950;color:#7d6b60;
+}
+
+.tag{
+  display:inline-block;border-radius:999px;
+  background:#f4e8ea;color:#7b5c8e;
+  border:1px solid #e2cfd5;
+  font-size:13px;font-weight:950;
+  padding:4px 10px;margin-bottom:8px;
+}
+.leveltag{
+  display:inline-block;border-radius:999px;
+  padding:2px 8px;margin-left:6px;
+  font-size:12px;font-weight:950;
+  border:1px solid;
+}
+.phonetic{color:#6b7280;font-size:15px;margin:4px 0 8px}
+.sense{margin:10px 0;padding:10px 12px;border-radius:14px;background:#fff8f1;border:1px solid #e8ddd3}
+.sense-title{font-weight:950;margin-bottom:4px}
+.colloc{font-size:14px;color:#374151;margin-top:4px}
+.example{font-size:15px;margin-top:6px;color:#1f2937}
+.sound{
+  display:inline-block;margin-top:8px;margin-right:6px;
+  border:0;border-radius:999px;
+  background:#111827;color:#fff;
+  padding:8px 12px;font-weight:900;cursor:pointer;
+}
+.zh{background:#fff8f1;border:1px solid #e5ddd5;border-radius:18px;padding:14px;margin-top:10px}
+.mini{background:#fff4e6;border:1px solid #f0dbc1;padding:11px;border-radius:14px;margin-top:10px}
+.wrong div{border-top:1px solid #ece7e1;padding:6px 0}
+.wrong div:first-child{border-top:0}
+
+.hide-lv .word{
+  background:transparent!important;
+  color:inherit!important;
+  font-weight:inherit;
+  border-bottom:2px dashed #9ca3af!important;
+}
+
+.fab{
+  position:fixed;right:18px;bottom:18px;
+  display:flex;flex-direction:column;gap:12px;z-index:1000;
+}
+.fab button{
+  border:2px solid #111827;border-radius:999px;
+  background:#fffdf8;color:#111827;
+  padding:13px 18px;font-weight:900;cursor:pointer;
+  box-shadow:4px 4px 0 rgba(17,24,39,.16);
+}
+.fab .btn-home{background:#ead4d8}
+
+#overlayPopup{
+  position:fixed;inset:0;
+  background:rgba(20,24,32,.55);
+  backdrop-filter:blur(4px);
+  display:flex;justify-content:center;align-items:center;
+  z-index:3000;padding:20px;
+}
+.center-popup{
+  width:min(760px,100%);max-height:85vh;overflow:auto;
+  background:#fffdf8;border:2px solid #111827;border-radius:30px;
+  padding:28px;box-shadow:8px 8px 0 rgba(17,24,39,.18);position:relative;
+}
+.big-close{
+  position:absolute;right:18px;top:12px;
+  font-size:22px;cursor:pointer;font-weight:900;color:#7b6d63;
+}
+
+@media(max-width:480px){
+  h1{font-size:22px}
+  .passage{font-size:18px}
+  .bank{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+
+<section class="card top-header">
+<h1>11505 學測第2回｜文意選填 21～30 檢討卷</h1>
+<div class="small">外送與幽靈廚房｜答案已標示（藍色格）｜Level 2 以上單字可點｜每句可翻譯｜選項 A～J 可點查字。</div>
+<div class="legend">
+  <span style="color:var(--lv2);border-color:#93c5fd;background:var(--lv2bg)">Level 2</span>
+  <span style="color:var(--lv3);border-color:#6ee7b7;background:var(--lv3bg)">Level 3</span>
+  <span style="color:var(--lv4);border-color:#c4b5fd;background:var(--lv4bg)">Level 4</span>
+  <span style="color:var(--lv5);border-color:#fdba74;background:var(--lv5bg)">Level 5</span>
+  <span style="color:var(--lv6);border-color:#fca5a5;background:var(--lv6bg)">Level 6</span>
+</div>
+</section>
+
+<section class="card choice-section">
+<h2>選項區（A～J，每個都可點）</h2>
+<div class="bank" id="choiceBank"></div>
+</section>
+
+<section class="card passage" id="passage"></section>
+
+</div>
+
+<div class="fab">
+  <button onclick="toggleLevelColors()">🎨 Level 顏色</button>
+  <button onclick="toggleAllTranslations()">📖 全文翻譯</button>
+  <button onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 頂端</button>
+  <button class="btn-home" onclick="goHome()">🏠 首頁</button>
+</div>
+
+<script>
+const fullTranslation = `
+近年來，人們體驗食物的方式經歷了重大轉變，這在很大程度上是由外送服務的快速成長所推動的。過去，取得一餐多半意味著在家烹飪或外出用餐；如今只要在智慧型手機上輕點幾下，各種熱食就能直接送到家門口。這種轉變讓用餐更加便利，也從根本上改變了消費者與食物之間的關係。<br><br>
+這個產業最值得注意的發展之一，是幽靈廚房的興起。與傳統餐廳不同，這些店家不提供內用空間，而只為外送準備食物。這種商業模式讓業主能省下租金與裝潢費用，把心力完全放在備餐上。因為這些廚房可以設在較便宜的區域，他們能以具競爭力的價格提供多樣菜單。對顧客而言，這代表不必離開舒適的家，就能取得更豐富的食物選擇。<br><br>
+此外，外送 app 正在改變選餐的決策過程。在忙碌的餐廳裡，顧客可能感到必須趕快點餐；透過數位平台下單則可以慢慢調整，不必匆忙。無論是多加起司，還是從漢堡裡拿掉洋蔥，過程都更彈性、壓力更小。因此，在家享用高品質食物越來越普遍，有些情況甚至取代全家外出到高級餐廳的傳統。隨著科技持續進步，這股轉變可能還會加深；人工智慧不久後或許會依個人偏好、飲食需求或過往訂單來推薦餐點。消費者不再受地點或時間限制，隨時隨地都能期待吃到喜愛的菜色。
+`;
+
+/* 詞彙：level, 詞性區塊（音標、中文、搭配、例句） */
+const vocabDB = {
+  recent:{level:2,entries:[{pos:'adj.',ipa:'/ˈriːsnt/',zh:'最近的；近年的',colloc:'in recent years',ex:'Technology has changed rapidly in recent years.'}]},
+  experience:{level:2,entries:[{pos:'v./n.',ipa:'/ɪkˈspɪriəns/',zh:'經歷；體驗',colloc:'experience food / have an experience',ex:'Many people want to experience local food when they travel.'}]},
+  undergone:{base:'undergo',level:4,entries:[{pos:'v.',ipa:'/ˌʌndərˈɡoʊ/',zh:'經歷；遭受（過去分詞）',colloc:'undergo a transformation',ex:'The city has undergone major changes.'}]},
+  undergo:{level:4,entries:[{pos:'v.',ipa:'/ˌʌndərˈɡoʊ/',zh:'經歷；遭受',colloc:'undergo surgery',ex:'She will undergo surgery next week.'}]},
+  significant:{level:3,entries:[{pos:'adj.',ipa:'/sɪɡˈnɪfɪkənt/',zh:'重大的；顯著的',colloc:'a significant change',ex:'There was a significant increase in sales.'}]},
+  transformation:{level:4,entries:[{pos:'n.',ipa:'/ˌtrænsfərˈmeɪʃn/',zh:'轉變；改造',colloc:'undergo a transformation',ex:'Digital tools led to a transformation in education.'}]},
+  driven:{base:'drive',level:2,entries:[{pos:'v.',ipa:'/draɪv/',zh:'驅動；推動（過去分詞）',colloc:'be driven by',ex:'The change was driven by new technology.'}]},
+  drive:{level:2,entries:[{pos:'v.',ipa:'/draɪv/',zh:'驅動；推動',colloc:'drive growth',ex:'Social media can drive sales.'}]},
+  rapid:{level:3,entries:[{pos:'adj.',ipa:'/ˈræpɪd/',zh:'快速的',colloc:'rapid growth',ex:'The company saw rapid growth last year.'}]},
+  growth:{level:2,entries:[{pos:'n.',ipa:'/ɡroʊθ/',zh:'成長；增長',colloc:'economic growth',ex:'The growth of delivery services continues.'}]},
+  delivery:{level:3,entries:[{pos:'n.',ipa:'/dɪˈlɪvəri/',zh:'外送；遞送',colloc:'delivery service / food delivery',ex:'Food delivery has become very popular.'}]},
+  services:{base:'service',level:2,entries:[{pos:'n.',ipa:'/ˈsɜːrvɪs/',zh:'服務',colloc:'delivery services',ex:'Online services make life easier.'}]},
+  service:{level:2,entries:[{pos:'n.',ipa:'/ˈsɜːrvɪs/',zh:'服務',colloc:'customer service',ex:'The hotel offers excellent service.'}]},
+  meant:{base:'mean',level:2,entries:[{pos:'v.',ipa:'/miːn/',zh:'意味著（過去式）',colloc:'mean doing something',ex:'Getting a meal meant cooking at home.'}]},
+  mean:{level:2,entries:[{pos:'v.',ipa:'/miːn/',zh:'意味著',colloc:'mean to do',ex:'I did not mean to upset you.'}]},
+  cooking:{base:'cook',level:1,entries:[{pos:'v./n.',ipa:'/ˈkʊkɪŋ/',zh:'烹飪',colloc:'home cooking',ex:'Home cooking can be healthier.'}]},
+  dining:{base:'dine',level:3,entries:[{pos:'n.',ipa:'/ˈdaɪnɪŋ/',zh:'用餐',colloc:'dining out',ex:'Dining out is popular on weekends.'}]},
+  dine:{level:3,entries:[{pos:'v.',ipa:'/daɪn/',zh:'用餐',colloc:'dine out',ex:'We decided to dine out tonight.'}]},
+  smartphone:{level:4,entries:[{pos:'n.',ipa:'/ˈsmɑːrtfoʊn/',zh:'智慧型手機',colloc:'on a smartphone',ex:'You can order food on a smartphone.'}]},
+  variety:{level:3,entries:[{pos:'n.',ipa:'/vəˈraɪəti/',zh:'多樣性；種類',colloc:'a wide variety of',ex:'The menu offers a wide variety of dishes.'}]},
+  delivered:{base:'deliver',level:2,entries:[{pos:'v.',ipa:'/dɪˈlɪvər/',zh:'遞送；外送',colloc:'deliver to your doorstep',ex:'Hot meals can be delivered quickly.'}]},
+  deliver:{level:2,entries:[{pos:'v.',ipa:'/dɪˈlɪvər/',zh:'遞送',colloc:'deliver food',ex:'The app can deliver food in thirty minutes.'}]},
+  directly:{level:3,entries:[{pos:'adv.',ipa:'/dəˈrektli/',zh:'直接地',colloc:'deliver directly to',ex:'Packages are sent directly to customers.'}]},
+  doorstep:{level:4,entries:[{pos:'n.',ipa:'/ˈdɔːrstep/',zh:'門口；家門前',colloc:'on your doorstep',ex:'The package arrived on my doorstep.'}]},
+  shift:{level:3,entries:[{pos:'n./v.',ipa:'/ʃɪft/',zh:'轉變；轉移',colloc:'a shift in attitude',ex:'This shift has changed how people eat.'}]},
+  convenient:{level:3,entries:[{pos:'adj.',ipa:'/kənˈviːniənt/',zh:'便利的',colloc:'make life more convenient',ex:'Online shopping is very convenient.'}]},
+  fundamentally:{level:4,entries:[{pos:'adv.',ipa:'/ˌfʌndəˈmentəli/',zh:'根本上；從根本上',colloc:'fundamentally change',ex:'The Internet fundamentally changed communication.'}]},
+  altered:{base:'alter',level:3,entries:[{pos:'v.',ipa:'/ˈɔːltər/',zh:'改變',colloc:'alter the relationship',ex:'Technology has altered daily life.'}]},
+  alter:{level:3,entries:[{pos:'v.',ipa:'/ˈɔːltər/',zh:'改變',colloc:'alter a plan',ex:'We had to alter our schedule.'}]},
+  relationship:{level:2,entries:[{pos:'n.',ipa:'/rɪˈleɪʃnʃɪp/',zh:'關係',colloc:'relationship between A and B',ex:'The relationship between consumers and food has changed.'}]},
+  consumers:{base:'consumer',level:3,entries:[{pos:'n.',ipa:'/kənˈsuːmər/',zh:'消費者',colloc:'consumers and producers',ex:'Consumers want faster delivery.'}]},
+  consumer:{level:3,entries:[{pos:'n.',ipa:'/kənˈsuːmər/',zh:'消費者',colloc:'consumer behavior',ex:'The app studies consumer behavior.'}]},
+  notable:{level:4,entries:[{pos:'adj.',ipa:'/ˈnoʊtəbl/',zh:'值得注意的；顯著的',colloc:'a notable development',ex:'This is a notable improvement.'}]},
+  developments:{base:'development',level:3,entries:[{pos:'n.',ipa:'/dɪˈveləpmənt/',zh:'發展；進展',colloc:'recent developments',ex:'Recent developments in AI are exciting.'}]},
+  development:{level:3,entries:[{pos:'n.',ipa:'/dɪˈveləpmənt/',zh:'發展',colloc:'economic development',ex:'The development of apps changed dining.'}]},
+  industry:{level:3,entries:[{pos:'n.',ipa:'/ˈɪndəstri/',zh:'產業',colloc:'the food industry',ex:'The delivery industry is growing fast.'}]},
+  rise:{level:3,entries:[{pos:'n./v.',ipa:'/raɪz/',zh:'興起；上升',colloc:'the rise of',ex:'We see the rise of ghost kitchens.'}]},
+  ghost:{level:4,entries:[{pos:'n./adj.',ipa:'/ɡoʊst/',zh:'幽靈（此指無店面之廚房）',colloc:'ghost kitchen',ex:'A ghost kitchen has no dine-in area.'}]},
+  kitchens:{base:'kitchen',level:2,entries:[{pos:'n.',ipa:'/ˈkɪtʃɪn/',zh:'廚房',colloc:'ghost kitchen',ex:'These kitchens prepare food for delivery only.'}]},
+  kitchen:{level:2,entries:[{pos:'n.',ipa:'/ˈkɪtʃɪn/',zh:'廚房',colloc:'in the kitchen',ex:'Chefs work in the kitchen.'}]},
+  traditional:{level:3,entries:[{pos:'adj.',ipa:'/trəˈdɪʃənl/',zh:'傳統的',colloc:'traditional restaurants',ex:'Traditional restaurants offer dine-in service.'}]},
+  restaurants:{base:'restaurant',level:2,entries:[{pos:'n.',ipa:'/ˈrestrɑːnt/',zh:'餐廳',colloc:'traditional restaurants',ex:'Many restaurants now offer delivery.'}]},
+  restaurant:{level:2,entries:[{pos:'n.',ipa:'/ˈrestrɑːnt/',zh:'餐廳',colloc:'local restaurant',ex:'We ordered from a nearby restaurant.'}]},
+  establishments:{base:'establishment',level:4,entries:[{pos:'n.',ipa:'/ɪˈstæblɪʃmənt/',zh:'店家；機構',colloc:'business establishments',ex:'These establishments do not have dining rooms.'}]},
+  establishment:{level:4,entries:[{pos:'n.',ipa:'/ɪˈstæblɪʃmənt/',zh:'店家；機構',colloc:'a new establishment',ex:'The establishment opened last month.'}]},
+  provide:{level:2,entries:[{pos:'v.',ipa:'/prəˈvaɪd/',zh:'提供',colloc:'provide a service',ex:'They do not provide dine-in space.'}]},
+  customers:{base:'customer',level:2,entries:[{pos:'n.',ipa:'/ˈkʌstəmər/',zh:'顧客',colloc:'serve customers',ex:'Customers can order through an app.'}]},
+  customer:{level:2,entries:[{pos:'n.',ipa:'/ˈkʌstəmər/',zh:'顧客',colloc:'loyal customers',ex:'The store values every customer.'}]},
+  exist:{level:3,entries:[{pos:'v.',ipa:'/ɪɡˈzɪst/',zh:'存在',colloc:'exist solely to',ex:'They exist solely to prepare food for delivery.'}]},
+  solely:{level:4,entries:[{pos:'adv.',ipa:'/ˈsoʊlli/',zh:'僅僅；只',colloc:'solely for delivery',ex:'The kitchen operates solely for online orders.'}]},
+  prepare:{level:2,entries:[{pos:'v.',ipa:'/prɪˈper/',zh:'準備；備餐',colloc:'prepare food',ex:'Chefs prepare meals in the kitchen.'}]},
+  preparation:{level:3,entries:[{pos:'n.',ipa:'/ˌprepəˈreɪʃn/',zh:'準備；備餐',colloc:'food preparation',ex:'They focus on food preparation.'}]},
+  business:{level:2,entries:[{pos:'n.',ipa:'/ˈbɪznəs/',zh:'商業；生意',colloc:'business model',ex:'This business model saves money on rent.'}]},
+  model:{level:3,entries:[{pos:'n.',ipa:'/ˈmɑːdl/',zh:'模式',colloc:'business model',ex:'The new model reduces costs.'}]},
+  allows:{base:'allow',level:2,entries:[{pos:'v.',ipa:'/əˈlaʊ/',zh:'允許；使可能',colloc:'allow someone to do',ex:'The app allows users to track orders.'}]},
+  allow:{level:2,entries:[{pos:'v.',ipa:'/əˈlaʊ/',zh:'允許',colloc:'allow owners to save',ex:'Lower rent allows owners to save money.'}]},
+  owners:{base:'owner',level:2,entries:[{pos:'n.',ipa:'/ˈoʊnər/',zh:'業主；老闆',colloc:'business owners',ex:'Owners can focus on cooking.'}]},
+  owner:{level:2,entries:[{pos:'n.',ipa:'/ˈoʊnər/',zh:'業主',colloc:'restaurant owner',ex:'The owner runs a small shop.'}]},
+  save:{level:2,entries:[{pos:'v.',ipa:'/seɪv/',zh:'節省；儲蓄',colloc:'save money on rent',ex:'They save money by cooking at home.'}]},
+  rent:{level:3,entries:[{pos:'n./v.',ipa:'/rent/',zh:'租金；租用',colloc:'pay rent',ex:'Ghost kitchens save money on rent.'}]},
+  decorations:{base:'decoration',level:3,entries:[{pos:'n.',ipa:'/ˌdekəˈreɪʃn/',zh:'裝潢；裝飾',colloc:'interior decorations',ex:'They spent less on decorations.'}]},
+  decoration:{level:3,entries:[{pos:'n.',ipa:'/ˌdekəˈreɪʃn/',zh:'裝潢；裝飾',colloc:'home decoration',ex:'The cafe has simple decoration.'}]},
+  efforts:{base:'effort',level:2,entries:[{pos:'n.',ipa:'/ˈefərt/',zh:'心力；努力',colloc:'focus efforts on',ex:'They focus their efforts on food quality.'}]},
+  effort:{level:2,entries:[{pos:'n.',ipa:'/ˈefərt/',zh:'努力',colloc:'make an effort',ex:'She made an effort to learn English.'}]},
+  entirely:{level:3,entries:[{pos:'adv.',ipa:'/ɪnˈtaɪərli/',zh:'完全地',colloc:'focus entirely on',ex:'They work entirely on food preparation.'}]},
+  located:{base:'locate',level:3,entries:[{pos:'v.',ipa:'/ˈloʊkeɪt/',zh:'位於；設置',colloc:'be located in',ex:'The kitchen can be located in cheaper areas.'}]},
+  locate:{level:3,entries:[{pos:'v.',ipa:'/ˈloʊkeɪt/',zh:'找出位置；設置',colloc:'locate a store',ex:'They located the kitchen near highways.'}]},
+  cheaper:{base:'cheap',level:2,entries:[{pos:'adj.',ipa:'/tʃiːp/',zh:'較便宜的',colloc:'cheaper areas',ex:'Rent is cheaper outside the city center.'}]},
+  cheap:{level:2,entries:[{pos:'adj.',ipa:'/tʃiːp/',zh:'便宜的',colloc:'cheap prices',ex:'Students look for cheap meals.'}]},
+  areas:{base:'area',level:2,entries:[{pos:'n.',ipa:'/ˈeriə/',zh:'區域',colloc:'urban areas',ex:'Delivery is fast in busy areas.'}]},
+  area:{level:2,entries:[{pos:'n.',ipa:'/ˈeriə/',zh:'區域',colloc:'residential area',ex:'The restaurant is in a quiet area.'}]},
+  offer:{level:2,entries:[{pos:'v.',ipa:'/ˈɔːfər/',zh:'提供',colloc:'offer menu choices',ex:'They offer diverse menu choices.'}]},
+  diverse:{level:4,entries:[{pos:'adj.',ipa:'/daɪˈvɜːrs/',zh:'多樣的',colloc:'diverse menu',ex:'The city has diverse food options.'}]},
+  menu:{level:2,entries:[{pos:'n.',ipa:'/ˈmenjuː/',zh:'菜單',colloc:'menu choices',ex:'Check the menu before you order.'}]},
+  choices:{base:'choice',level:2,entries:[{pos:'n.',ipa:'/tʃɔɪs/',zh:'選擇',colloc:'menu choices',ex:'Customers want more choices.'}]},
+  choice:{level:2,entries:[{pos:'n.',ipa:'/tʃɔɪs/',zh:'選擇',colloc:'make a choice',ex:'It is hard to make a choice.'}]},
+  competitive:{level:4,entries:[{pos:'adj.',ipa:'/kəmˈpetətɪv/',zh:'具競爭力的',colloc:'competitive prices',ex:'Stores offer competitive prices online.'}]},
+  prices:{base:'price',level:2,entries:[{pos:'n.',ipa:'/praɪs/',zh:'價格',colloc:'at competitive prices',ex:'Prices are lower during sales.'}]},
+  price:{level:2,entries:[{pos:'n.',ipa:'/praɪs/',zh:'價格',colloc:'reasonable price',ex:'The meal has a reasonable price.'}]},
+  access:{level:4,entries:[{pos:'n./v.',ipa:'/ˈækses/',zh:'取得；使用權',colloc:'have access to',ex:'Customers have access to more food options.'}]},
+  broader:{base:'broad',level:3,entries:[{pos:'adj.',ipa:'/brɔːd/',zh:'更廣泛的',colloc:'a broader range',ex:'Apps offer a broader range of restaurants.'}]},
+  broad:{level:3,entries:[{pos:'adj.',ipa:'/brɔːd/',zh:'廣泛的',colloc:'in broad terms',ex:'The topic is too broad for one essay.'}]},
+  range:{level:3,entries:[{pos:'n.',ipa:'/reɪndʒ/',zh:'範圍；一系列',colloc:'a range of options',ex:'There is a wide range of dishes.'}]},
+  options:{base:'option',level:2,entries:[{pos:'n.',ipa:'/ˈɑːpʃn/',zh:'選項',colloc:'food options',ex:'You have many options on the app.'}]},
+  option:{level:2,entries:[{pos:'n.',ipa:'/ˈɑːpʃn/',zh:'選項',colloc:'choose an option',ex:'Select the best option for you.'}]},
+  leaving:{base:'leave',level:2,entries:[{pos:'v.',ipa:'/liːv/',zh:'離開',colloc:'without leaving home',ex:'You can shop without leaving home.'}]},
+  leave:{level:2,entries:[{pos:'v.',ipa:'/liːv/',zh:'離開',colloc:'leave the house',ex:'He does not want to leave the house.'}]},
+  comfort:{level:3,entries:[{pos:'n.',ipa:'/ˈkʌmfərt/',zh:'舒適',colloc:'the comfort of home',ex:'She read in the comfort of her room.'}]},
+  homes:{base:'home',level:1,entries:[{pos:'n.',ipa:'/hoʊm/',zh:'家',colloc:'at home',ex:'Many people work from home now.'}]},
+  furthermore:{level:4,entries:[{pos:'adv.',ipa:'/ˌfɜːrðərˈmɔːr/',zh:'此外；而且',colloc:'Furthermore, ...',ex:'Furthermore, apps are changing how we choose meals.'}]},
+  apps:{base:'app',level:3,entries:[{pos:'n.',ipa:'/æp/',zh:'應用程式',colloc:'delivery apps',ex:'Delivery apps are very popular.'}]},
+  app:{level:3,entries:[{pos:'n.',ipa:'/æp/',zh:'應用程式',colloc:'download an app',ex:'Download the app to order food.'}]},
+  changing:{base:'change',level:2,entries:[{pos:'v.',ipa:'/tʃeɪndʒ/',zh:'改變',colloc:'change the process',ex:'Technology is changing meal selection.'}]},
+  change:{level:2,entries:[{pos:'v./n.',ipa:'/tʃeɪndʒ/',zh:'改變',colloc:'social change',ex:'Apps can change consumer habits.'}]},
+  decision:{level:3,entries:[{pos:'n.',ipa:'/dɪˈsɪʒn/',zh:'決定',colloc:'decision-making process',ex:'The decision-making process takes time.'}]},
+  making:{base:'make',level:1,entries:[{pos:'v.',ipa:'/meɪk/',zh:'製作；做出',colloc:'decision making',ex:'Good planning helps decision making.'}]},
+  process:{level:3,entries:[{pos:'n./v.',ipa:'/ˈprɑːses/',zh:'過程；處理',colloc:'the selection process',ex:'The ordering process is simple.'}]},
+  selection:{level:3,entries:[{pos:'n.',ipa:'/sɪˈlekʃn/',zh:'選擇；挑選',colloc:'meal selection',ex:'Apps influence meal selection.'}]},
+  busy:{level:2,entries:[{pos:'adj.',ipa:'/ˈbɪzi/',zh:'忙碌的',colloc:'a busy restaurant',ex:'The restaurant is always busy at noon.'}]},
+  might:{level:2,entries:[{pos:'modal v.',ipa:'/maɪt/',zh:'可能',colloc:'might feel pressured',ex:'You might feel tired after work.'}]},
+  feel:{level:2,entries:[{pos:'v.',ipa:'/fiːl/',zh:'感到',colloc:'feel pressured to',ex:'Students feel pressured to study hard.'}]},
+  pressured:{base:'pressure',level:4,entries:[{pos:'adj.',ipa:'/ˈpreʃərd/',zh:'感到壓力的',colloc:'feel pressured to do',ex:'Customers feel pressured to order quickly.'}]},
+  pressure:{level:3,entries:[{pos:'n./v.',ipa:'/ˈpreʃər/',zh:'壓力',colloc:'under pressure',ex:'He works well under pressure.'}]},
+  order:{level:2,entries:[{pos:'v./n.',ipa:'/ˈɔːrdər/',zh:'點餐；訂購',colloc:'order quickly',ex:'Please order when you are ready.'}]},
+  quickly:{base:'quick',level:2,entries:[{pos:'adv.',ipa:'/ˈkwɪkli/',zh:'快速地',colloc:'order quickly',ex:'She finished the test quickly.'}]},
+  quick:{level:2,entries:[{pos:'adj.',ipa:'/kwɪk/',zh:'快速的',colloc:'a quick meal',ex:'He wanted a quick lunch.'}]},
+  however:{level:2,entries:[{pos:'adv.',ipa:'/haʊˈevər/',zh:'然而',colloc:'However, ...',ex:'However, online ordering takes more time.'}]},
+  ordering:{base:'order',level:2,entries:[{pos:'v.',ipa:'/ˈɔːrdərɪŋ/',zh:'點餐；訂購',colloc:'ordering through an app',ex:'Ordering through an app is easy.'}]},
+  digital:{level:4,entries:[{pos:'adj.',ipa:'/ˈdɪdʒɪtl/',zh:'數位的',colloc:'digital platform',ex:'Use a digital platform to pay.'}]},
+  platform:{level:4,entries:[{pos:'n.',ipa:'/ˈplætfɔːrm/',zh:'平台',colloc:'online platform',ex:'The platform connects buyers and sellers.'}]},
+  allows:{base:'allow',level:2,entries:[{pos:'v.',ipa:'/əˈlaʊz/',zh:'使能夠',colloc:'allow users to',ex:'The platform allows users to customize orders.'}]},
+  users:{base:'user',level:3,entries:[{pos:'n.',ipa:'/ˈjuːzər/',zh:'使用者',colloc:'app users',ex:'Users can track their orders.'}]},
+  user:{level:3,entries:[{pos:'n.',ipa:'/ˈjuːzər/',zh:'使用者',colloc:'registered user',ex:'Each user has an account.'}]},
+  adjust:{level:3,entries:[{pos:'v.',ipa:'/əˈdʒʌst/',zh:'調整',colloc:'adjust an order',ex:'You can adjust your order before paying.'}]},
+  orders:{base:'order',level:2,entries:[{pos:'n.',ipa:'/ˈɔːrdərz/',zh:'訂單',colloc:'adjust orders',ex:'She changed her orders several times.'}]},
+  rushed:{base:'rush',level:3,entries:[{pos:'adj.',ipa:'/rʌʃt/',zh:'匆忙的',colloc:'feel rushed',ex:'Do not feel rushed when you choose food.'}]},
+  rush:{level:3,entries:[{pos:'v./n.',ipa:'/rʌʃ/',zh:'催促；匆忙',colloc:'in a rush',ex:'He ate breakfast in a rush.'}]},
+  whether:{level:3,entries:[{pos:'conj.',ipa:'/ˈweðər/',zh:'是否；無論',colloc:'whether ... or ...',ex:'Whether you add cheese or remove onions, it is your choice.'}]},
+  choosing:{base:'choose',level:2,entries:[{pos:'v.',ipa:'/ˈtʃuːzɪŋ/',zh:'選擇',colloc:'choose to do',ex:'Choosing healthy food is important.'}]},
+  choose:{level:2,entries:[{pos:'v.',ipa:'/tʃuːz/',zh:'選擇',colloc:'choose between A and B',ex:'You can choose any topping you like.'}]},
+  extra:{level:2,entries:[{pos:'adj.',ipa:'/ˈekstrə/',zh:'額外的',colloc:'extra cheese',ex:'Would you like extra cheese on your pizza?'}]},
+  cheese:{level:2,entries:[{pos:'n.',ipa:'/tʃiːz/',zh:'起司',colloc:'add cheese',ex:'Add extra cheese if you like.'}]},
+  remove:{level:3,entries:[{pos:'v.',ipa:'/rɪˈmuːv/',zh:'移除；拿掉',colloc:'remove onions from',ex:'Please remove onions from my burger.'}]},
+  onions:{base:'onion',level:2,entries:[{pos:'n.',ipa:'/ˈʌnjən/',zh:'洋蔥',colloc:'slice onions',ex:'Some people do not like onions.'}]},
+  onion:{level:2,entries:[{pos:'n.',ipa:'/ˈʌnjən/',zh:'洋蔥',colloc:'chop an onion',ex:'Chop the onion before cooking.'}]},
+  burger:{level:3,entries:[{pos:'n.',ipa:'/ˈbɜːrɡər/',zh:'漢堡',colloc:'a cheese burger',ex:'He ordered a burger for lunch.'}]},
+  flexible:{level:4,entries:[{pos:'adj.',ipa:'/ˈfleksəbl/',zh:'有彈性的；靈活的',colloc:'flexible schedule',ex:'Online ordering is more flexible.'}]},
+  stressful:{level:4,entries:[{pos:'adj.',ipa:'/ˈstresfl/',zh:'有壓力的',colloc:'less stressful',ex:'Working from home can be less stressful.'}]},
+  consequently:{level:4,entries:[{pos:'adv.',ipa:'/ˌkɑːnsɪˈkwentli/',zh:'因此；結果',colloc:'Consequently, ...',ex:'Consequently, more people eat at home.'}]},
+  eating:{base:'eat',level:1,entries:[{pos:'v.',ipa:'/ˈiːtɪŋ/',zh:'吃',colloc:'eating at home',ex:'Eating at home can save money.'}]},
+  eat:{level:1,entries:[{pos:'v.',ipa:'/iːt/',zh:'吃',colloc:'eat healthy food',ex:'Try to eat more vegetables.'}]},
+  quality:{level:2,entries:[{pos:'n.',ipa:'/ˈkwɑːləti/',zh:'品質',colloc:'high-quality food',ex:'High-quality food costs more.'}]},
+  foods:{base:'food',level:1,entries:[{pos:'n.',ipa:'/fuːdz/',zh:'食物',colloc:'healthy foods',ex:'Fresh foods taste better.'}]},
+  food:{level:1,entries:[{pos:'n.',ipa:'/fuːd/',zh:'食物',colloc:'fast food',ex:'Fast food is convenient but not always healthy.'}]},
+  increasingly:{level:4,entries:[{pos:'adv.',ipa:'/ɪnˈkriːsɪŋli/',zh:'越來越',colloc:'increasingly common',ex:'Home delivery is increasingly common.'}]},
+  common:{level:2,entries:[{pos:'adj.',ipa:'/ˈkɑːmən/',zh:'普遍的；常見的',colloc:'become common',ex:'Online classes have become common.'}]},
+  cases:{base:'case',level:2,entries:[{pos:'n.',ipa:'/ˈkeɪsɪz/',zh:'情況',colloc:'in some cases',ex:'In some cases, delivery is faster.'}]},
+  case:{level:2,entries:[{pos:'n.',ipa:'/keɪs/',zh:'情況；案例',colloc:'in this case',ex:'In this case, eating at home is cheaper.'}]},
+  replacing:{base:'replace',level:3,entries:[{pos:'v.',ipa:'/rɪˈpleɪsɪŋ/',zh:'取代',colloc:'replace A with B',ex:'Apps are replacing phone calls.'}]},
+  replace:{level:3,entries:[{pos:'v.',ipa:'/rɪˈpleɪs/',zh:'取代；更換',colloc:'replace an old phone',ex:'We replaced the old system with a new one.'}]},
+  traditional:{level:3,entries:[{pos:'adj.',ipa:'/trəˈdɪʃənl/',zh:'傳統的',colloc:'traditional family outings',ex:'They enjoy traditional holiday meals.'}]},
+  family:{level:1,entries:[{pos:'n.',ipa:'/ˈfæməli/',zh:'家庭',colloc:'family outings',ex:'Family outings bring people together.'}]},
+  outings:{base:'outing',level:3,entries:[{pos:'n.',ipa:'/ˈaʊtɪŋz/',zh:'外出活動',colloc:'family outings',ex:'Weekend outings are fun for kids.'}]},
+  outing:{level:3,entries:[{pos:'n.',ipa:'/ˈaʊtɪŋ/',zh:'外出活動',colloc:'a school outing',ex:'We had an outing to the museum.'}]},
+  fancy:{level:4,entries:[{pos:'adj.',ipa:'/ˈfænsi/',zh:'高級的；花俏的',colloc:'fancy restaurants',ex:'They went to a fancy restaurant.'}]},
+  technology:{level:3,entries:[{pos:'n.',ipa:'/tekˈnɑːlədʒi/',zh:'科技',colloc:'advancing technology',ex:'Technology continues to advance.'}]},
+  continues:{base:'continue',level:2,entries:[{pos:'v.',ipa:'/kənˈtɪnjuːz/',zh:'持續',colloc:'continue to advance',ex:'The trend continues to grow.'}]},
+  continue:{level:2,entries:[{pos:'v.',ipa:'/kənˈtɪnjuː/',zh:'持續',colloc:'continue doing',ex:'Please continue reading.'}]},
+  advance:{level:3,entries:[{pos:'v.',ipa:'/ədˈvæns/',zh:'進步；前進',colloc:'continue to advance',ex:'Medical science continues to advance.'}]},
+  likely:{level:3,entries:[{pos:'adv./adj.',ipa:'/ˈlaɪkli/',zh:'很可能',colloc:'be likely to',ex:'Prices are likely to rise.'}]},
+  deepen:{level:4,entries:[{pos:'v.',ipa:'/ˈdiːpən/',zh:'加深；深化',colloc:'deepen a transformation',ex:'The crisis may deepen social problems.'}]},
+  artificial:{level:4,entries:[{pos:'adj.',ipa:'/ˌɑːrtɪˈfɪʃl/',zh:'人工的',colloc:'artificial intelligence',ex:'Artificial intelligence helps recommend music.'}]},
+  intelligence:{level:4,entries:[{pos:'n.',ipa:'/ɪnˈtelɪdʒəns/',zh:'智慧；情報',colloc:'artificial intelligence (AI)',ex:'AI can learn from large amounts of data.'}]},
+  recommend:{level:3,entries:[{pos:'v.',ipa:'/ˌrekəˈmend/',zh:'推薦',colloc:'recommend meals / recommend that',ex:'The app may recommend meals you will like.'}]},
+  meals:{base:'meal',level:2,entries:[{pos:'n.',ipa:'/miːlz/',zh:'餐點',colloc:'hot meals',ex:'Hot meals arrive in thirty minutes.'}]},
+  meal:{level:2,entries:[{pos:'n.',ipa:'/miːl/',zh:'一餐；餐點',colloc:'a light meal',ex:'Breakfast is the most important meal.'}]},
+  based:{base:'base',level:2,entries:[{pos:'v.',ipa:'/beɪst/',zh:'以……為基礎',colloc:'based on',ex:'Menus are based on your past orders.'}]},
+  base:{level:2,entries:[{pos:'v./n.',ipa:'/beɪs/',zh:'以……為基礎；基地',colloc:'base A on B',ex:'Judges base scores on performance.'}]},
+  personal:{level:2,entries:[{pos:'adj.',ipa:'/ˈpɜːrsənl/',zh:'個人的',colloc:'personal preferences',ex:'The app remembers personal preferences.'}]},
+  preferences:{base:'preference',level:4,entries:[{pos:'n.',ipa:'/ˈprefərənsɪz/',zh:'偏好',colloc:'personal preferences',ex:'Everyone has different food preferences.'}]},
+  preference:{level:4,entries:[{pos:'n.',ipa:'/ˈprefərəns/',zh:'偏好',colloc:'show a preference for',ex:'She has a preference for spicy food.'}]},
+  dietary:{level:5,entries:[{pos:'adj.',ipa:'/ˈdaɪəteri/',zh:'飲食的',colloc:'dietary needs',ex:'The menu lists dietary needs clearly.'}]},
+  needs:{base:'need',level:2,entries:[{pos:'n.',ipa:'/niːdz/',zh:'需求',colloc:'dietary needs',ex:'The plan meets students\' needs.'}]},
+  need:{level:2,entries:[{pos:'n./v.',ipa:'/niːd/',zh:'需要',colloc:'meet the need',ex:'Children need enough sleep.'}]},
+  previous:{level:3,entries:[{pos:'adj.',ipa:'/ˈpriːviəs/',zh:'先前的',colloc:'previous orders',ex:'Check your previous orders on the app.'}]},
+  orders:{base:'order',level:2,entries:[{pos:'n.',ipa:'/ˈɔːrdərz/',zh:'訂單',colloc:'previous orders',ex:'AI learns from previous orders.'}]},
+  limited:{base:'limit',level:3,entries:[{pos:'adj.',ipa:'/ˈlɪmɪtɪd/',zh:'受限的',colloc:'be limited by',ex:'Choice was limited by location before apps.'}]},
+  limit:{level:3,entries:[{pos:'v./n.',ipa:'/ˈlɪmɪt/',zh:'限制',colloc:'limit someone\'s choices',ex:'Bad weather can limit travel plans.'}]},
+  location:{level:3,entries:[{pos:'n.',ipa:'/loʊˈkeɪʃn/',zh:'地點',colloc:'limited by location',ex:'Delivery depends on your location.'}]},
+  schedule:{level:3,entries:[{pos:'n./v.',ipa:'/ˈskedʒuːl/',zh:'行程；時間表',colloc:'busy schedule',ex:'A tight schedule makes cooking hard.'}]},
+  expect:{level:2,entries:[{pos:'v.',ipa:'/ɪkˈspekt/',zh:'期待；預期',colloc:'expect to enjoy',ex:'Customers expect fast delivery.'}]},
+  enjoy:{level:2,entries:[{pos:'v.',ipa:'/ɪnˈdʒɔɪ/',zh:'享受',colloc:'enjoy favorite dishes',ex:'I enjoy trying new restaurants.'}]},
+  favorite:{level:2,entries:[{pos:'adj.',ipa:'/ˈfeɪvərɪt/',zh:'最喜愛的',colloc:'favorite dishes',ex:'Pasta is my favorite dish.'}]},
+  dishes:{base:'dish',level:2,entries:[{pos:'n.',ipa:'/ˈdɪʃɪz/',zh:'菜餚',colloc:'favorite dishes',ex:'The restaurant serves local dishes.'}]},
+  dish:{level:2,entries:[{pos:'n.',ipa:'/dɪʃ/',zh:'菜餚；盤子',colloc:'main dish',ex:'Rice is a common side dish.'}]},
+  anywhere:{level:3,entries:[{pos:'adv.',ipa:'/ˈeniwer/',zh:'任何地方',colloc:'anywhere and anytime',ex:'You can study anywhere with a laptop.'}]},
+  anytime:{level:3,entries:[{pos:'adv.',ipa:'/ˈenitaɪm/',zh:'任何時候',colloc:'anytime you want',ex:'You can call me anytime.'}]},
+  taps:{base:'tap',level:3,entries:[{pos:'n.',ipa:'/tæps/',zh:'輕點；點擊（複數）',colloc:'a few taps on the screen',ex:'Order food with a few taps on your phone.'}]},
+  tap:{level:3,entries:[{pos:'v./n.',ipa:'/tæp/',zh:'輕敲；點擊',colloc:'tap the screen',ex:'Tap the icon to open the app.'}]},
+  driven:{base:'drive',level:2,entries:[{pos:'v.',ipa:'/ˈdrɪvn/',zh:'驅動（過去分詞）',colloc:'be driven by',ex:'Change was driven by technology.'}]},
+  establishments:{base:'establishment',level:4,entries:[{pos:'n.',ipa:'/ɪˈstæblɪʃmənts/',zh:'店家（複數）',colloc:'food establishments',ex:'These establishments serve delivery only.'}]},
+  decorations:{base:'decoration',level:3,entries:[{pos:'n.',ipa:'/ˌdekəˈreɪʃnz/',zh:'裝潢（複數）',colloc:'save on decorations',ex:'They save on rent and decorations.'}]},
+  competitive:{level:4,entries:[{pos:'adj.',ipa:'/kəmˈpetətɪv/',zh:'具競爭力的',colloc:'competitive prices',ex:'Menus are offered at competitive prices.'}]},
+  pressured:{base:'pressure',level:4,entries:[{pos:'adj.',ipa:'/ˈpreʃərd/',zh:'有壓力的',colloc:'feel pressured to',ex:'Diners may feel pressured to order quickly.'}]},
+  remove:{level:3,entries:[{pos:'v.',ipa:'/rɪˈmuːv/',zh:'移除',colloc:'remove onions',ex:'You can remove toppings you do not want.'}]},
+  fancy:{level:4,entries:[{pos:'adj.',ipa:'/ˈfænsi/',zh:'高級的',colloc:'fancy restaurant',ex:'Family outings to fancy restaurants are less common.'}]},
+  recommend:{level:3,entries:[{pos:'v.',ipa:'/ˌrekəˈmend/',zh:'推薦',colloc:'recommend meals',ex:'AI may recommend meals for you.'}]}
+};
+
+const choices = [
+  ['A','competitive'],['B','remove'],['C','pressured'],['D','taps'],['E','recommend'],
+  ['F','establishments'],['G','driven'],['H','decorations'],['I','fancy'],['J','convenient']
+];
+
+const answerMap = {
+  21:'G',22:'D',23:'J',24:'F',25:'H',
+  26:'A',27:'C',28:'B',29:'I',30:'E'
+};
+
+const passageParts = [
+  {html:`In {recent} years, the way people {experience} food has {undergone} a {significant} {transformation}.`, trans:'近年來，人們體驗食物的方式經歷了重大轉變。'},
+  {html:`This has been [[21:driven]] largely by the {rapid} {growth} of {delivery} {services}.`, trans:'這在很大程度上是由外送服務的快速成長所推動的。'},
+  {html:`Gone are the days when getting a {meal} mainly {meant} either {cooking} at home or {dining} out.`, trans:'過去，取得一餐多半意味著在家烹飪或外出用餐。'},
+  {html:`Today, with just a few [[22:taps]] on a {smartphone}, a wide {variety} of hot {meals} can be {delivered} {directly} to a person’s {doorstep}.`, trans:'如今只要在智慧型手機上輕點幾下，各種熱食就能直接送到家門口。'},
+  {html:`This {shift} has made {dining} more [[23:convenient]] and {fundamentally} {altered} the {relationship} between {consumers} and their food.`, trans:'這種轉變讓用餐更加便利，也從根本上改變了消費者與食物之間的關係。'},
+  {html:`One of the most {notable} {developments} in this {industry} is the {rise} of ghost {kitchens}.`, trans:'這個產業最值得注意的發展之一，是幽靈廚房的興起。'},
+  {html:`Unlike {traditional} {restaurants}, these [[24:establishments]] do not {provide} a dine-in space for {customers}.`, trans:'與傳統餐廳不同，這些店家不提供內用空間。'},
+  {html:`Instead, they {exist} {solely} to {prepare} food for delivery.`, trans:'它們只為外送準備食物。'},
+  {html:`This {business} {model} {allows} {owners} to {save} money on {rent} and [[25:decorations]] and focus their {efforts} {entirely} on food {preparation}.`, trans:'這種商業模式讓業主能省下租金與裝潢費用，把心力完全放在備餐上。'},
+  {html:`Because these {kitchens} can be {located} in {cheaper} {areas}, they can {offer} {diverse} {menu} {choices} at [[26:competitive]] {prices}.`, trans:'因為這些廚房可以設在較便宜的區域，他們能以具競爭力的價格提供多樣菜單。'},
+  {html:`For {customers}, this means {access} to a {broader} {range} of food {options} without {leaving} the {comfort} of their {homes}.`, trans:'對顧客而言，這代表不必離開舒適的家，就能取得更豐富的食物選擇。'},
+  {html:`{Furthermore}, delivery {apps} are {changing} the decision-{making} {process} behind meal {selection}.`, trans:'此外，外送 app 正在改變選餐的決策過程。'},
+  {html:`In a {busy} {restaurant}, a {customer} might {feel} [[27:pressured]] to {order} {quickly}.`, trans:'在忙碌的餐廳裡，顧客可能感到必須趕快點餐。'},
+  {html:`{However}, {ordering} through a {digital} {platform} {allows} {users} to take their time and {adjust} their {orders} without feeling {rushed}.`, trans:'透過數位平台下單則可以慢慢調整，不必匆忙。'},
+  {html:`{Whether} it’s {choosing} to add {extra} {cheese} or [[28:remove]] {onions} from a {burger}, the {process} becomes more {flexible} and less {stressful}.`, trans:'無論是多加起司，還是從漢堡裡拿掉洋蔥，過程都更彈性、壓力更小。'},
+  {html:`{Consequently}, {eating} high-{quality} {foods} at home has become {increasingly} {common}, and in some {cases}, it is {replacing} {traditional} family {outings} to [[29:fancy]] {restaurants}.`, trans:'因此，在家享用高品質食物越來越普遍，有些情況甚至取代全家外出到高級餐廳的傳統。'},
+  {html:`As {technology} {continues} to {advance}, this transformation is {likely} to {deepen}.`, trans:'隨著科技持續進步，這股轉變可能還會加深。'},
+  {html:`{Artificial} {intelligence} may soon [[30:recommend]] {meals} {based} on {personal} {preferences}, {dietary} {needs}, or {previous} {orders}.`, trans:'人工智慧不久後或許會依個人偏好、飲食需求或過往訂單來推薦餐點。'},
+  {html:`Instead of being {limited} by {location} or {schedule}, {consumers} may {expect} to {enjoy} their {favorite} {dishes} {anywhere} and {anytime}.`, trans:'消費者不再受地點或時間限制，隨時隨地都能期待吃到喜愛的菜色。'}
+];
+
+const explanations = {
+  21:{title:'21. G driven｜be driven by',why:'This has been ___ largely by the rapid growth... 需要過去分詞與 has been 形成被動，be driven by = 由……推動。',zh:'這股轉變 largely 由外送服務成長所驅動。',wrong:['taps 是名詞，不能接 has been。','convenient 是形容詞，不能形成 be convenient by。','remove 是動詞原形，不能放在 has been 後。','fancy 是形容詞，不合被動結構。']},
+  22:{title:'22. D taps｜a few taps on a smartphone',why:'with just a few ___ on a smartphone，需要可數名詞，a few taps = 輕點幾下。',zh:'在智慧型手機上輕點幾下就能叫餐。',wrong:['driven 不能當「點擊」的名詞。','establishments = 店家，不能 on a smartphone。','decorations = 裝潢，語意不合。','recommend 是動詞，不能接 a few。']},
+  23:{title:'23. J convenient｜made dining more + 形容詞',why:'made dining more ___，more 後面需要形容詞。convenient = 便利的。',zh:'讓用餐更加便利。',wrong:['competitive 通常修飾 price，較少直接說 dining competitive。','pressured = 有壓力的，made dining more pressured 語意不對。','fancy = 高級的，不能表達「便利」。','driven 不能修飾 dining。']},
+  24:{title:'24. F establishments｜these + 名詞',why:'these ___ 後面接 do not provide，需要複數名詞指「這些店家」。establishments = 店家、機構。',zh:'這些店家不提供內用空間。',wrong:['driven 不是名詞。','taps 是點擊，不能當店家。','remove 是動詞，不能當主詞。','convenient 是形容詞，these convenient 缺名詞。']},
+  25:{title:'25. H decorations｜rent and ___',why:'save money on rent and ___，and 連接兩個名詞。開店可省租金與裝潢 decorations。',zh:'省下租金與裝潢費用。',wrong:['competitive 是形容詞，不能接在 rent and 後當並列名詞。','pressured 是名詞化形容詞，不合 save money on pressured。','taps 不能與 rent 並列。','recommend 是動詞，不合 on recommend。']},
+  26:{title:'26. A competitive｜at ___ prices',why:'at ___ prices 需要形容詞修飾 prices。competitive prices = 具競爭力的價格。',zh:'以具競爭力的價格提供菜單。',wrong:['fancy prices 不自然。','convenient prices 不合搭配。','pressured prices 語意錯誤。','driven prices 不合語意。']},
+  27:{title:'27. C pressured｜feel ___ to order',why:'feel ___ to order quickly，固定說法 feel pressured to V = 感到被迫／有壓力要……',zh:'顧客可能感到必須趕快點餐。',wrong:['feel convenient to order 不自然。','feel competitive to order 不合語意。','feel fancy to order 不合語意。','feel driven to order 勉強可說「感到被驅使」，但考試慣用 pressured。']},
+  28:{title:'28. B remove｜add cheese or ___ onions',why:'add extra cheese or ___ onions from a burger，or 連接兩個動作，remove onions = 拿掉洋蔥。',zh:'多加起司或拿掉洋蔥。',wrong:['add ... or driven onions 不合。','add ... or convenient onions 不合。','add ... or establishments 不合。','add ... or recommend onions 不合。']},
+  29:{title:'29. I fancy｜outings to ___ restaurants',why:'outings to ___ restaurants，to 後面接形容詞修飾 restaurants。fancy restaurants = 高級餐廳。',zh:'全家外出到高級餐廳的傳統。',wrong:['competitive restaurants 可指價格競爭的店，但此處強調「講究、高檔」用 fancy。','pressured restaurants 不合。','convenient restaurants 較少這樣說。','remove restaurants 不合。']},
+  30:{title:'30. E recommend｜AI may soon ___ meals',why:'AI may soon ___ meals，may soon 後面接原形動詞。recommend meals = 推薦餐點。',zh:'AI 可能依偏好推薦餐點。',wrong:['may soon driven meals 文法錯。','may soon taps meals 不合。','may soon decorations meals 不合。','may soon competitive meals 不合。']}
+};
+
+let currentPopup = null;
+let levelColorsOn = true;
+
+function resolveWord(raw){
+  const key = raw.toLowerCase().replace(/[.,!?;:'"()]/g,'');
+  const entry = vocabDB[key];
+  if(!entry) return null;
+  if(entry.base && vocabDB[entry.base]){
+    return {...vocabDB[entry.base], display: raw, base: entry.base, level: entry.level || vocabDB[entry.base].level};
+  }
+  return {...entry, display: raw, base: key};
+}
+
+function levelTagClass(level){
+  return `lv${Math.min(6, Math.max(2, level))}`;
+}
+
+function renderWord(w){
+  const entry = resolveWord(w);
+  if(entry && entry.level >= 2){
+    const cls = levelTagClass(entry.level);
+    const safe = w.toLowerCase().replace(/'/g,"\\'");
+    return `<span class="word ${cls}" onclick="showVocab('${safe}',this)">${w}</span>`;
+  }
+  return w;
+}
+
+function processText(raw){
+  let html = raw;
+  html = html.replace(/\[\[(\d+):([^\]]+)\]\]/g, (_, no, word) =>
+    `<span class="blank" onclick="showExplain(${no},this)">${no}. ${word}</span>`
+  );
+  html = html.replace(/\{([^}]+)\}/g, (_, word) => renderWord(word));
+  return html;
+}
+
+function render(){
+  document.getElementById('choiceBank').innerHTML = choices.map(([letter, word]) =>
+    `<div class="choice" onclick="showChoice('${letter}',this)">(${letter}) ${word}</div>`
+  ).join('');
+  document.getElementById('passage').innerHTML = passageParts.map((p, i) =>
+    `<p class="sentence">${processText(p.html)} <span class="trans" onclick="showTrans(${i},this)">翻譯</span></p>`
+  ).join('');
+}
+
+function item(title, body){
+  return `<div class="tag">${title}</div><div>${body}</div>`;
+}
+
+function levelBadge(level){
+  const colors = {
+    2:'var(--lv2)',3:'var(--lv3)',4:'var(--lv4)',5:'var(--lv5)',6:'var(--lv6)'
+  };
+  const c = colors[level] || '#374151';
+  return `<span class="leveltag" style="color:${c};border-color:${c}">Level ${level}</span>`;
+}
+
+function buildVocabBody(entry){
+  const entries = entry.entries || [];
+  let html = entries.map(e => `
+    <div class="sense">
+      <div class="sense-title"><b>${e.pos}</b> ${e.zh}</div>
+      <div class="phonetic">${e.ipa || ''}</div>
+      ${e.colloc ? `<div class="colloc"><b>搭配：</b>${e.colloc}</div>` : ''}
+      <div class="example"><b>例句：</b>${e.ex}</div>
+      <button class="sound" onclick="speak('${(entry.base||'').replace(/'/g,"")}')">🔊 單字發音</button>
+      <button class="sound" onclick="speak('${(e.ex||'').replace(/'/g,"\\'")}')">🔊 例句發音</button>
+    </div>
+  `).join('');
+  if(entry.base && entry.base !== entry.display.toLowerCase().replace(/[.,!?;:'"()]/g,'')){
+    html = `<div class="mini">文中形式：<b>${entry.display}</b>｜查詢原形：<b>${entry.base}</b></div>` + html;
+  }
+  return html;
+}
+
+function showPopup(content, el){
+  if(currentPopup) currentPopup.remove();
+  const box = document.createElement('div');
+  box.className = 'popup';
+  box.innerHTML = '<span class="close" onclick="closePopup()">✕</span>' + content;
+  document.body.appendChild(box);
+  const r = el.getBoundingClientRect();
+  let left = window.scrollX + r.left;
+  let top = window.scrollY + r.bottom + 6;
+  if(left + 480 > window.scrollX + window.innerWidth) left = window.scrollX + window.innerWidth - 494;
+  if(left < 8) left = 8;
+  if(top + 320 > window.scrollY + window.innerHeight) top = window.scrollY + r.top - box.offsetHeight - 8;
+  box.style.left = left + 'px';
+  box.style.top = top + 'px';
+  currentPopup = box;
+}
+
+function showCenterPopup(content){
+  if(currentPopup) currentPopup.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'overlayPopup';
+  overlay.innerHTML = `
+    <div class="center-popup">
+      <span class="big-close" onclick="closePopup()">✕</span>
+      ${content}
+    </div>`;
+  overlay.addEventListener('click', e => { if(e.target.id === 'overlayPopup') closePopup(); });
+  document.body.appendChild(overlay);
+  currentPopup = overlay;
+}
+
+function closePopup(){
+  if(currentPopup){ currentPopup.remove(); currentPopup = null; }
+}
+
+document.addEventListener('click', e => {
+  if(!currentPopup) return;
+  if(currentPopup.id === 'overlayPopup') return;
+  if(currentPopup.contains(e.target)) return;
+  if(e.target.closest('.blank,.word,.trans,.choice,.sound,.fab button')) return;
+  closePopup();
+});
+
+function speak(text){
+  if(!('speechSynthesis' in window)){ alert('此瀏覽器不支援發音'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(String(text).replace(/\s*\(.*?\)/g,''));
+  u.lang = 'en-US';
+  u.rate = 0.82;
+  window.speechSynthesis.speak(u);
+}
+
+function showVocab(w, el){
+  const entry = resolveWord(w);
+  if(!entry){
+    showPopup(item(w, '此字尚未收錄在詞彙庫。'), el);
+    return;
+  }
+  const title = `${entry.display} ${levelBadge(entry.level)}`;
+  showPopup(item(title, buildVocabBody(entry)), el);
+}
+
+function showTrans(i, el){
+  showPopup(item('句子翻譯', passageParts[i].trans), el);
+}
+
+function showExplain(n, el){
+  const x = explanations[n];
+  const wrong = x.wrong.map(v => `<div>${v}</div>`).join('');
+  showPopup(item(x.title,
+    `<b>解析</b><br>${x.why}<br><br><b>中文：</b>${x.zh}
+    <div class="wrong"><b>其他選項為什麼不對？</b>${wrong}</div>`
+  ), el);
+}
+
+function showChoice(letter, el){
+  const word = choices.find(c => c[0] === letter)[1];
+  const correctNo = Object.entries(answerMap).find(([no, l]) => l === letter)?.[0];
+  const entry = resolveWord(word.split(' ')[0]);
+  let body = entry
+    ? buildVocabBody(entry)
+    : '<p>請參考選項中文與篇章語意。</p>';
+  if(correctNo){
+    body += `<div class="mini"><b>本篇正確位置：</b>第 ${correctNo} 格</div>`;
+  } else {
+    body += `<div class="mini">此選項在本篇其他空格不適用，但仍可點選學習字義與用法。</div>`;
+  }
+  showPopup(item(`(${letter}) ${word} ${entry ? levelBadge(entry.level) : ''}`, body), el);
+}
+
+function toggleLevelColors(){
+  levelColorsOn = !levelColorsOn;
+  document.getElementById('app').classList.toggle('hide-lv', !levelColorsOn);
+}
+
+function toggleAllTranslations(){
+  showCenterPopup(`<div class="tag">全文白話翻譯</div><div class="zh" style="font-size:17px;line-height:2">${fullTranslation}</div>`);
+}
+
+function goHome(){
+  if(window.location.pathname.endsWith('index.html') || !document.querySelector('a[href="index.html"]')){
+    window.scrollTo({top:0,behavior:'smooth'});
+  } else {
+    window.location.href = '11505-index.html';
+  }
+}
+
+render();
+</script>
+</body>
+</html>
