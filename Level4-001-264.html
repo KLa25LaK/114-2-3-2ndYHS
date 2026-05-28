@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 4 單字 001–264 互動詳解卷</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a2e;
+  --ink-mid: #3d3d5c;
+  --ink-light: #6b6b8a;
+  --paper: #faf9f6;
+  --paper-warm: #f4f1eb;
+  --paper-line: #e8e4db;
+  --accent: #c41e3a;
+  --accent-light: #fce8ec;
+  --gold: #b8860b;
+  --gold-light: #fdf6e3;
+  --blue: #1a4a7a;
+  --blue-light: #e8f0fa;
+  --green: #1a6640;
+  --green-light: #e8f5ee;
+  --shadow: rgba(26,26,46,0.12);
+  --radius: 6px;
+  --font-body: 'Noto Sans TC', sans-serif;
+  --font-serif: 'Noto Serif TC', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.site-header {
+  background: var(--ink);
+  color: #f0ede6;
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+.site-header h1 {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.header-meta { font-size: 12px; color: #a0a0b8; font-family: var(--font-mono); }
+.vocab-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+.vocab-btn:hover { background: #a01830; }
+
+/* ── LAYOUT ── */
+.container { max-width: 920px; margin: 0 auto; padding: 32px 24px 80px; }
+
+/* ── ANSWER KEY BAR ── */
+.answer-bar {
+  background: var(--ink);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 32px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: #c8c8e0;
+}
+.answer-bar .bar-label { color: #fff; font-weight: 600; margin-bottom: 8px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+.answer-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.ans-chip {
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.ans-chip span { color: #f0c040; font-weight: 600; }
+
+/* ── SECTION HEADERS ── */
+.section-header {
+  border-left: 4px solid var(--accent);
+  padding: 12px 16px;
+  margin: 40px 0 24px;
+  background: var(--accent-light);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.section-header h2 {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.section-header p { font-size: 13px; color: var(--ink-mid); margin-top: 4px; }
+
+/* ── QUESTION CARDS ── */
+.q-card {
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+.q-card:hover { box-shadow: 0 2px 10px var(--shadow); }
+
+.q-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+.q-answer-badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--green);
+  color: #fff;
+  border-radius: 3px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+/* ── SENTENCE AREA ── */
+.sentence-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.sentence-text {
+  flex: 1;
+  line-height: 2;
+  font-size: 15px;
+  min-width: 0;
+}
+
+/* ── CLICKABLE WORDS ── */
+.word-btn {
+  display: inline;
+  cursor: pointer;
+  border-bottom: 1px dotted var(--ink-light);
+  transition: background 0.15s, color 0.15s;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+.word-btn:hover {
+  background: var(--blue-light);
+  color: var(--blue);
+  border-bottom-color: var(--blue);
+}
+
+/* ── BLANK BUTTONS ── */
+.blank-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--gold-light);
+  border: 1.5px solid var(--gold);
+  border-radius: 4px;
+  padding: 2px 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--gold);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s;
+  margin: 0 2px;
+}
+.blank-btn:hover { background: #fdf0c0; }
+.blank-btn .blank-num { font-size: 11px; color: var(--ink-light); }
+
+/* ── OPTIONS DISPLAY ── */
+.options-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.opt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper-warm);
+  border: 1px solid var(--paper-line);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.opt-chip:hover { background: var(--blue-light); border-color: var(--blue); }
+.opt-chip.correct { background: var(--green-light); border-color: var(--green); }
+.opt-chip .opt-label {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--ink-mid);
+  min-width: 14px;
+}
+.opt-chip.correct .opt-label { color: var(--green); }
+
+/* ── TRANSLATE BTN ── */
+.translate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid var(--paper-line);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: var(--ink-mid);
+  cursor: pointer;
+  font-family: var(--font-body);
+  margin-top: 8px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.translate-btn:hover { background: var(--paper-warm); border-color: var(--ink-light); }
+
+/* ── PASSAGE STYLES ── */
+.passage-box {
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.passage-title {
+  background: var(--ink);
+  color: #f0ede6;
+  padding: 10px 18px;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.passage-content { padding: 20px 22px; }
+
+.sentence-block {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--paper-line);
+}
+.sentence-block:last-child { border-bottom: none; }
+.sentence-en { flex: 1; line-height: 2; }
+.sentence-zh {
+  font-size: 13px;
+  color: var(--ink-mid);
+  line-height: 1.7;
+  margin-top: 4px;
+  padding: 6px 10px;
+  background: var(--paper-warm);
+  border-radius: 4px;
+  border-left: 2px solid var(--paper-line);
+}
+
+/* ── OPTIONS BOX ── */
+.options-box {
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.options-box-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-light);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+/* ── FULL TRANSLATION PANEL ── */
+.full-trans-panel {
+  background: var(--gold-light);
+  border: 1px solid #e8d88a;
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-top: 12px;
+  display: none;
+}
+.full-trans-panel.open { display: block; }
+.full-trans-btn {
+  background: var(--gold-light);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s;
+  margin-top: 16px;
+}
+.full-trans-btn:hover { background: #fdf0c0; }
+.full-trans-text { font-size: 14px; line-height: 1.9; color: var(--ink-mid); white-space: pre-line; }
+
+/* ── POPUP OVERLAY ── */
+#popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: none;
+}
+#popup-overlay.open { display: block; }
+
+.popup-card {
+  position: fixed;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(26,26,46,0.2);
+  min-width: 240px;
+  max-width: 400px;
+  padding: 16px 18px;
+  display: none;
+  animation: popIn 0.15s ease;
+}
+.popup-card.open { display: block; }
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.popup-close {
+  position: absolute;
+  top: 8px; right: 10px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--ink-light);
+  cursor: pointer;
+  line-height: 1;
+}
+.popup-word {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.popup-ipa {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+.popup-pos {
+  display: inline-block;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 3px;
+  padding: 1px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.popup-meaning { font-size: 14px; color: var(--ink-mid); line-height: 1.7; }
+.popup-loading {
+  color: var(--ink-light);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid var(--paper-line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── BLANK POPUP (special) ── */
+.blank-popup-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-light);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.blank-answer-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.blank-answer-word {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green);
+}
+.blank-answer-pos {
+  background: var(--green-light);
+  color: var(--green);
+  border-radius: 3px;
+  padding: 1px 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.blank-reason { font-size: 13px; color: var(--ink-mid); line-height: 1.8; }
+.blank-other-valid { margin-top: 10px; font-size: 12px; color: var(--ink-light); }
+.blank-other-valid strong { color: var(--ink-mid); }
+
+/* ── OPTION SET POPUP ── */
+.option-set-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-light);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--paper-line);
+}
+.option-set-item {
+  display: grid;
+  grid-template-columns: 24px 100px 40px 1fr;
+  gap: 6px;
+  align-items: baseline;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--paper-line);
+  font-size: 13px;
+}
+.option-set-item:last-child { border-bottom: none; }
+.option-set-item .lbl { font-family: var(--font-mono); font-weight: 700; color: var(--accent); }
+.option-set-item.correct-opt .lbl { color: var(--green); }
+.option-set-item .wd { font-family: var(--font-mono); font-weight: 600; }
+.option-set-item .ps { font-size: 11px; color: var(--ink-light); background: var(--paper-warm); border-radius: 2px; padding: 1px 5px; text-align: center; }
+.option-set-item .mn { color: var(--ink-mid); }
+.option-set-item.correct-opt .wd { color: var(--green); }
+
+/* ── TRANSLATE POPUP ── */
+.trans-popup-zh { font-size: 14px; line-height: 1.9; color: var(--ink-mid); }
+
+/* ── VOCAB LIBRARY ── */
+#vocab-panel {
+  position: fixed;
+  top: 0; right: -380px;
+  width: 360px;
+  height: 100vh;
+  background: #fff;
+  border-left: 1px solid var(--paper-line);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s ease;
+  box-shadow: -4px 0 20px var(--shadow);
+}
+#vocab-panel.open { right: 0; }
+.vocab-panel-header {
+  background: var(--ink);
+  color: #f0ede6;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.vocab-panel-header h3 { font-family: var(--font-serif); font-size: 15px; }
+.vocab-panel-close { background: none; border: none; color: #f0ede6; font-size: 20px; cursor: pointer; }
+.vocab-list { flex: 1; overflow-y: auto; padding: 12px; }
+.vocab-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--paper-line);
+  border-radius: 4px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  animation: fadeIn 0.2s ease;
+}
+.vocab-item .vi-word { font-family: var(--font-mono); font-weight: 600; color: var(--ink); min-width: 90px; }
+.vocab-item .vi-ipa { color: var(--blue); font-family: var(--font-mono); font-size: 11px; }
+.vocab-item .vi-pos { font-size: 10px; background: var(--paper-warm); color: var(--ink-light); border-radius: 2px; padding: 1px 5px; }
+.vocab-item .vi-mean { color: var(--ink-mid); flex: 1; }
+.vocab-item .vi-del { background: none; border: none; color: var(--ink-light); cursor: pointer; font-size: 16px; }
+.vocab-empty { text-align: center; padding: 40px 20px; color: var(--ink-light); font-size: 14px; }
+.vocab-footer { padding: 12px 16px; border-top: 1px solid var(--paper-line); }
+.vocab-save-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 10px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.vocab-save-btn:hover { background: #a01830; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .container { padding: 16px 12px 60px; }
+  .popup-card { max-width: calc(100vw - 24px); }
+  .option-set-item { grid-template-columns: 20px 80px 36px 1fr; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <h1>Level 4 單字 001–264 ✦ 互動詳解卷</h1>
+    <div class="header-meta">點擊任何單字查看解說 · 點空格查看答案解析</div>
+  </div>
+  <button class="vocab-btn" onclick="toggleVocab()">
+    📖 單字庫 <span id="vocab-count">0</span>
+  </button>
+</header>
+
+<div class="container">
+
+  <!-- Answer Key -->
+  <div class="answer-bar">
+    <div class="bar-label">答案總覽</div>
+    <div class="answer-row" id="answer-row"></div>
+  </div>
+
+  <!-- PART 1 -->
+  <div class="section-header">
+    <h2>Part 1：文意字彙選擇</h2>
+    <p>點選任一單字查看音標、詞性與意思；點選選項字詞查看所有 ABCD 選項解說；點空格查看答題解析；點句末按鈕查看中文翻譯</p>
+  </div>
+  <div id="part1-container"></div>
+
+  <!-- PART 2 PASSAGE 1 -->
+  <div class="section-header">
+    <h2>Part 2：文意選填 ── Passage 1</h2>
+    <p>點選文章中任意單字查解說；點空格查看答案解析與詞性分析；句子旁顯示中文翻譯；文末可展開全篇翻譯</p>
+  </div>
+  <div id="passage1-options-container"></div>
+  <div id="passage1-container"></div>
+
+  <!-- PART 2 PASSAGE 2 -->
+  <div class="section-header">
+    <h2>Part 2：文意選填 ── Passage 2</h2>
+    <p>點選文章中任意單字查解說；點空格查看答案解析與詞性分析；句子旁顯示中文翻譯；文末可展開全篇翻譯</p>
+  </div>
+  <div id="passage2-options-container"></div>
+  <div id="passage2-container"></div>
+
+</div>
+
+<!-- Popup overlay -->
+<div id="popup-overlay" onclick="closePopup()"></div>
+<div class="popup-card" id="popup-card">
+  <button class="popup-close" onclick="closePopup()">✕</button>
+  <div id="popup-content"></div>
+</div>
+
+<!-- Vocab Panel -->
+<div id="vocab-panel">
+  <div class="vocab-panel-header">
+    <h3>📖 我的單字庫</h3>
+    <button class="vocab-panel-close" onclick="toggleVocab()">✕</button>
+  </div>
+  <div class="vocab-list" id="vocab-list"></div>
+  <div class="vocab-footer">
+    <button class="vocab-save-btn" onclick="exportVocab()">匯出單字庫 (JSON)</button>
+  </div>
+</div>
+
+<script>
+/* ── DATA ── */
+const EXAM = {
+  answers: {
+    1:'A',2:'B',3:'D',4:'C',5:'B',6:'C',7:'A',8:'B',9:'A',10:'D',
+    11:'C',12:'A',13:'A',14:'B',15:'B',16:'B',17:'C',18:'A',19:'A',20:'D',
+    21:'C',22:'A',23:'D',24:'F',25:'B',26:'J',27:'I',28:'G',29:'H',30:'E',
+    31:'A',32:'G',33:'B',34:'F',35:'C',36:'D',37:'H',38:'J',39:'I',40:'E'
+  },
+  part1: [
+    {num:1,ans:'A',sentence:"Faced with dwindling state funds and lack of societal support , the board of trustees had no choice but to [BLANK] the ambitious research project midway .",translation:"面對日益減少的國家資金和缺乏社會支持，董事會別無選擇，只能中途放棄這個雄心勃勃的研究計畫。",options:[{l:'A',w:'abandon',ipa:'/əˈbændən/',pos:'v.',m:'放棄'},{l:'B',w:'cherish',ipa:'/ˈtʃɛrɪʃ/',pos:'v.',m:'珍愛'},{l:'C',w:'concrete',ipa:'/ˈkɒŋkriːt/',pos:'adj.',m:'具體的'},{l:'D',w:'conquer',ipa:'/ˈkɒŋkər/',pos:'v.',m:'克服'}]},
+    {num:2,ans:'B',sentence:"The CEO demanded that the statistics in the financial report be verified again , emphasizing that market analysis requires absolute [BLANK] .",translation:"執行長要求對財務報告中的統計數據再次進行驗證，並強調市場分析需要絕對的準確性。",options:[{l:'A',w:'calculation',ipa:'/ˌkælkjʊˈleɪʃən/',pos:'n.',m:'計算'},{l:'B',w:'accuracy',ipa:'/ˈækjərəsi/',pos:'n.',m:'準確性'},{l:'C',w:'circulation',ipa:'/ˌsɜːkjʊˈleɪʃən/',pos:'n.',m:'循環/發行量'},{l:'D',w:'category',ipa:'/ˈkætɪɡəri/',pos:'n.',m:'類別'}]},
+    {num:3,ans:'D',sentence:"To prevent younger students from becoming smartphone [BLANK] and experiencing severe sleep deprivation , the school implemented a strict policy banning gadgets during class .",translation:"為了防止較年輕的學生沉迷於智慧型手機並經歷嚴重的睡眠不足，學校實施了課堂上禁止使用電子裝置的嚴格政策。",options:[{l:'A',w:'candidates',ipa:'/ˈkændɪdəts/',pos:'n.',m:'候選人'},{l:'B',w:'burglars',ipa:'/ˈbɜːɡlərz/',pos:'n.',m:'竊賊'},{l:'C',w:'critics',ipa:'/ˈkrɪtɪks/',pos:'n.',m:'評論家'},{l:'D',w:'addicts',ipa:'/ˈædɪkts/',pos:'n.',m:'成癮者'}]},
+    {num:4,ans:'C',sentence:"The transitional government sought advice from a legal [BLANK] to ensure that the newly drafted amendments complied with international human rights standards .",translation:"過渡政府向法律顧問尋求建議，以確保新起草的修正案符合國際人權標準。",options:[{l:'A',w:'companion',ipa:'/kəmˈpænjən/',pos:'n.',m:'同伴'},{l:'B',w:'commander',ipa:'/kəˈmɑːndər/',pos:'n.',m:'指揮官'},{l:'C',w:'consultant',ipa:'/kənˈsʌltənt/',pos:'n.',m:'顧問'},{l:'D',w:'conservative',ipa:'/kənˈsɜːvətɪv/',pos:'n./adj.',m:'保守派/保守的'}]},
+    {num:5,ans:'B',sentence:"Extensive geological surveys revealed that the deep oceanic [BLANK] contained unique ecosystems capable of thriving under extreme pressure and toxic chemicals .",translation:"廣泛的地質調查顯示，深海盆地包含著能夠在極端壓力和有毒化學物質下蓬勃發展的獨特生態系統。",options:[{l:'A',w:'aquarium',ipa:'/əˈkweərɪəm/',pos:'n.',m:'水族館'},{l:'B',w:'basin',ipa:'/ˈbeɪsən/',pos:'n.',m:'盆地/盆'},{l:'C',w:'cabin',ipa:'/ˈkæbɪn/',pos:'n.',m:'機艙/小木屋'},{l:'D',w:'barrier',ipa:'/ˈbærɪər/',pos:'n.',m:'障礙'}]},
+    {num:6,ans:'C',sentence:"Although the initial hypothesis seemed highly plausible , subsequent field experiments generated a series of [BLANK] results , leading to deep confusion among the scientists .",translation:"雖然最初的假設似乎非常合理，但隨後的野外實驗產生了一系列相反的結果，導致科學家們陷入深深的困惑。",options:[{l:'A',w:'competitive',ipa:'/kəmˈpɛtɪtɪv/',pos:'adj.',m:'有競爭力的'},{l:'B',w:'continuous',ipa:'/kənˈtɪnjuəs/',pos:'adj.',m:'連續的'},{l:'C',w:'contrary',ipa:'/ˈkɒntrəri/',pos:'adj.',m:'相反的'},{l:'D',w:'conventional',ipa:'/kənˈvɛnʃənəl/',pos:'adj.',m:'傳統的'}]},
+    {num:7,ans:'A',sentence:"In a desperate attempt to stay afloat during the severe economic recession , the tech giant chose to [BLANK] with its primary rival to monopolize the microchip market .",translation:"在經濟嚴重衰退期間，為了拼命維持生存，這家科技巨頭選擇與其主要對手合作，以壟斷微晶片市場。",options:[{l:'A',w:'cooperate',ipa:'/kəʊˈɒpəreɪt/',pos:'v.',m:'合作'},{l:'B',w:'circulate',ipa:'/ˈsɜːkjʊleɪt/',pos:'v.',m:'循環/流通'},{l:'C',w:'classify',ipa:'/ˈklæsɪfaɪ/',pos:'v.',m:'分類'},{l:'D',w:'construct',ipa:'/kənˈstrʌkt/',pos:'v.',m:'建造'}]},
+    {num:8,ans:'B',sentence:"Unless the international community takes immediate actions to mitigate carbon emissions , global warming will cause the irreversible [BLANK] of several low-lying coastal habitats .",translation:"除非國際社會立即採取行動減少碳排放，否則全球暖化將導致幾個低窪沿海棲息地不可逆轉的崩潰。",options:[{l:'A',w:'celebration',ipa:'/ˌsɛlɪˈbreɪʃən/',pos:'n.',m:'慶典'},{l:'B',w:'collapse',ipa:'/kəˈlæps/',pos:'n.',m:'崩潰/塌陷'},{l:'C',w:'cooperation',ipa:'/kəʊˌɒpəˈreɪʃən/',pos:'n.',m:'合作'},{l:'D',w:'combination',ipa:'/ˌkɒmbɪˈneɪʃən/',pos:'n.',m:'結合'}]},
+    {num:9,ans:'A',sentence:"The local community center organized a charity [BLANK] aimed at raising sufficient funds for the medical treatments of underprivileged children in the district .",translation:"當地社區中心組織了一場慈善活動，旨在為該地區弱勢兒童的醫療籌集足夠的資金。",options:[{l:'A',w:'campaign',ipa:'/kæmˈpeɪn/',pos:'n.',m:'活動'},{l:'B',w:'bulletin',ipa:'/ˈbʊlɪtɪn/',pos:'n.',m:'公告'},{l:'C',w:'competition',ipa:'/ˌkɒmpɪˈtɪʃən/',pos:'n.',m:'競爭'},{l:'D',w:'council',ipa:'/ˈkaʊnsəl/',pos:'n.',m:'委員會'}]},
+    {num:10,ans:'D',sentence:"Driven by intense scientific [BLANK] , the young biochemist spent countless nights in the laboratory trying to decipher the complex molecular structure of the newly discovered enzyme .",translation:"在強烈科學好奇心的驅使下，這位年輕的生物化學家在實驗室裡度過了無數個夜晚，試圖破解新發現酶的複雜分子結構。",options:[{l:'A',w:'capacity',ipa:'/kəˈpæsɪti/',pos:'n.',m:'能力/容量'},{l:'B',w:'conscience',ipa:'/ˈkɒnʃəns/',pos:'n.',m:'良心'},{l:'C',w:'courtesy',ipa:'/ˈkɜːtɪsi/',pos:'n.',m:'禮貌'},{l:'D',w:'curiosity',ipa:'/ˌkjʊərɪˈɒsɪti/',pos:'n.',m:'好奇心'}]},
+    {num:11,ans:'C',sentence:"The presidential candidate promised to introduce comprehensive reforms that would significantly benefit the middle class and revitalize the local [BLANK] .",translation:"總統候選人承諾引入全面改革，這將使中產階級顯著受益並振興地方商業。",options:[{l:'A',w:'cabinet',ipa:'/ˈkæbɪnɪt/',pos:'n.',m:'內閣'},{l:'B',w:'capitalism',ipa:'/ˈkæpɪtəlɪzəm/',pos:'n.',m:'資本主義'},{l:'C',w:'commerce',ipa:'/ˈkɒmɜːs/',pos:'n.',m:'商業'},{l:'D',w:'circulation',ipa:'/ˌsɜːkjʊˈleɪʃən/',pos:'n.',m:'流通/發行'}]},
+    {num:12,ans:'A',sentence:"In academic writing , researchers are strictly required to [BLANK] their sources clearly to avoid any potential accusations of plagiarism or intellectual theft .",translation:"在學術寫作中，研究人員被嚴格要求清楚地闡明他們的資料來源，以避免任何潛在的抄襲或知識產權盜竊指控。",options:[{l:'A',w:'clarify',ipa:'/ˈklærɪfaɪ/',pos:'v.',m:'闡明/澄清'},{l:'B',w:'confess',ipa:'/kənˈfɛs/',pos:'v.',m:'坦白'},{l:'C',w:'calculate',ipa:'/ˈkælkjʊleɪt/',pos:'v.',m:'計算'},{l:'D',w:'accuse',ipa:'/əˈkjuːz/',pos:'v.',m:'指控'}]},
+    {num:13,ans:'A',sentence:"The structural integrity of the ancient stone [BLANK] has been severely compromised after centuries of exposure to acid rain and seismic activities .",translation:"在經歷了幾個世紀的酸雨侵蝕和地震活動後，這座古老石拱門的結構完整性已受到嚴重破壞。",options:[{l:'A',w:'arch',ipa:'/ɑːtʃ/',pos:'n.',m:'拱門/拱形'},{l:'B',w:'asset',ipa:'/ˈæsɛt/',pos:'n.',m:'資產'},{l:'C',w:'canvas',ipa:'/ˈkænvəs/',pos:'n.',m:'帆布/油畫布'},{l:'D',w:'bin',ipa:'/bɪn/',pos:'n.',m:'箱子'}]},
+    {num:14,ans:'B',sentence:"The diplomat handles sensitive international disputes with remarkable [BLANK] , always ensuring that no words spoken could be interpreted as an insult to foreign nations .",translation:"這位外交官以極佳的禮貌處理敏感的國際爭端，始終確保所說的任何話都不會被解讀為對外國的侮辱。",options:[{l:'A',w:'anxiety',ipa:'/æŋˈzaɪɪti/',pos:'n.',m:'焦慮'},{l:'B',w:'courtesy',ipa:'/ˈkɜːtɪsi/',pos:'n.',m:'禮貌'},{l:'C',w:'coward',ipa:'/ˈkaʊəd/',pos:'n.',m:'懦夫'},{l:'D',w:'criticism',ipa:'/ˈkrɪtɪsɪzəm/',pos:'n.',m:'批評'}]},
+    {num:15,ans:'B',sentence:"Unlike traditional books that focus purely on text , this comprehensive [BLANK] offers readers a profound look into the artist's life through personal letters and rare photographs .",translation:"與純粹側重文字的傳統書籍不同，這本詳盡的傳記透過個人書信和珍貴照片，讓讀者對這位藝術家的一生有深刻的了解。",options:[{l:'A',w:'autobiography',ipa:'/ˌɔːtəbaɪˈɒɡrəfi/',pos:'n.',m:'自傳'},{l:'B',w:'biography',ipa:'/baɪˈɒɡrəfi/',pos:'n.',m:'傳記'},{l:'C',w:'catalogue',ipa:'/ˈkætəlɒɡ/',pos:'n.',m:'目錄'},{l:'D',w:'bulletin',ipa:'/ˈbʊlɪtɪn/',pos:'n.',m:'公告'}]},
+    {num:16,ans:'B',sentence:"Given the unpredictable nature of the market , investors are advised to remain highly [BLANK] to sudden economic fluctuations and policy adjustments .",translation:"鑑於市場不可預測的本質，建議投資者對突然的經濟波動和政策調整保持高度警惕。",options:[{l:'A',w:'accidental',ipa:'/ˌæksɪˈdɛntəl/',pos:'adj.',m:'意外的'},{l:'B',w:'alert',ipa:'/əˈlɜːt/',pos:'adj.',m:'警惕的'},{l:'C',w:'agreeable',ipa:'/əˈɡriːəbəl/',pos:'adj.',m:'宜人的'},{l:'D',w:'clumsy',ipa:'/ˈklʌmzi/',pos:'adj.',m:'笨拙的'}]},
+    {num:17,ans:'C',sentence:"The sudden resignation of the prime minister plunged the entire nation into a state of political [BLANK] , leaving citizens anxious about the future stability of the government .",translation:"首相的突然辭職使整個國家陷入政治混亂的狀態，讓公民對政府未來的穩定感到焦慮。",options:[{l:'A',w:'consistency',ipa:'/kənˈsɪstənsi/',pos:'n.',m:'一致性'},{l:'B',w:'acceptance',ipa:'/əkˈsɛptəns/',pos:'n.',m:'接受'},{l:'C',w:'confusion',ipa:'/kənˈfjuːʒən/',pos:'n.',m:'混亂'},{l:'D',w:'classification',ipa:'/ˌklæsɪfɪˈkeɪʃən/',pos:'n.',m:'分類'}]},
+    {num:18,ans:'A',sentence:"Advanced archeological evidence suggests that our ancient [BLANK] possessed sophisticated tools and methods for farming long before the dawn of modern civilization .",translation:"先進的考古證據表明，早在現代文明黎明到來之前，我們的古代祖先就擁有了複雜的務農工具和方法。",options:[{l:'A',w:'ancestors',ipa:'/ˈænsɛstərz/',pos:'n.',m:'祖先'},{l:'B',w:'applicants',ipa:'/ˈæplɪkənts/',pos:'n.',m:'申請人'},{l:'C',w:'colleagues',ipa:'/ˈkɒliːɡz/',pos:'n.',m:'同事'},{l:'D',w:'civilians',ipa:'/sɪˈvɪliənz/',pos:'n.',m:'平民'}]},
+    {num:19,ans:'A',sentence:"The severe drought has caused crops to wither across the country , which will inevitably lead to an acute food shortage and subsequent price hikes as a direct [BLANK] .",translation:"嚴重的乾旱已導致全國作物枯萎，這將不可避免地導致急性糧食短缺，並隨之帶來物價上漲的直接後果。",options:[{l:'A',w:'consequence',ipa:'/ˈkɒnsɪkwəns/',pos:'n.',m:'後果'},{l:'B',w:'contribution',ipa:'/ˌkɒntrɪˈbjuːʃən/',pos:'n.',m:'貢獻'},{l:'C',w:'compromise',ipa:'/ˈkɒmprəmaɪz/',pos:'n.',m:'妥協'},{l:'D',w:'confirmation',ipa:'/ˌkɒnfəˈmeɪʃən/',pos:'n.',m:'確認'}]},
+    {num:20,ans:'D',sentence:"Professor Evans praised the student's graduation essay , noting that her argument was highly [BLANK] and supported by robust empirical evidence .",translation:"艾文斯教授讚揚了該學生的畢業論文，指出她的論點高度一致，並得到了紮實實證證據的支持。",options:[{l:'A',w:'artistic',ipa:'/ɑːˈtɪstɪk/',pos:'adj.',m:'藝術的'},{l:'B',w:'dynamic',ipa:'/daɪˈnæmɪk/',pos:'adj.',m:'動態的'},{l:'C',w:'conventional',ipa:'/kənˈvɛnʃənəl/',pos:'adj.',m:'傳統的'},{l:'D',w:'consistent',ipa:'/kənˈsɪstənt/',pos:'adj.',m:'一致的'}]}
+  ],
+  passage1: {
+    options:[
+      {l:'A',w:'accuracy',ipa:'/ˈækjərəsi/',pos:'n.',m:'準確性、精確度'},
+      {l:'B',w:'accidental',ipa:'/ˌæksɪˈdɛntəl/',pos:'adj.',m:'意外的、偶然的'},
+      {l:'C',w:'analyze',ipa:'/ˈænəlaɪz/',pos:'v.',m:'分析'},
+      {l:'D',w:'anxiety',ipa:'/æŋˈzaɪɪti/',pos:'n.',m:'焦慮、不安'},
+      {l:'E',w:'approval',ipa:'/əˈpruːvəl/',pos:'n.',m:'批准、認可/讚賞'},
+      {l:'F',w:'assistance',ipa:'/əˈsɪstəns/',pos:'n.',m:'協助、幫助'},
+      {l:'G',w:'complicated',ipa:'/ˈkɒmplɪkeɪtɪd/',pos:'adj.',m:'複雜的、難懂的'},
+      {l:'H',w:'concept',ipa:'/ˈkɒnsɛpt/',pos:'n.',m:'概念、觀念'},
+      {l:'I',w:'conquer',ipa:'/ˈkɒŋkər/',pos:'v.',m:'克服、征服'},
+      {l:'J',w:'conservative',ipa:'/kənˈsɜːvətɪv/',pos:'adj.',m:'保守的、守舊的'}
+    ],
+    sentences:[
+      {id:'p1s1',en:"An ambitious academic applicant at a chemistry agency received an assignment from an association before an annual conference .",zh:"一家化學機構中一位雄心勃勃的學術申請人在一場年度會議前收到了來自協會的一項任務。",blanks:[]},
+      {id:'p1s2',en:"The applicant needed to [21:C:analyze:v.:分析] atomic data with [22:A:accuracy:n.:準確性] , assemble a complete catalog , classify every category , and calculate acid circulation in a laboratory atmosphere .",zh:"該申請人需要以準確性來分析原子數據、組合出完整目錄、分類每個類別，並在實驗室氣氛中計算酸液循環。",
+        blanks:[
+          {num:21,ans:'C',word:'analyze',pos:'v.',reason:'此空格需要動詞（v.）作為謂語，後接受詞「atomic data」。語意是「分析原子數據」。\n\n✅ 選 C analyze（分析）：唯一符合「處理數據」語意的動詞。\n\n❌ 排除 I conquer（克服）：動詞詞性符合，但語意不能搭配「data」。\n❌ 排除 A accuracy（準確性）：名詞，詞性不符。\n❌ 排除 D anxiety（焦慮）：名詞，詞性不符。'},
+          {num:22,ans:'A',word:'accuracy',pos:'n.',reason:'此空格需要名詞（n.），作為介系詞「with」的受詞。語意是「以某種品質」進行分析。\n\n✅ 選 A accuracy（準確性）：「with accuracy」是固定搭配，表示「精準地」。\n\n❌ 排除 D anxiety（焦慮）：雖是名詞，但「with anxiety」表示「帶著焦慮」，與分析數據的語境不符。\n❌ 排除 F assistance（協助）：名詞詞性符合，但「with assistance」意思不同。\n❌ 排除 H concept（概念）：語意不符。'}
+        ]},
+      {id:'p1s3',en:"Because the deadline created [23:D:anxiety:n.:焦慮] , the amateur applicant asked an agreeable accountant , a biology consultant , and an aggressive agent for [24:F:assistance:n.:協助] and cooperation .",zh:"因為截止日期帶來了焦慮，這位業餘的申請人向一位欣然贊同的會計師、一位生物學顧問以及一位積極進取的代理人尋求協助與合作。",
+        blanks:[
+          {num:23,ans:'D',word:'anxiety',pos:'n.',reason:'此空格需要名詞（n.），作為動詞「created」的受詞。語意：截止日期「造成了」某種情緒。\n\n✅ 選 D anxiety（焦慮）：「deadline created anxiety」是自然且常見的搭配。\n\n❌ 排除 A accuracy（準確性）：正面詞語，不符合「deadline 造成的負面影響」。\n❌ 排除 F assistance（協助）：截止日期不會「創造」協助。\n❌ 排除 H concept（概念）：語意不符。'},
+          {num:24,ans:'F',word:'assistance',pos:'n.',reason:'此空格需要名詞（n.），與「cooperation」並列，作為「asked...for」的受詞。\n\n✅ 選 F assistance（協助）：「ask for assistance and cooperation」是完整的搭配，語意自然。\n\n❌ 排除 E approval（批准）：「ask for approval」可以，但與後面「cooperation」並列語意不夠協調。\n❌ 排除 A accuracy（準確性）：「ask for accuracy」語意不通。\n❌ 排除 H concept（概念）：語意不符。'}
+        ]},
+      {id:'p1s4',en:"Their companion admired constructive behavior , continual concentration , and consistent analysis .",zh:"他們的同伴讚賞建設性的行為、持續的專注和始終如一的分析。",blanks:[]},
+      {id:'p1s5',en:"During the experiment , an [25:B:accidental:adj.:意外的] crisis almost caused the assignment to collapse .",zh:"在實驗過程中，一場意外的危機差點讓這項任務瓦解。",
+        blanks:[{num:25,ans:'B',word:'accidental',pos:'adj.',reason:'此空格需要形容詞（adj.）修飾名詞「crisis」（危機）。\n\n✅ 選 B accidental（意外的）：危機是「突發的、意外的」，符合語境。\n\n❌ 排除 G complicated（複雜的）：形容詞詞性符合，但「complicated crisis」不如「accidental crisis」自然。\n❌ 排除 J conservative（保守的）：形容詞詞性符合，但「conservative crisis」語意矛盾。\n❌ 排除 C analyze（分析）：動詞，詞性不符。'}]},
+      {id:'p1s6',en:"A container cracked beside a cabinet , acid damaged the catalog , and confusion spread through the association .",zh:"一個容器在櫃子旁裂開，酸液損壞了目錄，混亂在協會中蔓延開來。",blanks:[]},
+      {id:'p1s7',en:"A [26:J:conservative:adj.:保守的] commander accused the applicant of careless behavior and inadequate concentration .",zh:"一位保守的指揮官指責申請人的粗心行為和專注力不足。",
+        blanks:[{num:26,ans:'J',word:'conservative',pos:'adj.',reason:'此空格需要形容詞（adj.）修飾「commander」（指揮官）描述其性格。\n\n✅ 選 J conservative（保守的）：一個嚴謹、守舊的長官才會因「粗心」而指責下屬，符合人物形象。\n\n❌ 排除 B accidental（意外的）：「accidental commander」表示「誤打誤撞的指揮官」，語意不符。\n❌ 排除 G complicated（複雜的）：不用於描述人物性格。\n❌ 排除 C analyze（分析）：動詞，詞性不符。'}]},
+      {id:'p1s8',en:"Although criticism , pressure , and apparent failure became a critical barrier , the ambitious companion encouraged everyone to adapt , adjust , concentrate , and [27:I:conquer:v.:克服] the [28:G:complicated:adj.:複雜的] circumstance .",zh:"雖然批評、壓力和明顯的失敗成了關鍵的障礙，但這位雄心勃勃的同伴鼓勵每個人去適應、調整、專注並克服這複雜的處境。",
+        blanks:[
+          {num:27,ans:'I',word:'conquer',pos:'v.',reason:'此空格需要動詞（v.），與「adapt, adjust, concentrate」並列，接在「to」後面，後接受詞「the circumstance」。\n\n✅ 選 I conquer（克服）：「conquer a circumstance」（克服處境）語意完整，符合勵志語境。\n\n❌ 排除 C analyze（分析）：動詞詞性符合，但「analyze a circumstance」（分析處境）與前面排比句子的「overcome adversity」精神不符。\n❌ 排除 A accuracy（準確性）：名詞，詞性不符。\n❌ 排除 D anxiety（焦慮）：名詞，詞性不符。'},
+          {num:28,ans:'G',word:'complicated',pos:'adj.',reason:'此空格需要形容詞（adj.）修飾名詞「circumstance」（處境）。\n\n✅ 選 G complicated（複雜的）：前文描述一連串困難（批評、壓力、失敗），形容處境「複雜」最符合。\n\n❌ 排除 B accidental（意外的）：「accidental circumstance」語意不完整。\n❌ 排除 J conservative（保守的）：不用於描述抽象的「處境」。\n❌ 排除 A accuracy（準確性）：名詞，詞性不符。'}
+        ]},
+      {id:'p1s9',en:"The consultant clarified every abstract [29:H:concept:n.:概念] , corrected each calculation , and assured the applicant that continual cooperation could accomplish the assignment .",zh:"顧問闡明了每個抽象的概念、糾正了每項計算，並向申請人保證，持續的合作可以完成這項任務。",
+        blanks:[{num:29,ans:'H',word:'concept',pos:'n.',reason:'此空格需要名詞（n.），接受形容詞「abstract」（抽象的）修飾，並作為動詞「clarified」的受詞。\n\n✅ 選 H concept（概念）：「clarify abstract concepts」（闡明抽象概念）是極自然的學術語境搭配。\n\n❌ 排除 E approval（批准）：「clarify abstract approval」語意不通。\n❌ 排除 F assistance（協助）：「abstract assistance」語意不自然。\n❌ 排除 A accuracy（準確性）：「clarify abstract accuracy」語意不通。'}]},
+      {id:'p1s10',en:"After continuous effort , the agency finally expressed admiration and [30:E:approval:n.:認可] for the accomplishment .",zh:"經過連續不斷的努力，該機構最終對這項成就表達了讚賞與認可/批准。",
+        blanks:[{num:30,ans:'E',word:'approval',pos:'n.',reason:'此空格需要名詞（n.），與「admiration」（讚賞）並列，作為「expressed」的受詞。\n\n✅ 選 E approval（認可/讚賞）：與 admiration 並列表示兩種正面評價，語意層次豐富。「expressed admiration and approval」是標準搭配。\n\n❌ 排除 D anxiety（焦慮）：負面情緒，不符合正面語境。\n❌ 排除 F assistance（協助）：「expressed assistance」語意不通。\n❌ 排除 A accuracy（準確性）：「expressed accuracy」語意不通。'}]},
+      {id:'p1s11',en:"The conference audience congratulated the applicant , consultant , accountant , companion , and associate for their confidence , communication , concentration , and courageous cooperation .",zh:"會議的觀眾向申請人、顧問、會計師、同伴和夥伴表示祝賀，祝賀他們展現出的信心、溝通、專注以及勇敢的合作。",blanks:[]}
+    ],
+    fullZh:"一家化學機構中一位雄心勃勃的學術申請人在一場年度會議前收到了來自協會的一項任務。該申請人需要以準確性來分析原子數據、組合出一份完整的目錄、將每個類別分類，並在實驗室的氣氛中計算酸液的循環。因為截止日期帶來了焦慮，這位業餘的申請人向一位欣然贊同的會計師、一位生物學顧問以及一位積極進取的代理人尋求協助與合作。他們的同伴讚賞建設性的行為、持續的專注和始終如一的分析。\n\n在實驗過程中，一場意外的危機差點讓這項任務瓦解。一個容器在櫃子旁裂開，酸液損壞了目錄，混亂在協會中蔓延開來。一位保守的指揮官指責申請人的粗心行為和專注力不足。雖然批評、壓力和明顯的失敗成了關鍵的障礙，但這位雄心勃勃的同伴鼓勵每個人去適應、調整、專注並克服這複雜的處境。顧問闡明了每個抽象的概念、糾正了每項計算，並向申請人保證，持續的合作可以完成這項任務。\n\n經過連續不斷的努力，該機構最終對這項成就表達了讚賞與認可。會議的觀眾向申請人、顧問、會計師、同伴和夥伴表示祝賀，祝賀他們展現出的信心、溝通、專注以及勇敢的合作。"
+  },
+  passage2: {
+    options:[
+      {l:'A',w:'annual',ipa:'/ˈænjuəl/',pos:'adj.',m:'年度的'},
+      {l:'B',w:'artistic',ipa:'/ɑːˈtɪstɪk/',pos:'adj.',m:'藝術的'},
+      {l:'C',w:'celebration',ipa:'/ˌsɛlɪˈbreɪʃən/',pos:'n.',m:'慶典'},
+      {l:'D',w:'clumsy',ipa:'/ˈklʌmzi/',pos:'adj.',m:'笨拙的'},
+      {l:'E',w:'combination',ipa:'/ˌkɒmbɪˈneɪʃən/',pos:'n.',m:'結合'},
+      {l:'F',w:'convey',ipa:'/kənˈveɪ/',pos:'v.',m:'傳達/表達'},
+      {l:'G',w:'courageous',ipa:'/kəˈreɪdʒəs/',pos:'adj.',m:'勇敢的'},
+      {l:'H',w:'criticize',ipa:'/ˈkrɪtɪsaɪz/',pos:'v.',m:'批評'},
+      {l:'I',w:'cunning',ipa:'/ˈkʌnɪŋ/',pos:'adj.',m:'精明的/狡猾的'},
+      {l:'J',w:'costume',ipa:'/ˈkɒstjuːm/',pos:'n.',m:'服裝/戲服'}
+    ],
+    sentences:[
+      {id:'p2s1',en:"The village prepared an [31:A:annual:adj.:年度的] event to honor their ancestor .",zh:"村民們籌備了一場年度的盛事來祭拜他們的祖先。",
+        blanks:[{num:31,ans:'A',word:'annual',pos:'adj.',reason:'此空格需要形容詞（adj.）修飾名詞「event」（活動）。\n\n✅ 選 A annual（年度的）：村莊祭拜祖先是定期舉辦的傳統，annual 符合「每年一次的」語境。\n\n❌ 排除 G courageous（勇敢的）：描述性格，不用於修飾「event」。\n❌ 排除 B artistic（藝術的）：雖可修飾 event，但語意不符合「honor ancestor」的傳統儀式。\n❌ 排除 D clumsy（笨拙的）：負面詞，不符合「準備活動」的語境。'}]},
+      {id:'p2s2',en:"In the cottage near the cliff , a [32:G:courageous:adj.:勇敢的] bridegroom and an [33:B:artistic:adj.:藝術的] companion wanted to amuse the community .",zh:"在懸崖附近的小屋裡，一位勇敢的新郎和一位具有藝術才華的同伴想要娛樂社區。",
+        blanks:[
+          {num:32,ans:'G',word:'courageous',pos:'adj.',reason:'此空格需要形容詞（adj.）修飾「bridegroom」（新郎）的性格特質。\n\n✅ 選 G courageous（勇敢的）：在懸崖旁的小屋中籌辦公開表演需要膽識，courageous 描述正面人物特質。\n\n❌ 排除 D clumsy（笨拙的）：負面詞，不符合主動籌辦活動的積極形象。\n❌ 排除 I cunning（精明/狡猾的）：後文這個角色是 cunning agent，非 bridegroom。\n❌ 排除 A annual（年度的）：不能修飾人。'},
+          {num:33,ans:'B',word:'artistic',pos:'adj.',reason:'此空格需要形容詞（adj.）修飾「companion」（同伴）的特質。\n\n✅ 選 B artistic（藝術的）：後文提到他們要「compose a story, organize ballet and chorus」，artistic 最符合有藝術創作才能的同伴。\n\n❌ 排除 G courageous（勇敢的）：已用於修飾 bridegroom，且語意不如 artistic 符合藝術創作語境。\n❌ 排除 A annual（年度的）：不能修飾人。\n❌ 排除 D clumsy（笨拙的）：負面詞，矛盾。'}
+        ]},
+      {id:'p2s3',en:"They decided to compose a special story about a beggar who became a heroic commander .",zh:"他們決定創作出一個關於乞丐成為英雄指揮官的特別故事。",blanks:[]},
+      {id:'p2s4',en:"To [34:F:convey:v.:傳達] this story , they hired a local agency to organize a traditional ballet and a youth chorus .",zh:"為了傳達/表達這個故事，他們雇用了一家當地的機構來組織一場傳統芭蕾舞和青年合唱團。",
+        blanks:[{num:34,ans:'F',word:'convey',pos:'v.',reason:'此空格需要動詞（v.），接在「To」後面作不定詞，後接受詞「this story」。\n\n✅ 選 F convey（傳達）：「convey a story」（傳達故事）是自然搭配，且不定詞 to convey 表達目的。\n\n❌ 排除 H criticize（批評）：動詞詞性符合，但「to criticize a story」（為了批評故事）語意不符合籌辦表演的目的。\n❌ 排除 C celebration（慶典）：名詞，詞性不符。\n❌ 排除 E combination（結合）：名詞，詞性不符。'}]},
+      {id:'p2s5',en:"The entire town was looking forward to this magnificent weekend [35:C:celebration:n.:慶典] .",zh:"整個小鎮都在期待這場雄偉的週末慶典。",
+        blanks:[{num:35,ans:'C',word:'celebration',pos:'n.',reason:'此空格需要名詞（n.），受形容詞「magnificent」（雄偉的）和「weekend」修飾，作為「looking forward to」的受詞。\n\n✅ 選 C celebration（慶典）：「magnificent weekend celebration」完整描述一場盛大活動，語意最符合。\n\n❌ 排除 E combination（結合）：名詞詞性符合，但「a magnificent weekend combination」不自然。\n❌ 排除 J costume（服裝）：名詞詞性符合，但「looking forward to a costume」語意不完整。\n❌ 排除 F convey（傳達）：動詞，詞性不符。'}]},
+      {id:'p2s6',en:"However , the amateur dancers faced a major barrier .",zh:"然而，業餘舞者們面臨了一個重大的障礙。",blanks:[]},
+      {id:'p2s7',en:"The leading girl was [36:D:clumsy:adj.:笨拙的] , her behavior was unpredictable , and she would blink or cough when she felt anxiety .",zh:"女主角身手笨拙，她的行為不可預測，而且當她感到焦慮時就會眨眼或咳嗽。",
+        blanks:[{num:36,ans:'D',word:'clumsy',pos:'adj.',reason:'此空格需要形容詞（adj.），作為連綴動詞「was」的表語，描述女主角的特質。\n\n✅ 選 D clumsy（笨拙的）：後文描述她的不可預測行為和焦慮反應，clumsy 最符合業餘舞者的缺點。\n\n❌ 排除 B artistic（藝術的）：正面詞，與後文「barrier」和「unpredictable behavior」的負面語境矛盾。\n❌ 排除 G courageous（勇敢的）：正面詞，矛盾。\n❌ 排除 I cunning（精明的）：後文 cunning 用於 agent 角色，且精明與舞者困境不符。'}]},
+      {id:'p2s8',en:"During the assembly in the council chamber , the critic began to [37:H:criticize:v.:批評] her coarse [38:J:costume:n.:服裝] and clash with the director .",zh:"在議事廳的集會中，評論家開始批評她那身粗糙的服裝/戲服，並與導演發生衝突。",
+        blanks:[
+          {num:37,ans:'H',word:'criticize',pos:'v.',reason:'此空格需要動詞（v.），接在「began to」後面，後接受詞「her coarse costume」。\n\n✅ 選 H criticize（批評）：「began to criticize」完整表達評論家開始批評的動作，語意最自然。\n\n❌ 排除 F convey（傳達）：動詞詞性符合，但「convey costume」語意不通。\n❌ 排除 C celebration（慶典）：名詞，詞性不符。\n❌ 排除 I cunning（精明的）：形容詞，詞性不符。'},
+          {num:38,ans:'J',word:'costume',pos:'n.',reason:'此空格需要名詞（n.），受「coarse」（粗糙的）修飾，且是 criticize 的受詞核心名詞。\n\n✅ 選 J costume（服裝/戲服）：表演情境中「coarse costume」（粗糙的戲服）是評論家批評的對象，語意完整。\n\n❌ 排除 C celebration（慶典）：名詞詞性符合，但「coarse celebration」語意不通。\n❌ 排除 E combination（結合）：名詞詞性符合，但「criticize coarse combination」語意不自然。\n❌ 排除 A annual（年度的）：形容詞，詞性不符。'}
+        ]},
+      {id:'p2s9',en:"The tense atmosphere almost made the creative team cease the show .",zh:"緊張的氣氛差點讓創意團隊停止了這場演出。",blanks:[]},
+      {id:'p2s10',en:"Fortunately , a [39:I:cunning:adj.:精明的] agent provided assistance .",zh:"幸好，一位精明的/狡猾的經紀人提供了協助。",
+        blanks:[{num:39,ans:'I',word:'cunning',pos:'adj.',reason:'此空格需要形容詞（adj.）修飾「agent」（經紀人）的性格特質。\n\n✅ 選 I cunning（精明的/狡猾的）：後文描述她用阿斯匹靈、手鍊、軟木塞等方法解決問題，cunning 描述的「機智、變通」特質最符合。\n\n❌ 排除 D clumsy（笨拙的）：笨拙的人不能「provide effective assistance」。\n❌ 排除 G courageous（勇敢的）：語意可行但不如 cunning 突出此經紀人善用奇招的特點。\n❌ 排除 A annual（年度的）：不能修飾人。'}]},
+      {id:'p2s11',en:"She gave the girl an aspirin to soothe her , a beautiful bracelet for attraction , and a cork to chew to practice her accent .",zh:"她給了女孩一顆阿斯匹靈來安撫她，一條漂亮的手鍊來增加吸引力，以及一個可供咀嚼的軟木塞來練習口音。",blanks:[]},
+      {id:'p2s12',en:"On the anniversary night , when the flower blossoms began to bloom , the audience gave their loud approval .",zh:"在週年紀念的夜晚，當鮮花盛開之際，觀眾給予了他們響亮的讚許。",blanks:[]},
+      {id:'p2s13',en:"The circular theater was filled with amusement .",zh:"圓形劇場裡充滿了歡樂。",blanks:[]},
+      {id:'p2s14',en:"No one showed courtesy constraints ; they just cheered for this incredible [40:E:combination:n.:結合] of art , proving that cooperation can overcome any brutal circumstance .",zh:"沒有人表現出禮貌的束縛；他們只是為這場不可思議的藝術結合喝采，證明了合作可以克服任何殘酷的處境。",
+        blanks:[{num:40,ans:'E',word:'combination',pos:'n.',reason:'此空格需要名詞（n.），受「incredible」修飾，並與「of art」構成短語。\n\n✅ 選 E combination（結合）：「combination of art」（藝術的結合）呼應文章主旨——芭蕾、合唱、故事的融合展演。\n\n❌ 排除 C celebration（慶典）：名詞詞性符合，但「combination of art」比「celebration of art」更準確描述不同藝術形式的融合。\n❌ 排除 J costume（服裝）：名詞詞性符合，但「combination of art」中不用 costume 描述整體演出。\n❌ 排除 F convey（傳達）：動詞，詞性不符。'}]}
+    ],
+    fullZh:"村民們籌備了一場年度的盛事來祭拜他們的祖先。在懸崖附近的小屋裡，一位勇敢的新郎和一位具有藝術才華的同伴想要娛樂社區。他們決定創作出一個關於乞丐成為英雄指揮官的特別故事。為了傳達這個故事，他們雇用了一家當地的機構來組織一場傳統芭蕾舞和青年合唱團。整個小鎮都在期待這場雄偉的週末慶典。\n\n然而，業餘舞者們面臨了一個重大的障礙。女主角身手笨拙，她的行為不可預測，而且當她感到焦慮時就會眨眼或咳嗽。在議事廳的集會中，評論家開始批評她那身粗糙的服裝，並與導演發生衝突。緊張的氣氛差點讓創意團隊停止了這場演出。\n\n幸好，一位精明的經紀人提供了協助。她給了女孩一顆阿斯匹靈來安撫她，一條漂亮的手鍊來增加吸引力，以及一個可供咀嚼的軟木塞來練習口音。在週年紀念的夜晚，當鮮花盛開之際，觀眾給予了他們響亮的讚許。圓形劇場裡充滿了歡樂。沒有人表現出禮貌的束縛；他們只是為這場不可思議的藝術結合喝采，證明了合作可以克服任何殘酷的處境。"
+  }
+};
+
+/* ── SKIP WORDS (articles, possessives, prepositions) ── */
+const SKIP_WORDS = new Set([
+  'a','an','the','my','your','his','her','its','our','their',
+  'of','in','on','at','to','for','with','by','from','into','about','as',
+  'up','out','off','over','under','through','between','during','before',
+  'after','above','below','and','but','or','nor','so','yet','although',
+  'because','if','unless','that','which','who','whom','whose','when',
+  'where','how','this','these','those','be','is','are','was','were',
+  'been','being','have','has','had','do','does','did','will','would',
+  'could','should','may','might','shall','must','can','not','no',
+  's','t','re','ve','ll','d','m'
+]);
+
+/* ── WORD CACHE & VOCAB ── */
+const wordCache = {};
+let vocabLib = JSON.parse(localStorage.getItem('vocabLib') || '[]');
+
+/* ── POPUP STATE ── */
+let currentPopup = null;
+
+/* ── BUILD ANSWER BAR ── */
+function buildAnswerBar() {
+  const row = document.getElementById('answer-row');
+  for (let i = 1; i <= 40; i++) {
+    const chip = document.createElement('div');
+    chip.className = 'ans-chip';
+    chip.innerHTML = `${i}.<span>${EXAM.answers[i]}</span>`;
+    row.appendChild(chip);
+  }
+}
+
+/* ── PARSE SENTENCE WITH BLANKS ── */
+function parseSentence(enText, qNum, options, isPassage = false) {
+  const fragment = document.createDocumentFragment();
+  // Split by [NUM:LETTER:WORD:POS:MEANING] or [BLANK]
+  const blankRe = /\[(\d+):([A-J]):([^:]+):([^:]+):([^\]]+)\]|\[BLANK\]/g;
+  let last = 0;
+  let match;
+  const tokens = enText.split(/(\s+)/);
+  
+  // We'll do a character-level parse
+  let text = enText;
+  let parts = [];
+  let pos = 0;
+  
+  while ((match = blankRe.exec(text)) !== null) {
+    // Text before blank
+    if (match.index > pos) {
+      parts.push({ type: 'text', val: text.slice(pos, match.index) });
+    }
+    if (match[0] === '[BLANK]') {
+      parts.push({ type: 'blank', num: qNum });
+    } else {
+      parts.push({ type: 'blank', num: parseInt(match[1]), letter: match[2], word: match[3], pos: match[4], meaning: match[5] });
+    }
+    pos = match.index + match[0].length;
+  }
+  if (pos < text.length) parts.push({ type: 'text', val: text.slice(pos) });
+  
+  for (const part of parts) {
+    if (part.type === 'text') {
+      const words = part.val.split(/(\s+|[,.;:!?()])/);
+      for (const token of words) {
+        if (!token.trim() || /^[\s,.;:!?()]+$/.test(token)) {
+          fragment.appendChild(document.createTextNode(token));
+        } else {
+          const clean = token.replace(/[^a-zA-Z']/g, '').toLowerCase();
+          if (!clean || SKIP_WORDS.has(clean)) {
+            fragment.appendChild(document.createTextNode(token));
+          } else {
+            const span = document.createElement('span');
+            span.className = 'word-btn';
+            span.textContent = token;
+            span.dataset.word = clean;
+            span.addEventListener('click', (e) => { e.stopPropagation(); showWordPopup(e, clean, span); });
+            fragment.appendChild(span);
+          }
+        }
+      }
+    } else {
+      const blankData = isPassage ? findBlankData(part.num) : null;
+      const btn = document.createElement('button');
+      btn.className = 'blank-btn';
+      btn.innerHTML = `<span class="blank-num">${part.num}</span> ${part.word || '___'}`;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isPassage) {
+          showBlankPopup(e, part.num);
+        } else {
+          showOptionsPopup(e, qNum, options, part.letter);
+        }
+      });
+      fragment.appendChild(btn);
+    }
+  }
+  return fragment;
+}
+
+/* ── FIND BLANK DATA ── */
+let allBlanks = {};
+function buildBlankIndex() {
+  for (const s of EXAM.passage1.sentences) {
+    for (const b of s.blanks) allBlanks[b.num] = b;
+  }
+  for (const s of EXAM.passage2.sentences) {
+    for (const b of s.blanks) allBlanks[b.num] = b;
+  }
+}
+
+function findBlankData(num) {
+  return allBlanks[num] || null;
+}
+
+/* ── BUILD PART 1 ── */
+function buildPart1() {
+  const container = document.getElementById('part1-container');
+  for (const q of EXAM.part1) {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    
+    const header = document.createElement('div');
+    header.className = 'sentence-line';
+    
+    const numBadge = document.createElement('span');
+    numBadge.className = 'q-num';
+    numBadge.textContent = q.num;
+    
+    const ansBadge = document.createElement('span');
+    ansBadge.className = 'q-answer-badge';
+    ansBadge.textContent = q.ans;
+    
+    const sentSpan = document.createElement('span');
+    sentSpan.className = 'sentence-text';
+    
+    // Build clickable sentence with blank
+    const sentText = q.sentence.replace('[BLANK]', `[BLANK]`);
+    // Replace the blank token
+    const parts = q.sentence.split('[BLANK]');
+    
+    for (let i = 0; i < parts.length; i++) {
+      appendWords(sentSpan, parts[i], q.num, q.options);
+      if (i < parts.length - 1) {
+        const blankBtn = document.createElement('button');
+        blankBtn.className = 'blank-btn';
+        const ansOpt = q.options.find(o => o.l === q.ans);
+        blankBtn.innerHTML = `<span class="blank-num">${q.num}</span>${ansOpt ? ansOpt.w : '___'}`;
+        blankBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showOptionsPopup(e, q.num, q.options, q.ans);
+        });
+        sentSpan.appendChild(blankBtn);
+      }
+    }
+    
+    header.appendChild(numBadge);
+    header.appendChild(ansBadge);
+    header.appendChild(sentSpan);
+    card.appendChild(header);
+    
+    // Translate button
+    const transBtn = document.createElement('button');
+    transBtn.className = 'translate-btn';
+    transBtn.innerHTML = '🌐 翻譯';
+    transBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showTranslatePopup(e, q.translation);
+    });
+    card.appendChild(transBtn);
+    
+    // Options row (clickable)
+    const optsRow = document.createElement('div');
+    optsRow.className = 'options-row';
+    for (const opt of q.options) {
+      const chip = document.createElement('span');
+      chip.className = 'opt-chip' + (opt.l === q.ans ? ' correct' : '');
+      chip.innerHTML = `<span class="opt-label">${opt.l}</span><span>${opt.w}</span>`;
+      chip.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showOptionsPopup(e, q.num, q.options, q.ans);
+      });
+      optsRow.appendChild(chip);
+    }
+    card.appendChild(optsRow);
+    
+    container.appendChild(card);
+  }
+}
+
+function appendWords(container, text, qNum, options) {
+  const tokens = text.split(/(\s+|[,.;:!?()']+)/);
+  for (const token of tokens) {
+    if (!token || /^[\s,.;:!?()']+$/.test(token)) {
+      container.appendChild(document.createTextNode(token));
+    } else {
+      const clean = token.replace(/[^a-zA-Z']/g, '').toLowerCase().replace(/^'|'$/g,'');
+      if (!clean || SKIP_WORDS.has(clean) || clean.length <= 1) {
+        container.appendChild(document.createTextNode(token));
+      } else {
+        const span = document.createElement('span');
+        span.className = 'word-btn';
+        span.textContent = token;
+        span.dataset.word = clean;
+        span.addEventListener('click', (e) => { e.stopPropagation(); showWordPopup(e, clean, span); });
+        container.appendChild(span);
+      }
+    }
+  }
+}
+
+/* ── BUILD PASSAGE OPTIONS BOX ── */
+function buildOptionsBox(passage, containerId) {
+  const container = document.getElementById(containerId);
+  const box = document.createElement('div');
+  box.className = 'options-box';
+  box.innerHTML = `<div class="options-box-title">選項字詞（點擊查看解說）</div>`;
+  const grid = document.createElement('div');
+  grid.className = 'options-grid';
+  for (const opt of passage.options) {
+    const chip = document.createElement('span');
+    chip.className = 'opt-chip';
+    chip.innerHTML = `<span class="opt-label">${opt.l}</span><span style="font-family:var(--font-mono);font-weight:600">${opt.w}</span><span style="font-size:11px;color:var(--ink-light)">${opt.pos}</span><span style="color:var(--ink-mid)">${opt.m}</span>`;
+    chip.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showSingleWordInfo(e, opt);
+    });
+    grid.appendChild(chip);
+  }
+  box.appendChild(grid);
+  container.appendChild(box);
+}
+
+/* ── BUILD PASSAGE ── */
+function buildPassage(passage, containerId, fullTransId) {
+  const container = document.getElementById(containerId);
+  const box = document.createElement('div');
+  box.className = 'passage-box';
+  
+  const title = document.createElement('div');
+  title.className = 'passage-title';
+  title.textContent = '文章';
+  box.appendChild(title);
+  
+  const content = document.createElement('div');
+  content.className = 'passage-content';
+  
+  for (const sent of passage.sentences) {
+    if (sent.en === passage.sentences[passage.sentences.length-1].en && 
+        passage.sentences.filter(s=>s.id===sent.id).length > 1) continue;
+    
+    const block = document.createElement('div');
+    block.className = 'sentence-block';
+    
+    const enDiv = document.createElement('div');
+    enDiv.className = 'sentence-en';
+    
+    // Parse sentence with blanks
+    const parsed = parseSentencePassage(sent.en, sent.blanks, passage);
+    enDiv.appendChild(parsed);
+    
+    block.appendChild(enDiv);
+    
+    const zhDiv = document.createElement('div');
+    zhDiv.className = 'sentence-zh';
+    zhDiv.textContent = sent.zh;
+    
+    const inner = document.createElement('div');
+    inner.appendChild(enDiv);
+    inner.appendChild(zhDiv);
+    block.appendChild(inner);
+    
+    content.appendChild(block);
+  }
+  
+  box.appendChild(content);
+  container.appendChild(box);
+  
+  // Full translation button
+  const fullBtn = document.createElement('button');
+  fullBtn.className = 'full-trans-btn';
+  fullBtn.innerHTML = '📄 展開整篇中文翻譯';
+  const fullPanel = document.createElement('div');
+  fullPanel.className = 'full-trans-panel';
+  const fullText = document.createElement('p');
+  fullText.className = 'full-trans-text';
+  fullText.textContent = passage.fullZh;
+  fullPanel.appendChild(fullText);
+  
+  fullBtn.addEventListener('click', () => {
+    fullPanel.classList.toggle('open');
+    fullBtn.innerHTML = fullPanel.classList.contains('open') ? '▲ 收起整篇翻譯' : '📄 展開整篇中文翻譯';
+  });
+  
+  container.appendChild(fullBtn);
+  container.appendChild(fullPanel);
+}
+
+function parseSentencePassage(enText, blanks, passage) {
+  const frag = document.createDocumentFragment();
+  const blankRe = /\[(\d+):([A-J]):([^:]+):([^:]+):([^\]]+)\]/g;
+  let text = enText;
+  let parts = [];
+  let pos = 0;
+  let match;
+  
+  while ((match = blankRe.exec(text)) !== null) {
+    if (match.index > pos) parts.push({ type: 'text', val: text.slice(pos, match.index) });
+    parts.push({ type: 'blank', num: parseInt(match[1]), letter: match[2], word: match[3] });
+    pos = match.index + match[0].length;
+  }
+  if (pos < text.length) parts.push({ type: 'text', val: text.slice(pos) });
+  
+  for (const part of parts) {
+    if (part.type === 'text') {
+      const container = document.createDocumentFragment();
+      appendWords(container, part.val, null, null);
+      frag.appendChild(container);
+    } else {
+      const b = allBlanks[part.num];
+      const btn = document.createElement('button');
+      btn.className = 'blank-btn';
+      btn.innerHTML = `<span class="blank-num">${part.num}</span>${part.word}`;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showBlankPopup(e, part.num);
+      });
+      frag.appendChild(btn);
+    }
+  }
+  return frag;
+}
+
+/* ── POPUP FUNCTIONS ── */
+function positionPopup(e) {
+  const popup = document.getElementById('popup-card');
+  const x = e.clientX, y = e.clientY;
+  const pw = 380, ph = 300;
+  let left = x + 12, top = y + 12;
+  if (left + pw > window.innerWidth - 16) left = x - pw - 12;
+  if (top + ph > window.innerHeight - 16) top = y - ph - 12;
+  if (left < 8) left = 8;
+  if (top < 8) top = 8;
+  popup.style.left = left + 'px';
+  popup.style.top = top + 'px';
+}
+
+function showPopup(e, html) {
+  const overlay = document.getElementById('popup-overlay');
+  const popup = document.getElementById('popup-card');
+  overlay.classList.add('open');
+  popup.classList.add('open');
+  document.getElementById('popup-content').innerHTML = html;
+  positionPopup(e);
+}
+
+function closePopup() {
+  document.getElementById('popup-overlay').classList.remove('open');
+  document.getElementById('popup-card').classList.remove('open');
+}
+
+async function showWordPopup(e, word, el) {
+  showPopup(e, `<div class="popup-loading"><div class="spinner"></div>載入中...</div>`);
+  positionPopup(e);
+  
+  if (wordCache[word]) {
+    renderWordPopup(word, wordCache[word]);
+    return;
+  }
+  
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        messages: [{
+          role: 'user',
+          content: `你是高中英文老師。請為英文單字「${word}」提供：音標(IPA)、詞性(最常見用法)、繁體中文意思(1-2個)、1句使用情境說明。只回傳JSON，格式：{"ipa":"...","pos":"...","meaning":"...","note":"..."}`
+        }]
+      })
+    });
+    const data = await resp.json();
+    const text = data.content.map(i => i.text||'').join('').replace(/```json|```/g,'').trim();
+    const info = JSON.parse(text);
+    wordCache[word] = info;
+    renderWordPopup(word, info);
+  } catch(err) {
+    document.getElementById('popup-content').innerHTML = `<div class="popup-word">${word}</div><div class="popup-meaning" style="color:var(--ink-light)">載入失敗，請再試一次</div>`;
+  }
+}
+
+function renderWordPopup(word, info) {
+  const addBtn = `<button onclick="addToVocab('${word}', '${(info.ipa||'').replace(/'/g,"\\'")}', '${(info.pos||'').replace(/'/g,"\\'")}', '${(info.meaning||'').replace(/'/g,"\\'")}', '${(info.note||'').replace(/'/g,"\\'")}'); this.textContent='✓ 已加入'; this.disabled=true;" style="margin-top:10px;background:var(--accent);color:#fff;border:none;border-radius:4px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:var(--font-body);">+ 加入單字庫</button>`;
+  document.getElementById('popup-content').innerHTML = `
+    <div class="popup-word">${word}</div>
+    <div class="popup-ipa">${info.ipa || ''}</div>
+    <span class="popup-pos">${info.pos || ''}</span>
+    <div class="popup-meaning">${info.meaning || ''}</div>
+    ${info.note ? `<div style="font-size:12px;color:var(--ink-light);margin-top:6px;border-top:1px solid var(--paper-line);padding-top:6px">${info.note}</div>` : ''}
+    ${addBtn}
+  `;
+}
+
+function showSingleWordInfo(e, opt) {
+  showPopup(e, `
+    <div class="popup-word">${opt.w}</div>
+    <div class="popup-ipa">${opt.ipa||''}</div>
+    <span class="popup-pos">${opt.pos}</span>
+    <div class="popup-meaning">${opt.m}</div>
+    <button onclick="addToVocab('${opt.w}','${(opt.ipa||'').replace(/'/g,"\\'")}','${opt.pos}','${opt.m}',''); this.textContent='✓ 已加入'; this.disabled=true;" style="margin-top:10px;background:var(--accent);color:#fff;border:none;border-radius:4px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:var(--font-body);">+ 加入單字庫</button>
+  `);
+}
+
+function showOptionsPopup(e, qNum, options, ansLetter) {
+  let rows = '';
+  for (const opt of options) {
+    const isCorrect = opt.l === ansLetter;
+    rows += `<div class="option-set-item ${isCorrect ? 'correct-opt' : ''}">
+      <span class="lbl">${opt.l}</span>
+      <span class="wd">${opt.w}</span>
+      <span class="ps">${opt.ipa ? opt.ipa.replace(/\//g,'') : opt.pos||'—'}</span>
+      <span class="mn">${opt.m}</span>
+    </div>`;
+  }
+  const html = `
+    <div class="option-set-title">第 ${qNum} 題選項解說 <span style="color:var(--green);font-size:12px">答案：${ansLetter}</span></div>
+    ${rows}
+    <div style="font-size:11px;color:var(--green);margin-top:8px">✓ 綠色為正確答案</div>
+  `;
+  showPopup(e, html);
+}
+
+function showBlankPopup(e, num) {
+  const b = allBlanks[num];
+  if (!b) { showPopup(e, `<div>空格資料載入失敗</div>`); return; }
+  
+  const html = `
+    <div class="blank-popup-title">第 ${num} 格解析</div>
+    <div class="blank-answer-row">
+      <span class="blank-answer-word">${b.word}</span>
+      <span class="blank-answer-pos">${b.pos}</span>
+    </div>
+    <div class="blank-reason">${b.reason.replace(/\n/g,'<br>')}</div>
+  `;
+  showPopup(e, html);
+}
+
+function showTranslatePopup(e, translation) {
+  showPopup(e, `<div class="blank-popup-title">中文翻譯</div><div class="trans-popup-zh">${translation}</div>`);
+}
+
+/* ── VOCAB ── */
+function addToVocab(word, ipa, pos, meaning, note) {
+  if (vocabLib.some(v => v.word === word)) return;
+  vocabLib.push({ word, ipa, pos, meaning, note });
+  localStorage.setItem('vocabLib', JSON.stringify(vocabLib));
+  updateVocabCount();
+  renderVocabList();
+}
+
+function updateVocabCount() {
+  document.getElementById('vocab-count').textContent = vocabLib.length;
+}
+
+function renderVocabList() {
+  const list = document.getElementById('vocab-list');
+  if (vocabLib.length === 0) {
+    list.innerHTML = '<div class="vocab-empty">單字庫是空的<br>點擊單字後可加入</div>';
+    return;
+  }
+  list.innerHTML = '';
+  for (let i = 0; i < vocabLib.length; i++) {
+    const v = vocabLib[i];
+    const item = document.createElement('div');
+    item.className = 'vocab-item';
+    item.innerHTML = `
+      <span class="vi-word">${v.word}</span>
+      <span class="vi-ipa">${v.ipa||''}</span>
+      <span class="vi-pos">${v.pos}</span>
+      <span class="vi-mean">${v.meaning}</span>
+      <button class="vi-del" onclick="removeVocab(${i})">×</button>
+    `;
+    list.appendChild(item);
+  }
+}
+
+function removeVocab(idx) {
+  vocabLib.splice(idx, 1);
+  localStorage.setItem('vocabLib', JSON.stringify(vocabLib));
+  updateVocabCount();
+  renderVocabList();
+}
+
+function toggleVocab() {
+  document.getElementById('vocab-panel').classList.toggle('open');
+  renderVocabList();
+}
+
+function exportVocab() {
+  if (vocabLib.length === 0) { alert('單字庫是空的！'); return; }
+  const blob = new Blob([JSON.stringify(vocabLib, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'vocab_library.json';
+  a.click();
+}
+
+/* ── INIT ── */
+function init() {
+  buildBlankIndex();
+  buildAnswerBar();
+  buildPart1();
+  buildOptionsBox(EXAM.passage1, 'passage1-options-container');
+  buildPassage(EXAM.passage1, 'passage1-container', 'passage1-trans');
+  buildOptionsBox(EXAM.passage2, 'passage2-options-container');
+  buildPassage(EXAM.passage2, 'passage2-container', 'passage2-trans');
+  updateVocabCount();
+  renderVocabList();
+  
+  // Close popup on ESC
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
