@@ -353,9 +353,7 @@ body {
 }
 #popup-overlay.open {
   display: block;
-  background: rgba(15, 23, 42, 0.42);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: rgba(15, 23, 42, 0.18);
 }
 
 .popup-card {
@@ -465,14 +463,14 @@ body.popup-scroll-lock { overflow: auto; }
 
 /* option-set popup (Part 1 ABCD) */
 .option-set-title { font-size: 11px; font-weight: 700; color: #94a3b8; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #334155; }
-.option-set-item { display: grid; grid-template-columns: 18px 1fr 1fr; gap: 4px 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid #ffffff0d; font-size: 13px; }
+.option-set-item { display: grid; grid-template-columns: 24px 1fr 1fr; gap: 6px 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid #ffffff0d; font-size: 16px; }
 .option-set-item:last-child { border-bottom: none; }
-.option-set-item .lbl { font-family: var(--font-mono); font-weight: 800; color: #94a3b8; }
+.option-set-item .lbl { font-family: var(--font-mono); font-weight: 800; color: #94a3b8; font-size: 16px; }
 .option-set-item.correct-opt .lbl { color: #34d399; }
-.option-set-item .wd { font-family: var(--font-mono); font-weight: 700; color: #e2e8f0; }
+.option-set-item .wd { font-family: var(--font-mono); font-weight: 700; color: #e2e8f0; font-size: 16px; }
 .option-set-item.correct-opt .wd { color: #34d399; }
-.option-set-item .ps { font-size: 10px; color: #64748b; font-style: italic; white-space: nowrap; }
-.option-set-item .mn { color: #94a3b8; font-size: 12.5px; }
+.option-set-item .ps { font-size: 13px; color: #64748b; font-style: italic; white-space: nowrap; }
+.option-set-item .mn { color: #94a3b8; font-size: 15px; }
 .option-set-item.correct-opt .mn { color: #6ee7b7; }
 
 /* translate popup */
@@ -578,6 +576,40 @@ body.popup-scroll-lock { overflow: auto; }
 .pop-folder-btn{background:#334155;border:1px solid #475569;border-radius:6px;padding:6px 10px;font-size:12px;font-weight:bold;color:#e2e8f0;text-align:left;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}
 .pop-folder-btn:hover{background:#3e536b}
 .pop-folder-btn.has-word{border-color:#f43f5e;background:#4c0519;color:#fecdd3}
+
+
+/* ── GRAMMAR WORD HIGHLIGHT ── */
+.grammar-word {
+  color: #dc2626 !important;
+  border-bottom-color: #dc2626 !important;
+  font-weight: 600;
+}
+.grammar-word:hover {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+}
+
+/* ── GRAMMAR BTN ── */
+.grammar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 800;
+  font-family: var(--font-body);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  min-height: 28px;
+  touch-action: manipulation;
+}
+.grammar-btn:hover { background: #b91c1c; }
 </style>
 </head>
 <body>
@@ -614,10 +646,11 @@ body.popup-scroll-lock { overflow: auto; }
 </div>
 
 <!-- Popup overlay -->
-<div id="popup-overlay"></div>
-<div class="popup-card" id="popup-card">
-  <button type="button" class="popup-close" aria-label="關閉" onclick="closePopup()">✕</button>
-  <div id="popup-content"></div>
+<div id="popup-overlay">
+  <div class="popup-card" id="popup-card">
+    <button type="button" class="popup-close" aria-label="關閉" onclick="closePopup()">✕</button>
+    <div id="popup-content"></div>
+  </div>
 </div>
 
 <!-- Vocab Panel -->
@@ -774,6 +807,461 @@ let vocabLib = JSON.parse(localStorage.getItem('vocabLib') || '[]');
 /* ── POPUP STATE ── */
 let currentPopup = null;
 
+/* ── GRAMMAR DATA ── */
+const GRAMMAR_NOTES = {
+  1: {
+    tag: '分詞構句',
+    highlight: 'Faced with dwindling state funds ... the board of trustees had no choice but to ___',
+    points: [
+      { structure: 'Faced with ... , 主詞 + 動詞',
+        explain: '過去分詞（Faced）放句首，省略了主詞與 being，完整寫法是 Being faced with...，表示「面對……」的被動原因。分詞構句的主詞必須與主句一致——這裡省略的主詞就是 the board of trustees。',
+        tip: '口訣：句首 V-ed → 被動分詞構句，表原因或背景。' },
+      { structure: 'had no choice but to + 原形動詞',
+        explain: '固定句型，意思是「別無選擇，只能……」。but 在此當介系詞，後接不定詞（to + V）。',
+        tip: '同義句型：have no option but to V = have no alternative but to V' }
+    ]
+  },
+  2: {
+    tag: '假設語氣（Subjunctive Mood）',
+    highlight: 'demanded that ... be verified',
+    points: [
+      { structure: '命令／建議動詞 + that + 主詞 + (should) + 原形動詞',
+        explain: 'demand、suggest、insist、require、propose 等動詞後面的 that 子句，動詞必須用原形（或保留 should）。這裡 "be verified" 是原形被動，寫成 "was verified" 是錯誤的。',
+        tip: '口訣記法：RIDAS（Request / Insist / Demand / Ask / Suggest）後 that 子句用原形動詞。' },
+      { structure: 'emphasizing that ... （分詞構句補充說明）',
+        explain: '句末的 emphasizing 是現在分詞構句，表示主詞（The CEO）同時附帶強調的動作，修飾整個主句。',
+        tip: '分詞放句尾，表伴隨動作或補充說明，主詞同為句子主詞。' }
+    ]
+  },
+  3: {
+    tag: '不定詞表目的 + prevent...from',
+    highlight: 'To prevent younger students from becoming ... , the school implemented ...',
+    points: [
+      { structure: 'To + 原形動詞 , 主詞 + 動詞（目的副詞）',
+        explain: '不定詞片語放句首，表示「為了……的目的」。完整形式是 In order to prevent...，考試兩種都接受。',
+        tip: '辨別：句首 To V 表目的 → 可替換 In order to V；句首 V-ing → 分詞構句表原因。' },
+      { structure: 'prevent + 受詞 + from + V-ing',
+        explain: '固定搭配：prevent A from doing B，意思是「防止 A 做 B」。from 後面一定接動名詞（-ing），不能接原形。',
+        tip: '同類句型：stop / keep / prohibit / discourage + O + from + V-ing' },
+      { structure: 'a strict policy banning gadgets（分詞後位修飾）',
+        explain: '現在分詞 banning 後置修飾名詞 policy，等同關係子句 a policy that bans gadgets。動作主動（policy 主動 ban），所以用 V-ing。',
+        tip: '後位修飾判斷：名詞 + V-ing（主動）/ 名詞 + V-ed（被動）' }
+    ]
+  },
+  4: {
+    tag: '不定詞表目的 + that 名詞子句',
+    highlight: '... sought advice ... to ensure that the newly drafted amendments complied with ...',
+    points: [
+      { structure: 'sought advice ... to ensure that ...',
+        explain: 'to ensure 是不定詞表目的，說明政府尋求建議的原因。that 引導名詞子句當 ensure 的受詞。',
+        tip: 'ensure / make sure + that 子句：常見固定用法，確保某事成真。' },
+      { structure: 'the newly drafted amendments（副詞 + 過去分詞修飾名詞）',
+        explain: 'newly drafted 是「副詞 + 過去分詞」組合，整體當形容詞修飾 amendments（修正案）。drafted 表被動，即「被起草的」。',
+        tip: '過去分詞修飾名詞：表被動關係。例：the newly built school（剛建好的學校）' }
+    ]
+  },
+  5: {
+    tag: 'that 名詞子句 + 形容詞片語後位修飾',
+    highlight: 'revealed that ... ecosystems capable of thriving under extreme pressure',
+    points: [
+      { structure: 'revealed that + 子句（名詞子句當受詞）',
+        explain: 'that 引導名詞子句，當動詞 revealed 的受詞。此類用法極常見：show / reveal / prove / suggest / indicate + that 子句。',
+        tip: '判斷 that 的功能：接在及物動詞後 → 名詞子句；接在先行詞後 → 關係子句。' },
+      { structure: 'ecosystems capable of thriving...（形容詞片語後位修飾）',
+        explain: '形容詞片語 capable of thriving... 後置修飾 ecosystems，等同 ecosystems that are capable of thriving...。be capable of + V-ing 是固定搭配，意為「能夠……」。',
+        tip: '後位修飾：形容詞片語（含介系詞片語）太長時，放在名詞後面修飾。' }
+    ]
+  },
+  6: {
+    tag: '讓步子句 + 分詞構句表結果',
+    highlight: 'Although ... , subsequent experiments generated ... results , leading to confusion',
+    points: [
+      { structure: 'Although + 子句 , 主句（讓步副詞子句）',
+        explain: 'Although 引導讓步副詞子句，意思是「雖然……，但……」。Although 和 but 不能同時出現在同一句，是最常考的錯誤句型。',
+        tip: '常考錯誤：× Although ... , but ... ✓ Although ... , （去掉 but）' },
+      { structure: '... results , leading to deep confusion（分詞構句表結果）',
+        explain: '句末的 leading to... 是現在分詞構句，表示主句動作「導致」的結果。主動分詞（leading）說明前面整件事的後果。',
+        tip: '分詞放句尾表結果，常見：causing / resulting in / leading to / leaving + 受詞' }
+    ]
+  },
+  7: {
+    tag: '介系詞片語前置 + 雙重不定詞',
+    highlight: 'In a desperate attempt to stay afloat ... , the tech giant chose to cooperate ... to monopolize',
+    points: [
+      { structure: 'In a desperate attempt to + V（介系詞片語前置）',
+        explain: '介系詞片語 In an attempt to... 放句首，修飾整個主句，說明動機。to stay afloat 是不定詞後位修飾 attempt（嘗試去……）。',
+        tip: 'In an attempt to V = In order to V，常見於正式書面語與新聞英文。' },
+      { structure: 'chose to cooperate ... to monopolize（兩個不定詞功能不同）',
+        explain: '第一個 to（chose to cooperate）是不定詞當受詞；第二個 to（to monopolize）是不定詞副詞表目的。同一句兩個 to，功能完全不同。',
+        tip: '不定詞的兩大功能：① 動詞受詞（chose to V）②目的副詞（放句末，表為了什麼）' }
+    ]
+  },
+  8: {
+    tag: 'Unless 條件句',
+    highlight: 'Unless the international community takes ... , global warming will cause ...',
+    points: [
+      { structure: 'Unless + 現在式 , 主句 + will（條件副詞子句）',
+        explain: 'Unless 等於 if...not，引導條件副詞子句。子句用現在式表未來條件，主句用 will 表結果。這是第一條件句的標準句型。',
+        tip: '口訣：條件子句用現在式代替未來式（× will take ✓ takes）' },
+      { structure: 'the irreversible collapse of...（動詞名詞化）',
+        explain: '名詞片語結構：冠詞 + 形容詞（irreversible）+ 名詞（collapse）+ of 介系詞片語。collapse 原為動詞，名詞化後用 the collapse of 表示「……的崩潰」。',
+        tip: '動詞名詞化（nominalization）：常見於正式寫作，collapse → the collapse of，destroy → the destruction of' }
+    ]
+  },
+  9: {
+    tag: '過去分詞片語後位修飾',
+    highlight: 'a charity campaign aimed at raising sufficient funds',
+    points: [
+      { structure: '名詞 + aimed at + V-ing（過去分詞後位修飾）',
+        explain: '過去分詞片語 aimed at raising... 後置修飾 campaign，等同關係子句 a campaign that was aimed at raising...。過去分詞表被動：campaign 被設定為……目標。',
+        tip: 'aim at + V-ing：以……為目標（主動）/ be aimed at + V-ing：被設計來……（被動）' }
+    ]
+  },
+  10: {
+    tag: '分詞構句（被動原因）+ 伴隨動作',
+    highlight: 'Driven by intense scientific curiosity , the young biochemist spent ... trying to decipher',
+    points: [
+      { structure: 'Driven by ... , 主詞 + 動詞（被動分詞構句）',
+        explain: '過去分詞 Driven 開頭，省略了 Being，完整形式是 Being driven by...，表被動原因：「在好奇心的驅使下」。分詞主詞必須與主句主詞一致（the biochemist）。',
+        tip: '主動分詞構句：V-ing 開頭。被動分詞構句：V-ed 開頭（省略 Being）。' },
+      { structure: 'spent countless nights trying to decipher（伴隨動作）',
+        explain: 'trying to decipher 是現在分詞構句，表示伴隨 spent 的動作，說明「怎麼花時間的」。',
+        tip: '句型：spend + 時間/金錢 + V-ing，表示「花……做……」。' }
+    ]
+  },
+  11: {
+    tag: '限定關係子句',
+    highlight: 'comprehensive reforms that would significantly benefit the middle class',
+    points: [
+      { structure: '先行詞 + that + 動詞（限定關係子句）',
+        explain: 'that 引導限定關係子句，修飾 reforms（改革）。that 在子句中當主詞，would benefit 用過去助動詞 would，因為主句動詞是 promised（從過去的角度看未來）。',
+        tip: '限定關係子句：去掉後意思改變，不加逗號。非限定：去掉後意思仍完整，加逗號（which 引導）。' }
+    ]
+  },
+  12: {
+    tag: '被動語態 + 不定詞表目的',
+    highlight: 'researchers are strictly required to clarify ... to avoid any potential accusations',
+    points: [
+      { structure: 'be required to + 原形動詞（被動 + 不定詞）',
+        explain: '被動語態（are required）加不定詞，表示「被要求去做……」。主動句型是 require sb to do sth → 被動：sb be required to do sth。',
+        tip: '常見被動 + 不定詞：be asked / required / expected / supposed / allowed to V' },
+      { structure: 'to avoid any potential accusations（目的副詞）',
+        explain: '不定詞 to avoid 放句末表目的，說明為何要 clarify sources。注意 avoid 本身後面接動名詞（avoid + V-ing），但這裡的 to avoid 是目的副詞，是另一層用法。',
+        tip: '辨別：to avoid 放句末是目的副詞；avoid + V-ing 是 avoid 的受詞用法，兩者不同。' }
+    ]
+  },
+  13: {
+    tag: '完成式被動語態',
+    highlight: 'has been severely compromised after centuries of exposure',
+    points: [
+      { structure: 'has been + 過去分詞（現在完成式被動）',
+        explain: '現在完成式被動：have / has + been + 過去分詞，表示「已經被……」且影響持續至今。句中 has been compromised 說明損壞從過去持續到現在。',
+        tip: '口訣：be動詞 + been + V-ed = 完成式被動。after centuries of exposure 是時間副詞片語，強調時間跨度。' },
+      { structure: 'after centuries of exposure to（介系詞片語）',
+        explain: 'after + 名詞片語 表時間背景。exposure to 是固定搭配：「暴露於……；接觸……」，後接名詞。',
+        tip: 'exposure to + 名詞 = 接觸到……，常見：exposure to acid rain / sunlight / chemicals' }
+    ]
+  },
+  14: {
+    tag: '分詞構句（伴隨說明）+ 被動不定詞',
+    highlight: 'always ensuring that no words spoken could be interpreted as an insult',
+    points: [
+      { structure: 'always ensuring that ...（現在分詞構句）',
+        explain: '現在分詞 ensuring 放句尾，表「伴隨動作」，說明外交官處理爭端時同時做的事。always 加強語氣，表示「始終確保」。',
+        tip: '分詞構句放句尾表伴隨：V-ing = and + 主詞 + V（主動）' },
+      { structure: 'words spoken（過去分詞後位修飾）',
+        explain: '過去分詞 spoken 後置修飾 words，等同關係子句 words that were spoken / words that are spoken。表被動：「被說出口的話」。',
+        tip: '名詞 + 過去分詞 = 被動後位修飾，常見：the plan proposed（被提出的計畫）、the work done（已完成的工作）' },
+      { structure: 'could be interpreted as（情態動詞被動）',
+        explain: 'could be + 過去分詞：情態動詞被動語態，表示「可能被……解讀為」。情態動詞後面 be 不變形。',
+        tip: 'could / would / might + be + V-ed = 情態動詞被動，be 永遠是原形。' }
+    ]
+  },
+  15: {
+    tag: '對比連接詞 Unlike + 限定關係子句',
+    highlight: 'Unlike traditional books that focus purely on text , this ... offers readers a profound look',
+    points: [
+      { structure: 'Unlike + 名詞 , 主句（對比介系詞）',
+        explain: 'Unlike 是介系詞（不是連接詞），後接名詞片語，放句首表對比。Unlike A, B ... = 與 A 不同，B……。',
+        tip: '區別：Unlike（介系詞）+ 名詞；Although（連接詞）+ 子句。不能說 Unlike traditional books, but this...' },
+      { structure: 'books that focus purely on text（限定關係子句）',
+        explain: 'that 引導限定關係子句修飾 books，that 在子句中當主詞。限定用法去掉後意思改變，不加逗號。',
+        tip: '限定 vs 非限定：The books that I bought（特定那些書）vs. The books, which I bought,（補充說明）' },
+      { structure: 'offers readers a profound look into（雙受詞 + 介系詞片語）',
+        explain: 'offer + 間接受詞（readers）+ 直接受詞（a look），是雙受詞句型（SVOO）。look into 是固定搭配，表示「深入了解……」。',
+        tip: 'offer / give / show + 人 + 物 = 雙受詞句型。offer sb sth = offer sth to sb' }
+    ]
+  },
+  16: {
+    tag: '分詞構句（Given）+ 被動不定詞',
+    highlight: 'Given the unpredictable nature of the market , investors are advised to remain',
+    points: [
+      { structure: 'Given + 名詞片語 , 主句（介系詞/分詞前置）',
+        explain: 'Given 在此作介系詞或獨立分詞，放句首表「鑑於……；考量……」，引導背景條件。相當於 Considering / In light of。',
+        tip: 'Given that + 子句 / Given + 名詞：兩種都可以，意思相同，都表「考量到……」。' },
+      { structure: 'are advised to remain（被動 + 不定詞）',
+        explain: 'be advised to + V：被動語態接不定詞，表「被建議去……」。主動句型是 advise sb to do sth。',
+        tip: '常見被動 + 不定詞：be advised / expected / required / encouraged / allowed to V' }
+    ]
+  },
+  17: {
+    tag: '分詞構句（表結果）+ 名詞子句',
+    highlight: 'plunged the entire nation into a state of ... , leaving citizens anxious about',
+    points: [
+      { structure: 'plunged ... into a state of（固定搭配）',
+        explain: 'plunge A into B：使 A 陷入 B（的狀態）。into a state of + 名詞，表示進入某種狀態。',
+        tip: '固定搭配：plunge / throw / send + 受詞 + into + 狀態，常見於新聞英文。' },
+      { structure: ', leaving citizens anxious about（分詞構句表結果）',
+        explain: '現在分詞 leaving 放句尾，表示「導致公民……」的結果。leaving + 受詞 + 形容詞，是「使役分詞」結構。',
+        tip: 'leave + 受詞 + 形容詞/分詞：使……處於某狀態。The news left me speechless.（消息讓我說不出話）' }
+    ]
+  },
+  18: {
+    tag: 'that 名詞子句 + 時間副詞片語',
+    highlight: 'suggests that ... possessed sophisticated tools ... long before the dawn of modern civilization',
+    points: [
+      { structure: 'suggests that + 子句（名詞子句當受詞）',
+        explain: 'suggest + that 子句：注意此處是「表明；顯示」的意思（不是「建議」），後面不用假設語氣，直接用過去式 possessed。',
+        tip: '辨別 suggest 的兩種用法：① suggest（建議）+ that + 原形動詞；② suggest（表明）+ that + 一般時態' },
+      { structure: 'long before the dawn of modern civilization（時間副詞片語）',
+        explain: 'long before + 名詞片語，表「在……很久之前」。dawn 字面是黎明，引申為「（文明的）開端、曙光」。',
+        tip: 'long before / long after + 名詞/子句：強調時間距離遙遠的前後關係。' }
+    ]
+  },
+  19: {
+    tag: '非限定關係子句（which 引導）',
+    highlight: 'caused crops to wither across the country , which will inevitably lead to',
+    points: [
+      { structure: 'cause + 受詞 + to + 原形動詞（使役動詞）',
+        explain: 'cause A to do B：使 A 做 B，是使役動詞句型（SVOC）。caused crops to wither 即「導致農作物枯萎」。',
+        tip: '使役動詞比較：cause / force / get + O + to V；make / let / have + O + 原形V（不加to）' },
+      { structure: ', which will inevitably lead to（非限定關係子句）',
+        explain: 'which 引導非限定關係子句，前面加逗號，指代整個前面子句（嚴重乾旱導致農作物枯萎這件事）。which 在子句中當主詞。',
+        tip: '非限定關係子句：, which / , who / , where 等，可指代整個句子或名詞，去掉後主句意思不變。' }
+    ]
+  },
+  20: {
+    tag: '分詞構句（補充說明）',
+    highlight: "praised the student's graduation essay , noting that her argument was highly",
+    points: [
+      { structure: 'praised ... , noting that（現在分詞構句）',
+        explain: '現在分詞 noting 放句尾，表示「同時指出」的伴隨動作，主詞同為 Professor Evans。that 引導名詞子句當 noting 的受詞。',
+        tip: '常用伴隨分詞：saying / noting / adding / emphasizing / pointing out that ...（都表示「同時說明……」）' },
+      { structure: 'supported by robust empirical evidence（過去分詞後位修飾）',
+        explain: '過去分詞片語 supported by... 後置修飾 argument，等同關係子句 an argument that was supported by...。表被動：「被……支持的論點」。',
+        tip: '後位修飾：名詞 + V-ed + by ... 表被動關係，常見於學術正式文體。' }
+    ]
+  },
+  // Passage 1 sentences
+  'p1s2': {
+    tag: '不定詞並列（needed to V）',
+    highlight: 'needed to analyze ... assemble ... classify ... and calculate',
+    points: [
+      { structure: 'needed to V1 , V2 , V3 , and V4（不定詞並列）',
+        explain: 'need to + 原形動詞。當多個動詞並列時，只需在第一個動詞前加 to，後面的動詞直接原形並列，用逗號分隔，最後一個前加 and。',
+        tip: '動詞並列省略 to：needed to analyze, assemble, classify, and calculate（只有第一個有 to）' },
+      { structure: 'with accuracy（介系詞片語表方式）',
+        explain: 'with + 名詞，表示「以某種方式/特質」。with accuracy = accurately（精確地）。',
+        tip: 'with + 抽象名詞 = 副詞：with care（小心地）/ with accuracy（精確地）/ with confidence（有信心地）' }
+    ]
+  },
+  'p1s3': {
+    tag: 'Because 原因子句 + ask for',
+    highlight: 'Because the deadline created ... , the applicant asked ... for ... and cooperation',
+    points: [
+      { structure: 'Because + 子句 , 主句（原因副詞子句）',
+        explain: 'Because 引導原因副詞子句，放句首時後面加逗號再接主句。注意：Because 和 so 不能同時使用（× Because..., so...）。',
+        tip: '常考錯誤：× Because ... , so ... ✓ Because ...（去掉 so）or So ...（去掉 Because）' },
+      { structure: 'ask + 人 + for + 事物（固定搭配）',
+        explain: 'ask sb for sth：向某人要求某物。ask for assistance and cooperation 是並列名詞作受詞。',
+        tip: 'ask for = 要求；ask sb to do = 請某人做；ask + 人 + for + 物 = 向某人索取某物' }
+    ]
+  },
+  'p1s5': {
+    tag: '使役動詞 cause + 不定詞',
+    highlight: 'almost caused the assignment to collapse',
+    points: [
+      { structure: 'cause + 受詞 + to + 原形動詞',
+        explain: 'cause A to do B：使役動詞句型，使 A 發生 B 的動作。almost caused the assignment to collapse = 差點讓任務瓦解。',
+        tip: '使役動詞 cause 後接 to V（不省略 to），與 make（make it collapse，不加 to）不同。' }
+    ]
+  },
+  'p1s7': {
+    tag: '動詞 accuse 的固定搭配',
+    highlight: 'accused the applicant of careless behavior',
+    points: [
+      { structure: 'accuse + 受詞 + of + 名詞/V-ing',
+        explain: 'accuse A of B：指責 A 有 B（的問題/行為）。of 後面接名詞或動名詞，不能接不定詞。',
+        tip: '同類搭配：blame A for B / suspect A of B / convict A of B / charge A with B' }
+    ]
+  },
+  'p1s8': {
+    tag: '讓步子句 Although + 動詞並列不定詞',
+    highlight: 'Although ... became a critical barrier , ... encouraged everyone to adapt , adjust , concentrate , and conquer',
+    points: [
+      { structure: 'Although + 子句 , 主句（讓步子句）',
+        explain: 'Although 引導讓步子句，表「雖然……但……」。前文已說明，Although 不可與 but 同用。',
+        tip: '常考：× Although ... , but ... ✓ Although ... ,（主句直接接）' },
+      { structure: 'encouraged everyone to adapt , adjust , concentrate , and conquer（並列不定詞）',
+        explain: 'encourage sb to + V。當多個不定詞並列時，to 只出現一次，後面動詞直接並列。',
+        tip: '不定詞並列：鼓勵某人去做多件事，只需 to + V1, V2, V3, and V4。' }
+    ]
+  },
+  'p1s9': {
+    tag: '動詞 assure 的固定搭配',
+    highlight: 'assured the applicant that continual cooperation could accomplish',
+    points: [
+      { structure: 'assure + 受詞 + that 子句',
+        explain: 'assure A that...：向 A 保證……。that 引導名詞子句作 assure 的第二個受詞。注意與 ensure（確保）/ insure（投保）的區別。',
+        tip: 'assure（向人保證）/ ensure（確保某事發生）/ insure（投保）— 三個字形近但意思不同。' }
+    ]
+  },
+  'p2s1': {
+    tag: '不定詞表目的',
+    highlight: 'prepared an annual event to honor their ancestor',
+    points: [
+      { structure: '動詞 + 受詞 + to + 原形動詞（不定詞表目的）',
+        explain: 'to honor 是不定詞表目的，說明「籌備活動的目的是祭拜祖先」。目的不定詞修飾動詞或整個主句。',
+        tip: '不定詞表目的可放句尾：prepared an event to honor = prepared an event in order to honor' }
+    ]
+  },
+  'p2s3': {
+    tag: '關係子句（who 引導）',
+    highlight: 'a beggar who became a heroic commander',
+    points: [
+      { structure: '先行詞（人）+ who + 動詞（限定關係子句）',
+        explain: 'who 引導限定關係子句，修飾先行詞 beggar（人）。who 在子句中當主詞，became 是子句動詞。',
+        tip: '關係代名詞選擇：人 → who / that；物 → which / that；所有格 → whose（人/物都可）' }
+    ]
+  },
+  'p2s4': {
+    tag: '不定詞表目的（句首）+ 僱用句型',
+    highlight: 'To convey this story , they hired a local agency to organize',
+    points: [
+      { structure: 'To + V , 主詞 + 動詞（句首不定詞表目的）',
+        explain: 'To convey 放句首表目的，修飾主句 they hired...。句首目的不定詞後面接逗號，再接主句。',
+        tip: '句首不定詞表目的：To V, 主詞 + V = In order to V, 主詞 + V，兩者互換。' },
+      { structure: 'hired a local agency to organize（雇用 + 不定詞）',
+        explain: 'hire sb to do sth：雇用某人做某事。to organize 是不定詞表目的，說明雇用的原因/目的。',
+        tip: '同類句型：hire / employ / ask / invite + O + to V（雇用/請某人去做……）' }
+    ]
+  },
+  'p2s5': {
+    tag: '現在進行式表未來 + was looking forward to',
+    highlight: 'The entire town was looking forward to this magnificent weekend celebration',
+    points: [
+      { structure: 'be looking forward to + 名詞/V-ing（期待）',
+        explain: 'look forward to 是固定片語，to 是介系詞（不是不定詞），後面一定接名詞或動名詞（V-ing），不能接原形動詞。was looking forward to 是過去進行式，表當時持續的期待狀態。',
+        tip: '常考陷阱：× look forward to see ✓ look forward to seeing（to 是介系詞，後接 V-ing）' }
+    ]
+  },
+  'p2s7': {
+    tag: '對等連接詞並列 + 條件子句省略',
+    highlight: 'her behavior was unpredictable , and she would blink or cough when she felt anxiety',
+    points: [
+      { structure: 'and 連接並列句',
+        explain: '三個獨立子句以逗號和 and 並列：(1) The leading girl was clumsy (2) her behavior was unpredictable (3) she would blink or cough when...。對等連接詞 and 連接兩個對等子句。',
+        tip: '並列句（Compound sentence）：主句1, and 主句2。注意逗號在 and 前面的用法（Oxford comma）。' },
+      { structure: 'would blink or cough when she felt anxiety（when 時間子句）',
+        explain: 'when 引導時間副詞子句，would + V 在此表過去的習慣性行為（= used to）。「每當她感到焦慮，就會眨眼或咳嗽」。',
+        tip: '過去 would + V 表習慣：She would always cry when she was sad.（過去習慣）' }
+    ]
+  },
+  'p2s11': {
+    tag: '不定詞表目的（三個並列）',
+    highlight: 'gave the girl an aspirin to soothe her , a beautiful bracelet for attraction , and a cork to chew to practice her accent',
+    points: [
+      { structure: 'gave + 人 + 物（雙受詞 SVOO）',
+        explain: 'give + 間接受詞（the girl）+ 直接受詞（an aspirin）= SVOO 雙受詞句型。這裡三個直接受詞（aspirin / bracelet / cork）以逗號並列。',
+        tip: 'SVOO 雙受詞：give / offer / show / send + 人 + 物 = give 物 to 人（可互換）' },
+      { structure: 'to soothe / to chew / to practice（不定詞表目的）',
+        explain: '每個名詞後面接不定詞表目的：aspirin to soothe（用來安撫）/ cork to chew to practice（用來咀嚼以練習）。to chew to practice 是兩層目的不定詞。',
+        tip: '名詞 + to V = 用來做……的（東西）：something to eat / a pen to write with / aspirin to soothe' }
+    ]
+  },
+  'p2s14': {
+    tag: '分詞構句（proving）+ 動名詞主詞',
+    highlight: 'they just cheered for this incredible combination of art , proving that cooperation can overcome',
+    points: [
+      { structure: ', proving that ...（現在分詞構句表結果）',
+        explain: '現在分詞 proving 放句尾，表示「由此證明了……」的結果。that 引導名詞子句當 proving 的受詞。',
+        tip: '分詞構句句尾表結果或補充：..., proving / showing / demonstrating + that 子句' },
+      { structure: 'cooperation can overcome（動名詞/名詞當主詞）',
+        explain: 'cooperation 是抽象名詞當主詞，說明合作這件事能克服困難。抽象名詞當主詞在英文中非常常見，考試也常考。',
+        tip: '抽象名詞當主詞：Cooperation / Patience / Kindness + 動詞 = 強調這個特質/行為的重要性。' }
+    ]
+  }
+};
+
+function showGrammarPopup(e, qNum) {
+  const note = GRAMMAR_NOTES[qNum];
+  if (!note) return;
+  let html = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="background:#dc2626;color:#fff;border-radius:4px;padding:2px 10px;font-size:11px;font-weight:800;letter-spacing:.06em;flex-shrink:0">📐 文法重點</span>
+        <span style="color:#fca5a5;font-size:13px;font-weight:700">${note.tag}</span>
+      </div>
+      <button type="button" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:14px;min-width:40px;min-height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0" onclick="closePopup()">✕</button>
+    </div>
+    <div style="background:#0f172a;border-left:3px solid #dc2626;padding:8px 12px;border-radius:0 6px 6px 0;margin-bottom:12px;font-size:12px;color:#fca5a5;line-height:1.7;font-style:italic">${note.highlight}</div>
+  `;
+  for (let i = 0; i < note.points.length; i++) {
+    const p = note.points[i];
+    html += `
+      <div style="margin-bottom:10px;padding-bottom:10px;${i < note.points.length - 1 ? 'border-bottom:1px solid #1e293b' : ''}">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:800;color:#34d399;margin-bottom:5px">⬩ ${p.structure}</div>
+        <div style="font-size:13px;color:#e2e8f0;line-height:1.85;margin-bottom:5px">${p.explain}</div>
+        <div style="font-size:12px;color:#fbbf24;background:#1e293b;border-radius:4px;padding:6px 8px;line-height:1.7">💡 ${p.tip}</div>
+      </div>
+    `;
+  }
+  showPopup(e, html);
+}
+
+/* ── GRAMMAR PHRASE HIGHLIGHTS (exact substrings per question) ── */
+const GRAMMAR_PHRASES = {
+  1:  ["Faced with", "had no choice but to"],
+  2:  ["demanded that", "be verified", "emphasizing that"],
+  3:  ["To prevent", "from becoming", "banning"],
+  4:  ["to ensure that", "newly drafted"],
+  5:  ["revealed that", "capable of thriving"],
+  6:  ["Although", "leading to"],
+  7:  ["attempt to stay", "chose to", "to monopolize"],
+  8:  ["Unless", "takes", "will cause"],
+  9:  ["aimed at raising"],
+  10: ["Driven by", "trying to decipher"],
+  11: ["that would", "benefit"],
+  12: ["are strictly required to", "to avoid"],
+  // Q13-20
+  13: ["has been severely compromised", "after centuries of exposure to"],
+  14: ["always ensuring that", "spoken", "could be interpreted as"],
+  15: ["Unlike", "that focus purely on text", "offers readers"],
+  16: ["Given", "are advised to remain"],
+  17: ["plunged the entire nation into", "leaving citizens anxious"],
+  18: ["suggests that", "long before the dawn of"],
+  19: ["caused crops to wither", "which will inevitably lead to"],
+  20: ["noting that", "supported by"],
+  // Passage 1
+  'p1s2': ["needed to", "with accuracy"],
+  'p1s3': ["Because", "asked", "for"],
+  'p1s5': ["caused the assignment to collapse"],
+  'p1s7': ["accused the applicant of"],
+  'p1s8': ["Although", "encouraged everyone to"],
+  'p1s9': ["assured the applicant that"],
+  // Passage 2
+  'p2s1': ["to honor"],
+  'p2s3': ["who became"],
+  'p2s4': ["To convey", "to organize"],
+  'p2s5': ["was looking forward to"],
+  'p2s7': ["would blink", "when she felt"],
+  'p2s11': ["to soothe", "to chew", "to practice"],
+  'p2s14': ["proving that", "can overcome"],
+};
+
+
+
+
 /* ── PARSE SENTENCE WITH BLANKS ── */
 function parseSentence(enText, qNum, options, isPassage = false) {
   const fragment = document.createDocumentFragment();
@@ -907,6 +1395,20 @@ function buildPart1() {
     });
     sentSpan.appendChild(transBtn);   // ← inline inside sentence span
 
+    // Grammar button – only for questions with grammar notes
+    if (GRAMMAR_NOTES[q.num]) {
+      const grammarBtn = document.createElement('button');
+      grammarBtn.className = 'grammar-btn';
+      grammarBtn.textContent = '文法';
+      grammarBtn.title = '查看文法解析';
+      grammarBtn.style.cssText = 'display:inline-flex;vertical-align:middle;margin-left:5px;flex-shrink:0;';
+      grammarBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showGrammarPopup(e, q.num);
+      });
+      sentSpan.appendChild(grammarBtn);
+    }
+
     header.appendChild(numBadge);
     // ansBadge not appended
     header.appendChild(sentSpan);
@@ -932,24 +1434,180 @@ function buildPart1() {
 }
 
 function appendWords(container, text, qNum, options) {
-  const tokens = text.split(/(\s+|[,.;:!?()']+)/);
-  for (const token of tokens) {
-    if (!token || /^[\s,.;:!?()']+$/.test(token)) {
-      container.appendChild(document.createTextNode(token));
-    } else {
-      const clean = token.replace(/[^a-zA-Z']/g, '').toLowerCase().replace(/^'|'$/g,'');
-      if (!clean || SKIP_WORDS.has(clean) || clean.length <= 1) {
+  // Build a list of grammar-highlighted ranges for this question
+  const phrases = (qNum && GRAMMAR_PHRASES[qNum]) ? GRAMMAR_PHRASES[qNum] : [];
+  
+  // Mark each character position: grammarMark[i] = true if char i is inside a grammar phrase
+  const grammarMark = new Uint8Array(text.length);
+  for (const phrase of phrases) {
+    let searchFrom = 0;
+    while (true) {
+      const idx = text.indexOf(phrase, searchFrom);
+      if (idx === -1) break;
+      for (let k = idx; k < idx + phrase.length; k++) grammarMark[k] = 1;
+      searchFrom = idx + 1;
+    }
+  }
+
+  // Split into segments: each segment is either all-grammar or all-normal
+  let pos = 0;
+  while (pos < text.length) {
+    // Find run end
+    const isGrammar = grammarMark[pos] === 1;
+    let end = pos + 1;
+    while (end < text.length && grammarMark[end] === (isGrammar ? 1 : 0)) end++;
+    const segment = text.slice(pos, end);
+    pos = end;
+
+    // Tokenize segment and render
+    const tokens = segment.split(/(\s+|[,.;:!?()']+)/);
+    for (const token of tokens) {
+      if (!token || /^[\s,.;:!?()']+$/.test(token)) {
         container.appendChild(document.createTextNode(token));
       } else {
-        const span = document.createElement('span');
-        span.className = 'word-btn';
-        span.textContent = token;
-        span.dataset.word = clean;
-        span.addEventListener('click', (e) => { e.stopPropagation(); showWordPopup(e, clean, span); });
-        container.appendChild(span);
+        const clean = token.replace(/[^a-zA-Z']/g, '').toLowerCase().replace(/^'|'$/g,'');
+        if (!clean || clean.length <= 1) {
+          container.appendChild(document.createTextNode(token));
+        } else if (SKIP_WORDS.has(clean) && !isGrammar) {
+          // Skip-word that's NOT in a grammar phrase → plain text
+          container.appendChild(document.createTextNode(token));
+        } else {
+          const span = document.createElement('span');
+          // Always make it a word-btn so single-word lookup works
+          span.className = 'word-btn' + (isGrammar ? ' grammar-word' : '');
+          span.textContent = token;
+          span.dataset.word = clean;
+          if (isGrammar && PHRASE_POPUP_MAP[clean]) {
+            span.addEventListener('click', (e) => { e.stopPropagation(); showPhrasePopup(e, clean, clean); });
+          } else {
+            span.addEventListener('click', (e) => { e.stopPropagation(); showWordPopup(e, clean, span); });
+          }
+          container.appendChild(span);
+        }
       }
     }
   }
+}
+
+
+/* ── PHRASE POPUP MAP
+   Key: lowercase token  →  Value: { phrase, pos, zh, explain }
+   Used when a grammar-highlighted word is clicked: show phrase info instead of single word.
+   Tokens that appear in multiple phrases carry the most instructive one.
+── */
+const PHRASE_POPUP_MAP = {
+  // Q1
+  'faced':   { phrase:'faced with',            pos:'片語',  zh:'面對……；面臨……',          explain:'過去分詞 faced 放句首構成分詞構句，= being faced with，表被動原因。' },
+  'had':     { phrase:'had no choice but to V', pos:'片語',  zh:'別無選擇，只能……',          explain:'固定句型。but 後接不定詞（to V），表示唯一的選擇。' },
+  'choice':  { phrase:'had no choice but to V', pos:'片語',  zh:'別無選擇，只能……',          explain:'固定句型。but 後接不定詞（to V），表示唯一的選擇。' },
+  // Q2
+  'demanded':    { phrase:'demand that + 原形動詞', pos:'片語',  zh:'要求……（假設語氣）',         explain:'demand / suggest / insist 等後面 that 子句動詞用原形，不加 s 也不用過去式。' },
+  'verified':    { phrase:'be verified',            pos:'片語',  zh:'被核實；被驗證',             explain:'原形被動（be + 過去分詞），用在假設語氣 that 子句中，不能改成 was verified。' },
+  'emphasizing': { phrase:'emphasizing that …',     pos:'分詞構句', zh:'（同時）強調……',           explain:'現在分詞 emphasizing 放句尾，表伴隨動作，主詞同為 The CEO。' },
+  // Q3
+  'prevent': { phrase:'prevent A from V-ing',   pos:'片語',  zh:'防止 A 做 B',               explain:'固定搭配：prevent / stop / keep + 受詞 + from + V-ing。' },
+  'becoming':{ phrase:'prevent A from V-ing',   pos:'片語',  zh:'防止 A 做 B',               explain:'from 後面一定接動名詞（-ing），不能接原形動詞。' },
+  'banning': { phrase:'policy banning gadgets', pos:'分詞修飾', zh:'禁止……的政策',             explain:'現在分詞 banning 後置修飾 policy，等同 a policy that bans gadgets。' },
+  // Q4
+  'ensure':  { phrase:'to ensure that …',       pos:'不定詞', zh:'為了確保……',               explain:'to ensure 是不定詞表目的；ensure + that 子句 = 確保某事成真。' },
+  'drafted': { phrase:'newly drafted',           pos:'形容詞片語', zh:'新起草的；剛擬定的',     explain:'副詞 newly + 過去分詞 drafted，修飾名詞 amendments，表被動（被起草）。' },
+  'newly':   { phrase:'newly drafted',           pos:'形容詞片語', zh:'新起草的；剛擬定的',     explain:'副詞 newly 修飾過去分詞 drafted，整體作前位形容詞。' },
+  // Q5
+  'revealed':{ phrase:'revealed that …',        pos:'動詞片語', zh:'揭示了……；顯示了……',     explain:'reveal / show / prove + that 子句，that 引導名詞子句當受詞。' },
+  'capable': { phrase:'be capable of V-ing',    pos:'片語',  zh:'能夠……；有能力……',           explain:'capable of + V-ing 是固定搭配；此處後置修飾 ecosystems，等同關係子句 that are capable of。' },
+  'thriving':{ phrase:'be capable of thriving', pos:'片語',  zh:'能夠蓬勃發展',               explain:'of 後接動名詞 thriving，不能接原形動詞。' },
+  // Q6
+  'although':{ phrase:'Although … , 主句',       pos:'連接詞', zh:'雖然……（讓步子句）',        explain:'Although 引導讓步副詞子句。注意：Although 和 but 不能同時出現在同一句。' },
+  'leading': { phrase:'leading to …',           pos:'分詞構句', zh:'（因此）導致……',           explain:'現在分詞構句放句尾，表示前面整件事造成的結果，常見：leading to / causing / resulting in。' },
+  // Q7
+  'attempt': { phrase:'in an attempt to V',     pos:'片語',  zh:'試圖……；為了……',             explain:'介系詞片語 in an attempt to V 放句首修飾主句，= in order to V，常見於正式書面語。' },
+  'stay':    { phrase:'stay afloat',             pos:'片語',  zh:'維持運轉；勉強撐下去',        explain:'stay afloat 字面是「保持漂浮」，引申為「（公司/個人）勉強維持下去」。' },
+  'afloat':  { phrase:'stay afloat',             pos:'片語',  zh:'維持運轉；勉強撐下去',        explain:'stay afloat 字面是「保持漂浮」，引申為「（公司/個人）勉強維持下去」。' },
+  'chose':   { phrase:'chose to V',              pos:'動詞片語', zh:'選擇去做……',              explain:'choose to + 原形動詞，表示主動選擇某個行動。' },
+  'monopolize':{ phrase:'to monopolize',         pos:'不定詞目的', zh:'為了壟斷……',            explain:'to monopolize 是不定詞表目的，說明 chose to cooperate 的原因。' },
+  // Q8
+  'unless':  { phrase:'Unless … , 主句 + will',  pos:'連接詞', zh:'除非……，否則……',            explain:'Unless = if...not，引導條件子句；子句用現在式代替未來式（不能用 will）。' },
+  'takes':   { phrase:'Unless … takes … , will', pos:'條件句動詞', zh:'（條件子句）採取',      explain:'條件子句中用現在式 takes 代替未來式，這是條件句的固定規則。' },
+  // Q9
+  'aimed':   { phrase:'aimed at V-ing',          pos:'分詞修飾', zh:'以……為目標；旨在……',      explain:'過去分詞片語 aimed at raising... 後置修飾 campaign，等同 a campaign that was aimed at raising...。' },
+  'raising': { phrase:'aimed at raising',        pos:'動名詞',  zh:'籌集……（動名詞）',          explain:'aimed at 後接動名詞（V-ing），不能接原形動詞。' },
+  // Q10
+  'driven':  { phrase:'Driven by …',             pos:'分詞構句', zh:'在……的驅使下（被動原因）', explain:'過去分詞 Driven 開頭，省略 Being，表被動原因。主詞須與主句一致（the biochemist）。' },
+  'trying':  { phrase:'trying to decipher',      pos:'分詞構句', zh:'（同時）試圖破解……',       explain:'現在分詞 trying 表伴隨動作，修飾 spent countless nights，說明怎麼花時間的。' },
+  'decipher':{ phrase:'trying to decipher',      pos:'不定詞',  zh:'試圖破解；設法解讀',        explain:'decipher 本意是「破解密碼」，引申為「弄懂複雜事物」。try to + V = 試圖做某事。' },
+  // Q11
+  'would':   { phrase:'that would benefit',      pos:'關係子句助動詞', zh:'（將會）……',         explain:'would 在關係子句中表「從過去看未來」，因為主句是 promised（過去式）。' },
+  'benefit': { phrase:'that would benefit',      pos:'關係子句動詞', zh:'使……受益；有益於',     explain:'that 引導限定關係子句，修飾 reforms；would benefit 是子句的動詞。' },
+  // Q12
+  'required':{ phrase:'be required to V',        pos:'被動不定詞', zh:'被要求去……',             explain:'be required to + 原形動詞：被動語態接不定詞，= 被要求做某事。' },
+  'avoid':   { phrase:'to avoid …',              pos:'不定詞目的', zh:'為了避免……',             explain:'不定詞 to avoid 放句末表目的，說明為何要 clarify sources。注意：avoid 本身後接 V-ing（avoid + V-ing）。' },
+  // Q13
+  'compromised': { phrase:'has been compromised',       pos:'完成式被動', zh:'已被損壞；已受損',         explain:'現在完成式被動：have/has + been + 過去分詞，表示「已經被……」且影響持續至今。' },
+  'exposure':    { phrase:'exposure to',                pos:'片語名詞',   zh:'暴露於……；接觸……',         explain:'固定搭配：exposure to + 名詞，表示「長期接觸或暴露於某物」。' },
+  // Q14
+  'ensuring':    { phrase:'always ensuring that',       pos:'分詞構句',   zh:'（始終）確保……',           explain:'現在分詞 ensuring 放句尾，表伴隨動作，等同 and always ensures that...。' },
+  'spoken':      { phrase:'words spoken（後位修飾）',   pos:'分詞修飾',   zh:'被說出的（話）',            explain:'過去分詞 spoken 後置修飾 words，等同 words that were spoken，表被動。' },
+  'interpreted': { phrase:'be interpreted as',          pos:'被動片語',   zh:'被解讀為……；被詮釋為……',   explain:'情態動詞被動：could be + V-ed，表示「可能被……」。as 後面接名詞表身分或性質。' },
+  // Q15
+  'unlike':      { phrase:'Unlike A , B …',             pos:'介系詞對比', zh:'與 A 不同，B……',           explain:'Unlike 是介系詞（非連接詞），後接名詞片語作對比。注意不可同時加 but。' },
+  'focus':       { phrase:'that focus on',              pos:'限定關係子句', zh:'（只）專注於……的',         explain:'that 引導限定關係子句，修飾 books，that 在子句中當主詞。' },
+  'offers':      { phrase:'offers sb a look into',      pos:'雙受詞動詞', zh:'讓某人深入了解……',          explain:'offer + 間接受詞 + 直接受詞：SVOO 雙受詞句型。look into = 深入了解。' },
+  // Q16
+  'given':       { phrase:'Given + 名詞，主句',          pos:'介系詞/分詞', zh:'鑑於……；考量到……',         explain:'Given 放句首表「鑑於某情況」，後接名詞片語，等同 Considering / In light of。' },
+  'advised':     { phrase:'be advised to V',            pos:'被動不定詞', zh:'被建議去……',                explain:'be advised to + V：被動 + 不定詞，主動句是 advise sb to do sth。' },
+  // Q17
+  'plunged':     { phrase:'plunge A into B',            pos:'動詞片語',   zh:'使……陷入……',                explain:'plunge + 受詞 + into + 名詞，表「使某人/事陷入某種狀態」，常用於負面情境。' },
+  'leaving':     { phrase:'leaving sb + 形容詞',        pos:'分詞構句',   zh:'（因此）使……處於……狀態',    explain:'leave + 受詞 + 形容詞：使役分詞構句，放句尾表結果，等同 and left sb + adj。' },
+  // Q18
+  'suggests':    { phrase:'suggests that（表明）',      pos:'動詞片語',   zh:'表明……；顯示……',            explain:'suggest 此處是「表明；顯示」（不是「建議」），後面 that 子句用一般時態，不用假設語氣。' },
+  'long':        { phrase:'long before',                pos:'副詞片語',   zh:'在……很久之前',              explain:'long before/after + 名詞/子句，強調時間距離遙遠的前後關係。' },
+  'dawn':        { phrase:'the dawn of',                pos:'名詞片語',   zh:'……的開端；……的黎明',        explain:'dawn 字面是黎明，引申為某事物的「起源、開端」。the dawn of civilization = 文明的開端。' },
+  // Q19
+  'wither':      { phrase:'cause ... to wither',        pos:'使役動詞片語', zh:'導致……枯萎',               explain:'cause + 受詞 + to V：使役動詞句型，cause 後面的不定詞不省略 to。' },
+  'which':       { phrase:', which will lead to（非限定）', pos:'非限定關係子句', zh:'（而）這將導致……',    explain:'which 引導非限定關係子句，前加逗號，代指整個前面子句。去掉後主句意思不變。' },
+  'inevitably':  { phrase:'will inevitably lead to',    pos:'副詞修飾',   zh:'將不可避免地導致',          explain:'inevitably 修飾 will lead to，副詞放助動詞後、主動詞前：will + adv + V。' },
+  // Q20
+  'noting':      { phrase:'noting that',                pos:'分詞構句',   zh:'（同時）指出……',            explain:'現在分詞 noting 放句尾，表伴隨動作，等同 and noted that...，主詞同為 Professor Evans。' },
+  'supported':   { phrase:'supported by（後位修飾）',   pos:'分詞修飾',   zh:'被……所支持的',              explain:'過去分詞片語 supported by... 後置修飾 argument，等同 an argument that was supported by...。' },
+  // Passage 1
+  'needed':      { phrase:'needed to V1, V2, V3',      pos:'不定詞並列', zh:'需要去做……（多件事）',       explain:'need to + V。多個動詞並列時，只在第一個前加 to，後面直接原形並列，用逗號分隔。' },
+  'because':     { phrase:'Because + 子句，主句',        pos:'連接詞',     zh:'因為……（原因子句）',         explain:'Because 引導原因子句，放句首時後面加逗號。注意 Because 和 so 不能同時用。' },
+  'asked':       { phrase:'ask sb for sth',             pos:'動詞片語',   zh:'向某人請求某物',             explain:'ask + 人 + for + 事物：固定搭配。ask for = 要求；ask sb to do = 請某人做。' },
+  'accused':     { phrase:'accuse A of B',              pos:'動詞片語',   zh:'指責 A 有 B（的問題）',      explain:'accuse + 受詞 + of + 名詞/V-ing：固定搭配，of 後面接名詞或動名詞。' },
+  'encouraged':  { phrase:'encourage sb to V1, V2',     pos:'動詞 + 不定詞並列', zh:'鼓勵某人去做……',     explain:'encourage sb to + V。多個不定詞並列時，to 只出現一次，後面動詞直接並列。' },
+  'assured':     { phrase:'assure A that',              pos:'動詞片語',   zh:'向 A 保證……',               explain:'assure + 受詞 + that 子句：向某人保證某事。與 ensure（確保事情發生）意思不同。' },
+  // Passage 2
+  'honor':       { phrase:'to honor（不定詞目的）',     pos:'不定詞',     zh:'（為了）祭拜；（為了）紀念', explain:'不定詞 to honor 放在動詞/名詞後表目的，說明「籌備活動的目的是祭拜祖先」。' },
+  'became':      { phrase:'a beggar who became',        pos:'關係子句',   zh:'（後來）成為……',             explain:'who 引導限定關係子句，修飾先行詞 beggar（人）。who 在子句中當主詞。' },
+  'organize':    { phrase:'hired ... to organize',      pos:'不定詞目的', zh:'（雇來）去組織……',           explain:'hire sb to do sth：雇用某人做某事。to organize 是不定詞表目的。' },
+  'looking':     { phrase:'be looking forward to + V-ing', pos:'片語',   zh:'期待……；盼望……',            explain:'look forward to 中的 to 是介系詞，後面一定接名詞或 V-ing，不能接原形動詞。' },
+  'blink':       { phrase:'would blink when',           pos:'過去習慣',   zh:'（過去）每當……就會眨眼',     explain:'would + V 表過去的習慣性動作，等同 used to + V。when 引導時間副詞子句。' },
+  'soothe':      { phrase:'aspirin to soothe',          pos:'不定詞目的', zh:'（用來）安撫的',             explain:'名詞 + to V：表示「用來做……的（東西）」。to soothe 是不定詞修飾 aspirin。' },
+  'chew':        { phrase:'cork to chew to practice',   pos:'雙層不定詞', zh:'（用來咀嚼以）練習口音',     explain:'兩個不定詞：to chew（目的1）+ to practice（目的2）。第二個說明咀嚼的更深層目的。' },
+  'practice':    { phrase:'to practice her accent',     pos:'不定詞目的', zh:'（為了）練習口音',            explain:'to practice 是不定詞表目的，說明為什麼要咀嚼軟木塞。' },
+  'proving':     { phrase:'proving that（分詞構句）',    pos:'分詞構句',   zh:'（由此）證明了……',           explain:'現在分詞 proving 放句尾，表示「由此得到的結論/結果」，that 引導名詞子句。' },
+  'overcome':    { phrase:'cooperation can overcome',   pos:'主詞 + 動詞', zh:'合作能夠克服……',            explain:'cooperation（合作）是抽象名詞當主詞。overcome = 克服（不規則動詞：overcome/overcame/overcome）。' },
+};
+
+function showPhrasePopup(e, token, phraseKey) {
+  const entry = PHRASE_POPUP_MAP[phraseKey];
+  if (!entry) { showWordPopup(e, token); return; }
+  const isSaved = false;
+  const html = `
+    <div class="pop-header">
+      <div class="pop-title-group">
+        <button class="pop-star-svg-btn" style="visibility:hidden">${starSvg(false)}</button>
+        <span class="pop-word" style="color:#fca5a5">${entry.phrase}</span>
+      </div>
+      <button class="pop-close" onclick="closePopup()">✕</button>
+    </div>
+    <div style="margin-bottom:4px">
+      <button class="pop-audio-btn" onclick="speakWord('${(entry.phrase).replace(/'/g,"\'")}');event.stopPropagation();">🔊 發音</button>
+    </div>
+    <div class="pop-zh-row"><span class="pop-pos-tag">${entry.pos}</span>${entry.zh}</div>
+    <div style="margin-top:8px;font-size:12px;color:#cbd5e1;background:#0f172a;border-left:3px solid #dc2626;padding:7px 10px;border-radius:0 5px 5px 0;line-height:1.75">${entry.explain}</div>
+  `;
+  showPopup(e, html);
 }
 
 /* ── BUILD PASSAGE OPTIONS BOX ── */
@@ -993,7 +1651,7 @@ function buildPassage(passage, containerId) {
     enDiv.className = 'sentence-en';
     
     // Parse sentence with blanks
-    const parsed = parseSentencePassage(sent.en, sent.blanks, passage);
+    const parsed = parseSentencePassage(sent.en, sent.blanks, passage, sent.id);
     enDiv.appendChild(parsed);
     
     // Translation button inline at end of sentence
@@ -1006,7 +1664,19 @@ function buildPassage(passage, containerId) {
       e.stopPropagation();
       showTranslatePopup(e, sent.zh);
     });
-    enDiv.appendChild(zhBtn);   // ← inline inside sentence div
+    enDiv.appendChild(zhBtn);
+    // Grammar button for passage sentences with grammar notes
+    if (GRAMMAR_NOTES[sent.id]) {
+      const gBtn = document.createElement('button');
+      gBtn.className = 'grammar-btn';
+      gBtn.textContent = '文法';
+      gBtn.style.cssText = 'display:inline-flex;vertical-align:middle;margin-left:5px;flex-shrink:0;';
+      gBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showGrammarPopup(e, sent.id);
+      });
+      enDiv.appendChild(gBtn);
+    }
     
     block.appendChild(enDiv);
     
@@ -1017,7 +1687,7 @@ function buildPassage(passage, containerId) {
   container.appendChild(box);
 }
 
-function parseSentencePassage(enText, blanks, passage) {
+function parseSentencePassage(enText, blanks, passage, sentId) {
   const frag = document.createDocumentFragment();
   const blankRe = /\[(\d+):([A-J]):([^:]+):([^:]+):([^\]]+)\]/g;
   let text = enText;
@@ -1035,7 +1705,7 @@ function parseSentencePassage(enText, blanks, passage) {
   for (const part of parts) {
     if (part.type === 'text') {
       const container = document.createDocumentFragment();
-      appendWords(container, part.val, null, null);
+      appendWords(container, part.val, sentId || null, null);
       frag.appendChild(container);
     } else {
       const b = allBlanks[part.num];
@@ -1056,9 +1726,7 @@ function parseSentencePassage(enText, blanks, passage) {
 let _lastPopupPointer = null;
 
 function useCompactPopup() {
-  return window.matchMedia('(max-width: 900px)').matches
-    || window.matchMedia('(hover: none)').matches
-    || window.matchMedia('(pointer: coarse)').matches;
+  return false; // Always follow click position
 }
 
 function positionPopup(e) {
@@ -1069,31 +1737,36 @@ function positionPopup(e) {
 
   const place = () => {
     if (compact) {
-      popup.style.left = (window.pageXOffset + (window.innerWidth / 2)) + 'px';
+      // Bottom sheet for narrow phones
+      popup.style.left = (window.innerWidth / 2) + 'px';
       popup.style.right = 'auto';
       popup.style.top = 'auto';
       popup.style.bottom = '';
-      popup.style.top = (window.pageYOffset + window.innerHeight - popup.offsetHeight) + 'px';
+      popup.style.top = (window.innerHeight - popup.offsetHeight) + 'px';
       popup.style.transform = 'translateX(-50%)';
       return;
     }
+    // Follow the click: appear just to the right/below the pointer
     popup.style.transform = '';
     popup.style.bottom = 'auto';
     const pw = popup.offsetWidth || 340;
     const ph = popup.offsetHeight || 320;
-    const pad = 12;
-    const x = (_lastPopupPointer ? _lastPopupPointer.x : window.innerWidth / 2) + window.pageXOffset;
-    const y = (_lastPopupPointer ? _lastPopupPointer.y : window.innerHeight / 2) + window.pageYOffset;
-    let left = x + pad;
-    let top = y + pad;
-    const maxLeft = window.pageXOffset + window.innerWidth - pw - pad;
-    const minLeft = window.pageXOffset + pad;
-    const maxTop = window.pageYOffset + window.innerHeight - ph - pad;
-    const minTop = window.pageYOffset + pad;
-    if (left > maxLeft) left = Math.max(minLeft, x - pw - pad);
-    if (top > maxTop) top = Math.max(minTop, y - ph - pad);
-    if (left < minLeft) left = minLeft;
-    if (top < minTop) top = minTop;
+    const pad = 10;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const cx = _lastPopupPointer ? _lastPopupPointer.x : vw / 2;
+    const cy = _lastPopupPointer ? _lastPopupPointer.y : vh / 2;
+
+    // Try right of click first, then left
+    let left = cx + pad;
+    if (left + pw > vw - pad) left = cx - pw - pad;
+    if (left < pad) left = pad;
+
+    // Try below click first, then above
+    let top = cy + pad;
+    if (top + ph > vh - pad) top = cy - ph - pad;
+    if (top < pad) top = pad;
+
     popup.style.left = left + 'px';
     popup.style.top = top + 'px';
   };
@@ -1122,8 +1795,11 @@ function dismissPopupFromBackdrop(e) {
 
 function wirePopupDismiss() {
   const overlay = document.getElementById('popup-overlay');
+  const popup = document.getElementById('popup-card');
   if (!overlay) return;
   overlay.addEventListener('click', dismissPopupFromBackdrop);
+  // Stop clicks inside the card from bubbling up to overlay
+  if (popup) popup.addEventListener('click', e => e.stopPropagation());
 }
 
 function shouldSkipOpenAfterDismiss() {
@@ -1170,10 +1846,39 @@ window.addEventListener('orientationchange', () => {
   }, 120);
 });
 
+function lemmatize(key) {
+  // Try progressively stripped forms to find the base word in wordCache
+  if (wordCache[key]) return key;
+  // -ed / -ing / -s / -es / -ies endings → try base forms
+  const tries = [];
+  if (key.endsWith('ied'))   tries.push(key.slice(0,-3) + 'y');       // studied → study
+  if (key.endsWith('ies'))   tries.push(key.slice(0,-3) + 'y');       // studies → study
+  if (key.endsWith('ing')) {
+    tries.push(key.slice(0,-3));                                        // running → runn → run (double)
+    tries.push(key.slice(0,-3) + 'e');                                  // providing → provide
+    if (key.length > 5) tries.push(key.slice(0,-4));                   // running → run (drop double)
+  }
+  if (key.endsWith('ed')) {
+    tries.push(key.slice(0,-2));                                        // provided → provid → provide
+    tries.push(key.slice(0,-2) + 'e');                                  // provided → provide
+    tries.push(key.slice(0,-1));                                        // planned → planne → plan (double)
+    if (key.length > 4) tries.push(key.slice(0,-3));                   // planned → plan
+  }
+  if (key.endsWith('es'))    tries.push(key.slice(0,-2));              // provides → provid
+  if (key.endsWith('es'))    tries.push(key.slice(0,-1));              // provides → provide (drop s)
+  if (key.endsWith('s') && !key.endsWith('ss')) tries.push(key.slice(0,-1)); // provides → provide
+  for (const t of tries) {
+    if (wordCache[t]) return t;
+  }
+  return key; // give up, return original
+}
+
 function showWordPopup(e, word) {
   const key = (word || '').toLowerCase().replace(/[^a-z]/g, '');
-  const info = wordCache[key] || getFallbackWordInfo(word);
-  openWordPopup(e, word, info, 'w_' + key.replace(/[^a-z]/g, '_'));
+  const baseKey = lemmatize(key);
+  const info = wordCache[baseKey] || getFallbackWordInfo(word);
+  // Show the display word as typed, but look up with base key
+  openWordPopup(e, word, info, 'w_' + baseKey.replace(/[^a-z]/g, '_'));
 }
 
 /* ── 7000單 custom_folders（同 B4L7：每部裝置讀自己的 localStorage）── */
@@ -1379,11 +2084,11 @@ function showOptionsPopup(e, qNum, options, ansLetter) {
   }
   const html = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #334155">
-      <span style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.07em;text-transform:uppercase">第 ${qNum} 題選項</span>
-      <span style="font-size:12px;font-weight:800;color:#34d399">答案：${ansLetter}</span>
+      <span style="font-size:14px;font-weight:700;color:#94a3b8;letter-spacing:.05em;text-transform:uppercase">第 ${qNum} 題選項</span>
+      <span style="font-size:15px;font-weight:800;color:#34d399">答案：${ansLetter}</span>
     </div>
     ${rows}
-    <div style="font-size:11px;color:#34d399;margin-top:6px">✓ 綠色為正確答案｜可點任一選項開星星收藏</div>
+    <div style="font-size:13px;color:#34d399;margin-top:8px">✓ 綠色為正確答案｜可點任一選項開星星收藏</div>
   `;
   showPopup(e, html);
 }
