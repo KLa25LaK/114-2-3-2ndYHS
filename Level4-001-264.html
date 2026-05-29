@@ -1847,38 +1847,64 @@ window.addEventListener('orientationchange', () => {
 });
 
 function lemmatize(key) {
-  // Try progressively stripped forms to find the base word in wordCache
   if (wordCache[key]) return key;
-  // -ed / -ing / -s / -es / -ies endings → try base forms
-  const tries = [];
-  if (key.endsWith('ied'))   tries.push(key.slice(0,-3) + 'y');       // studied → study
-  if (key.endsWith('ies'))   tries.push(key.slice(0,-3) + 'y');       // studies → study
-  if (key.endsWith('ing')) {
-    tries.push(key.slice(0,-3));                                        // running → runn → run (double)
-    tries.push(key.slice(0,-3) + 'e');                                  // providing → provide
-    if (key.length > 5) tries.push(key.slice(0,-4));                   // running → run (drop double)
+  const try1 = (s) => wordCache[s] ? s : null;
+  let t;
+
+  // -ies → -y  (studies → study, tries → try)
+  if (key.endsWith('ies') && key.length > 4) {
+    if (t = try1(key.slice(0,-3) + 'y')) return t;
   }
-  if (key.endsWith('ed')) {
-    tries.push(key.slice(0,-2));                                        // provided → provid → provide
-    tries.push(key.slice(0,-2) + 'e');                                  // provided → provide
-    tries.push(key.slice(0,-1));                                        // planned → planne → plan (double)
-    if (key.length > 4) tries.push(key.slice(0,-3));                   // planned → plan
+  // -ied → -y  (studied → study)
+  if (key.endsWith('ied') && key.length > 4) {
+    if (t = try1(key.slice(0,-3) + 'y')) return t;
   }
-  if (key.endsWith('es'))    tries.push(key.slice(0,-2));              // provides → provid
-  if (key.endsWith('es'))    tries.push(key.slice(0,-1));              // provides → provide (drop s)
-  if (key.endsWith('s') && !key.endsWith('ss')) tries.push(key.slice(0,-1)); // provides → provide
-  for (const t of tries) {
-    if (wordCache[t]) return t;
+  // -ing forms
+  if (key.endsWith('ing') && key.length > 5) {
+    // combining → combine (drop -ing, add -e)
+    if (t = try1(key.slice(0,-3) + 'e')) return t;
+    // running → run (drop -ning, consonant was doubled)
+    const stem3 = key.slice(0,-3);
+    if (stem3.length >= 2 && stem3[stem3.length-1] === stem3[stem3.length-2]) {
+      if (t = try1(stem3.slice(0,-1))) return t;
+    }
+    // experiencing → experience  (drop just -ing)
+    if (t = try1(stem3)) return t;
   }
-  return key; // give up, return original
+  // -ed forms
+  if (key.endsWith('ed') && key.length > 4) {
+    // required → require (drop -d)
+    if (t = try1(key.slice(0,-1))) return t;
+    // provided → provide (drop -d, already has e... same as above)
+    // planned → plan (consonant doubled: drop -ned → -n)
+    const stem2 = key.slice(0,-2);
+    if (stem2.length >= 2 && stem2[stem2.length-1] === stem2[stem2.length-2]) {
+      if (t = try1(stem2.slice(0,-1))) return t;
+    }
+    // dropped → drop (drop -ped → stem)
+    if (t = try1(stem2)) return t;
+  }
+  // -s / -es (boys → boy, requires → require)
+  if (key.endsWith('es') && key.length > 4) {
+    // requires → require (drop -s)
+    if (t = try1(key.slice(0,-1))) return t;
+    // matches → match (drop -es)
+    if (t = try1(key.slice(0,-2))) return t;
+  }
+  if (key.endsWith('s') && !key.endsWith('ss') && key.length > 3) {
+    if (t = try1(key.slice(0,-1))) return t;
+  }
+
+  return key;
 }
 
 function showWordPopup(e, word) {
   const key = (word || '').toLowerCase().replace(/[^a-z]/g, '');
   const baseKey = lemmatize(key);
   const info = wordCache[baseKey] || getFallbackWordInfo(word);
-  // Show the display word as typed, but look up with base key
-  openWordPopup(e, word, info, 'w_' + baseKey.replace(/[^a-z]/g, '_'));
+  // Use baseKey as the canonical word for display, audio and saving
+  const displayWord = wordCache[baseKey] ? baseKey : word;
+  openWordPopup(e, displayWord, info, 'w_' + baseKey.replace(/[^a-z]/g, '_'));
 }
 
 /* ── 7000單 custom_folders（同 B4L7：每部裝置讀自己的 localStorage）── */
